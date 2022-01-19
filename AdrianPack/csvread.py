@@ -5,7 +5,7 @@ import math
 from typing import Sized, Iterable
 
 
-def csvead(path=None, cols=None, rows=None, delimiter=';',
+def csvead(path, cols=None, rows=None, delimiter=';',
            head=True, start_row=None, output='dict', dtype='object'):
     """
             Parse csv data to dict.
