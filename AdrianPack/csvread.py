@@ -5,6 +5,43 @@ import math
 from typing import Sized, Iterable
 
 
+def csvead(path=None, cols=None, rows=None, delimiter=';',
+           head=True, start_row=None, output='dict', dtype='object'):
+    """
+            Parse csv data to dict.
+
+            Support for xlsx and csv, selecting specific columns and/or rows,
+            specifying header and delimiter. Dependencies: pandas and numpy.
+
+            :rtype: object
+            :param path:
+                Path of the file. Always str
+            :param cols:
+                Input in a tuple for more than one column or in int/str for one col
+                input in (int/str, int/str) OR int/str OR ((int, label), (int, label))
+                OR a combination.
+
+                Used to specify the index/label of columns to append to dict
+                Note: keys will be ints or strings.
+            :param rows:
+                Input in a tuple. ((row, label), (row, label), ...)
+                OR (row, row, ...) OR combination of ((row, label), row)
+
+                Used to specify the index of the row (int) and give a label (str) to
+                append to dict. Note, keys of the rows will be strings.
+            :param head:
+                Boolean, default True change if the csv file doesn't have an header.
+            :param delimiter:
+                Default: ';', change for custom delimiter must be str.
+            :return:
+                Dict with all or specified rows/cols.
+            """
+
+    Data_reader(path=path, cols=cols, rows=rows, delimiter=delimiter,
+                head=head, start_row=start_row, output=output, dtype=dtype)()
+    return None
+
+
 class Data_reader:
     """
         Parse csv data to dict.
