@@ -58,7 +58,8 @@ class Data_reader:
             OR a combination.
 
             Used to specify the index/label of columns to append to dict
-            Note: keys will be ints or strings.
+            Note: keys will be ints or strings, multifile str keys are NOT supported.
+
         :param rows:
             Input in a tuple. ((row, label), (row, label), ...)
             OR (row, row, ...) OR combination of ((row, label), row)
@@ -69,6 +70,11 @@ class Data_reader:
             Boolean, default True change if the csv file doesn't have an header.
         :param delimiter:
             Default: ';', change for custom delimiter must be str.
+        :param: allow_duplicates:
+            Allow duplicate columns to be added to the dictionary default False.
+        :param: include_all:
+            Unless cols or row is specified include all columns/rows from file
+            default False.
         :return:
             Dict with all or specified rows/cols.
         """
@@ -86,6 +92,7 @@ class Data_reader:
         self.head = head
 
         self.duplicate = False
+        self.all = False
 
         # Check kwargs
         if "allow_duplicates" in kwargs:
@@ -93,15 +100,35 @@ class Data_reader:
                           True)
             self.duplicate = kwargs["allow_duplicates"]
 
+        if "include_all" in kwargs:
+            self.test_inp(kwargs["include_all"], bool, "Include all",
+                          True)
+            self.all = kwargs["include_all"]
+
         if path.__class__.__name__ in 'list':
             # Test inputs (row currently only supports all file wide rows)
+            # TODO: dict row support
+            # TODO: multifile str support
             self.test_inp(cols, (dict, type(None)), "cols")
             self.test_inp(rows, (type(None), list, tuple, int), "row")
+
+            try:
+                assert len(cols) == len(path)
+            except AssertionError:
+                if not self.all:
+                    raise IndexError("Length of 'path' should equal length of"
+                                     " 'cols' in multi file mode but equals: "
+                                     "{0} and {1}. If you meant to include all files"
+                                     "set include_all to True".format(len(path), len(cols)))
+                else:
+                    # TODO: include_all support
+                    pass
 
             # init talley list
             df_list = []
             col_count, it = [0, ], 0
             heads = []
+
             # Read files
             for file in path:
                 df, head_h = self.arr__init__(file, start_row, self.head)
@@ -111,10 +138,13 @@ class Data_reader:
                 heads.extend(head_h)
                 it += 1
             df = pd.DataFrame()
-            self.cols = cols[0]
-            self.cols = [self.cols + (np.array(cols[i]) + col_count[i]).tolist() for i in
-                         range(1, len(cols))][0]
 
+            # Indexes of requested cols
+            self.cols = cols[0]
+            for i in range(1, len(cols)):
+                self.cols += (np.array(cols[i]) + col_count[i]).tolist()
+
+            print(self.cols)
             # Combine dataframes
             for dataframe in df_list:
                 df = pd.concat([df, dataframe], ignore_index=True, axis=1)
@@ -519,3 +549,9 @@ class Data_reader:
         print(arr)
         print('filtered: ', np.array[lambda v: v == v, arr])
         return np.array[lambda v: v == v, arr]
+
+if __name__ == "__main__":
+    data = Data_reader(path=["Meting0.txt", "LiftOmhoog1.txt", "LiftOmlaag1.txt"],
+                cols={0: ["time", 4], 1: [1, 4], 2: [1, 4]},
+                allow_duplicates=True)()
+    print(data)
