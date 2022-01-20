@@ -4,62 +4,24 @@ import numpy as np
 import math
 from typing import Sized, Iterable, Union, Optional, Any, Type, Tuple, List
 
-
-def csvead(path, cols=None, rows=None, delimiter=';',
-           head=True, start_row=None, output='dict', dtype='object'):
+class csvread:
     """
-            Parse csv data to dict.
+        Parse file data to a python usable output.
 
-            Support for xlsx and csv, selecting specific columns and/or rows,
-            specifying header and delimiter. Dependencies: pandas and numpy.
-
-            :rtype: object
-            :param path:
-                Path of the file. Always str
-            :param cols:
-                Input in a tuple for more than one column or in int/str for one col
-                input in (int/str, int/str) OR int/str OR ((int, label), (int, label))
-                OR a combination.
-
-                Used to specify the index/label of columns to append to dict
-                Note: keys will be ints or strings.
-            :param rows:
-                Input in a tuple. ((row, label), (row, label), ...)
-                OR (row, row, ...) OR combination of ((row, label), row)
-
-                Used to specify the index of the row (int) and give a label (str) to
-                append to dict. Note, keys of the rows will be strings.
-            :param head:
-                Boolean, default True change if the csv file doesn't have an header.
-            :param delimiter:
-                Default: ';', change for custom delimiter must be str.
-            :return:
-                Dict with all or specified rows/cols.
-            """
-
-    Data_reader(path=path, cols=cols, rows=rows, delimiter=delimiter,
-                head=head, start_row=start_row, output=output, dtype=dtype)()
-    return None
-
-
-class Data_reader:
-    """
-        Parse csv data to dict.
-
-        Support for xlsx and csv, selecting specific columns and/or rows,
+        Support for xlsx, csv and txt, selecting specific columns and/or rows,
         specifying header and delimiter. Dependencies: pandas and numpy.
 
         :rtype: object
         :param path:
-            Path of the file. Always str
+            Path of the file(s). If multiple files in either a tuple of str or
+            list of str.
         :param cols:
             Input in a tuple for more than one column or in int/str for one col
             input in (int/str, int/str) OR int/str OR ((int, label), (int, label))
             OR a combination.
 
             Used to specify the index/label of columns to append to dict
-            Note: keys will be ints or strings, multifile str keys are NOT supported.
-
+            Note: keys will be ints or strings.
         :param rows:
             Input in a tuple. ((row, label), (row, label), ...)
             OR (row, row, ...) OR combination of ((row, label), row)
@@ -70,6 +32,15 @@ class Data_reader:
             Boolean, default True change if the csv file doesn't have an header.
         :param delimiter:
             Default: ';', change for custom delimiter must be str.
+        :param: start_row:
+            Index of starting row, default int(0).
+        :param: output:
+            output format, either "dict" or "dictionary" for dictionary;
+            "np" or "numpy" for a numpy matrix (possibly with NaN values);
+            "df" or "dataframe" or "pd" or "pandas" for a pandas dataframe.
+        :param: dtype:
+            The data type of the output, default 'object';
+            future implementations may include auto detect unless specified.
         :param: allow_duplicates:
             Allow duplicate columns to be added to the dictionary default False.
         :param: include_all:
@@ -79,9 +50,14 @@ class Data_reader:
             Dict with all or specified rows/cols.
         """
 
-    def __init__(self, path=None, cols: Union[list, dict, str] = None,
-                 rows=None, delimiter=';', head=True, start_row=None,
-                 output='dict', dtype='object', **kwargs):
+    # TODO: documentation, docstrings and write support.
+    def __init__(self, path: Optional[list, str, tuple] = None,
+                 cols: Optional[list, str, tuple] = None,
+                 rows: Optional[list, str, tuple] = None,
+                 delimiter: str = ';', head: bool = True,
+                 start_row: int = None,
+                 output: str = 'dict', dtype: str = 'object',
+                 **kwargs):
         self.cols = cols
         self.rows = rows
 
