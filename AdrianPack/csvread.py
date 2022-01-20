@@ -525,8 +525,3 @@ class csvread:
         print('filtered: ', np.array[lambda v: v == v, arr])
         return np.array[lambda v: v == v, arr]
 
-if __name__ == "__main__":
-    data = Data_reader(path=["Meting0.txt", "LiftOmhoog1.txt", "LiftOmlaag1.txt"],
-                cols={0: ["time", 4], 1: [1, 4], 2: [1, 4]},
-                allow_duplicates=True)()
-    print(data)
