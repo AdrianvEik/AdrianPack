@@ -120,7 +120,6 @@ class csvread:
             for i in range(1, len(cols)):
                 self.cols += (np.array(cols[i]) + col_count[i]).tolist()
 
-            print(self.cols)
             # Combine dataframes
             for dataframe in df_list:
                 df = pd.concat([df, dataframe], ignore_index=True, axis=1)
