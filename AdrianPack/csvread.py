@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 import math
-from typing import Sized, Iterable
+from typing import Sized, Iterable, Union, Optional, Any, Type, Tuple, List
 
 
 def csvead(path, cols=None, rows=None, delimiter=';',
@@ -73,42 +73,64 @@ class Data_reader:
             Dict with all or specified rows/cols.
         """
 
-    # TODO: documentation, docstrings and write support.
-    def __init__(self, path=None, cols=None, rows=None, delimiter=';',
-                 head=True, start_row=None, output='dict', dtype='object'):
-        # TODO: csv_path optioneel maken
+    def __init__(self, path=None, cols: Union[list, dict, str] = None,
+                 rows=None, delimiter=';', head=True, start_row=None,
+                 output='dict', dtype='object', **kwargs):
         self.cols = cols
         self.rows = rows
+
         self.path = path
         self.delimiter = delimiter
+
         self.dtype = dtype
-        if path is not None:
-            with open(path, mode='r') as f:
-                if start_row is not None:
-                    self.test_inp(start_row, int, 'start row')
-                else:
-                    start_row = 0
-                if path.split('.')[1] in ('csv', 'txt'):
-                    df = pd.read_csv(f, delimiter=self.delimiter,
-                                     skiprows=range(start_row))
-                elif path.split('.')[1] == 'xlsx':
-                    df = pd.read_excel(path, skiprows=range(start_row))
-                else:
-                    raise Exception('Expected .csv or .xlsx, got .' +
-                                    path.split('.')[1])
+        self.head = head
 
-                if head:
-                    heads = list(df.columns)
-                else:
-                    # Make a numerical list instead of headers
-                    heads = [i for i in range(len(list(df.columns)))]
+        self.duplicate = False
 
-                    # Add the first row at the top
-                    df.loc[-1] = list(df.columns)
-                    df.index = df.index + 1
-                    df = df.sort_index()
-                f.close()
-            self.head = head
+        # Check kwargs
+        if "allow_duplicates" in kwargs:
+            self.test_inp(kwargs["allow_duplicates"], bool, "Allow duplicates",
+                          True)
+            self.duplicate = kwargs["allow_duplicates"]
+
+        if path.__class__.__name__ in 'list':
+            # Test inputs (row currently only supports all file wide rows)
+            self.test_inp(cols, (dict, type(None)), "cols")
+            self.test_inp(rows, (type(None), list, tuple, int), "row")
+
+            # init talley list
+            df_list = []
+            col_count, it = [0, ], 0
+            heads = []
+            # Read files
+            for file in path:
+                df, head_h = self.arr__init__(file, start_row, self.head)
+                df.columns = range(col_count[it], col_count[it] + len(df.columns))
+                col_count.append(len(df.columns) + col_count[-1])
+                df_list.append(df)
+                heads.extend(head_h)
+                it += 1
+            df = pd.DataFrame()
+            self.cols = cols[0]
+            self.cols = [self.cols + (np.array(cols[i]) + col_count[i]).tolist() for i in
+                         range(1, len(cols))][0]
+
+            # Combine dataframes
+            for dataframe in df_list:
+                df = pd.concat([df, dataframe], ignore_index=True, axis=1)
+
+            # Init final values used in self.read_cols and self.read_rows
+            self.heads = heads
+            self.arr = df.to_numpy()
+            self.arr_t = self.arr.transpose()
+            self.output = output
+
+            self.data_dict = dict()
+
+
+        elif path is not None:
+            df, heads = self.arr__init__(path, start_row, self.head)
+
             self.heads = heads
             self.arr = df.to_numpy()
             self.arr_t = self.arr.transpose()
@@ -152,6 +174,51 @@ class Data_reader:
                 raise Exception('Expected output in df or dict not in %s'
                                 % self.output)
 
+    def arr__init__(self, path: str, start_row: int, head: bool,
+                    df: pd.DataFrame = None) -> Tuple[Union[Optional[str], Any],
+                                                      Union[list, List[int]]]:
+        """"
+        Turn the file into a pandas dataframe.
+
+        :rtype: Pandas.DataFrame
+        :param: path:
+            Path str
+        :param: start_row:
+            Int for the starting row, default 0
+        :param: head:
+            List with str of header values
+        :param: df:
+            Append the current path file to this dataframe
+        :return:
+            Dataframe created from the path file and input arg df.
+        """
+        with open(path, mode='r') as f:
+            if start_row is not None:
+                self.test_inp(start_row, int, 'start row')
+            else:
+                start_row = 0
+            if path.split('.')[1] in ('csv', 'txt'):
+                df = pd.read_csv(f, delimiter=self.delimiter,
+                                 skiprows=range(start_row))
+            elif path.split('.')[1] == 'xlsx':
+                df = pd.read_excel(path, skiprows=range(start_row))
+            else:
+                raise Exception('Expected .csv or .xlsx, got .' +
+                                path.split('.')[1])
+
+            if head:
+                heads = list(df.columns)
+            else:
+                # Make a numerical list instead of headers
+                heads = [i for i in range(len(list(df.columns)))]
+
+                # Add the first row at the top
+                df.loc[-1] = list(df.columns)
+                df.index = df.index + 1
+                df = df.sort_index()
+            f.close()
+        return df, heads
+
     def read_cols(self):
         """
         Read specific columns and append to the dict
@@ -178,6 +245,10 @@ class Data_reader:
                     self.data_dict[self.heads[i]] = self.arr_t[i][
                         ~pd.isnull(self.arr_t[i])
                     ].astype(self.dtype)
+                elif self.duplicate:
+                    dupe_count = self.heads[0:i].count(self.heads[i])
+                    self.data_dict[str(self.heads[i]) + ".%s"%dupe_count] = \
+                        self.arr_t[i][~pd.isnull(self.arr_t[i])].astype(self.dtype)
                 else:
                     print('\x1b[33m' +
                           'Column with index %s already added to dict, '
@@ -189,6 +260,10 @@ class Data_reader:
                 if len(i) == 2:
                     if isinstance(i[0], int):
                         if self.heads[i[0]] not in self.data_dict:
+                            self.data_dict[i[1]] = self.arr_t[i[0]][
+                                ~pd.isnull(self.arr_t[i[0]])
+                            ].astype(self.dtype)
+                        elif self.duplicate:
                             self.data_dict[i[1]] = self.arr_t[i[0]][
                                 ~pd.isnull(self.arr_t[i[0]])
                             ].astype(self.dtype)
@@ -214,6 +289,13 @@ class Data_reader:
 
                 if i not in self.data_dict:
                     self.data_dict[i] = self.arr_t[
+                        self.heads.index(i)
+                    ][
+                        ~pd.isnull(self.arr_t[self.heads.index(i)])
+                    ].astype(self.dtype)
+                elif self.duplicate:
+                    dupe_count = self.heads[0:self.heads.index(i)].count(i)
+                    self.data_dict[i + '.%s'%dupe_count] = self.arr_t[
                         self.heads.index(i)
                     ][
                         ~pd.isnull(self.arr_t[self.heads.index(i)])
@@ -390,7 +472,7 @@ class Data_reader:
         Bool, if True the exception also shows test_obj not recommended for
         long lists.
         :param: name_inp
-        String, the formal name of the object shown in exception.
+        String, the informal name of the object shown in exception.
         """
         assert isinstance(name_inp, str)
         try:
