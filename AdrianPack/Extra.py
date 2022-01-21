@@ -150,7 +150,7 @@ def trap_int(x: Iterable, y: Iterable, **kwargs) -> Iterable:
     yprime = np.insert(y[1:] + y[:-1], 0, 0) * 1 / 2
 
     # Calculating the integral xprime * yprime.
-    totprime = xprime * yprime
+    prime = np.cumsum(xprime * yprime)
 
     # Calculating the attributions to error of x and y.
     # 0 + (x(i)^2 + x(i-1)^2)^(1/2)
@@ -158,14 +158,12 @@ def trap_int(x: Iterable, y: Iterable, **kwargs) -> Iterable:
         np.insert(np.power(xerr[1:], 2) + np.power(xerr[:-1], 2), 0, 0))
     # (0 + (fx(i)^2 + fx(i-1)^2)^(1/2)) * 1/2
     yprime_err = np.sqrt(
-        np.insert(np.power(yerr[1:], 2) + np.power(yerr[:-1], 2), 0,
-                  0)) / 2
+        np.insert(np.power(yerr[1:], 2) + np.power(yerr[:-1], 2), 0, 0)) / 2
 
     # Summing the error and propagating error in x and y
     # (sum(|x_i * y_i|^2 * ((errx_i / x_i)^2 * (erry_i / y_i)^2)^(1/2)))^(1/2)
-    print(yprime)
-    tot_err = np.sqrt(
-        sum(
+    prime_err = np.sqrt(
+        np.cumsum(
             # |x_i * y_i|^2
             np.power((np.absolute(xprime[1:] * yprime[1:]) * np.sqrt(
                 # ((errx_i / x_i)^2 * (erry_i / y_i)^2)^(1/2)
@@ -178,9 +176,9 @@ def trap_int(x: Iterable, y: Iterable, **kwargs) -> Iterable:
     )
 
     if "x_err" in kwargs or "y_err" in kwargs:
-        return np.sum(totprime), tot_err
+        return np.sum(prime), prime_err
     else:
-        return np.sum(totprime)
+        return np.sum(prime)
 
 
 def dep_trap(x, y, xerr, yerr):
