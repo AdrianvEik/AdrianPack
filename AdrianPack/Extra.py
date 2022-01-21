@@ -114,26 +114,26 @@ def trap_int(x: Iterable, y: Iterable, **kwargs) -> Iterable:
     try:
         assert x.shape == y.shape == xerr.shape == yerr.shape
     except AssertionError:
-        if "x_err" in kwargs:
+        if "y_err" in kwargs and "x_err" in kwargs:
+            raise IndexError(
+                "Shape of x_err, y_err, x and y should be the same but"
+                " are {0}, {1}, {2} and {3}".format(xerr.shape, yerr.shape,
+                                                    x.shape, y.shape)
+            )
+        elif "x_err" in kwargs:
             raise IndexError(
                 "Shape of x_err, x and y should be the same but"
-                " are {0}, {1} and {2}".format(xerr.shape[0], x.shape[0], y.shape[0])
+                " are {0}, {1} and {2}".format(xerr.shape, x.shape, y.shape)
             )
         elif "y_err" in kwargs:
             raise IndexError(
                 "Shape of y_err, x and y should be the same but"
-                " are {0}, {1} and {2}".format(yerr.shape[0], x.shape[0], y.shape[0])
-            )
-        elif "y_err" in kwargs and "x_err" in kwargs:
-            raise IndexError(
-                "Shape of x_err, y_err, x and y should be the same but"
-                " are {0}, {1}, {2} and {3}".format(xerr.shape[0], yerr.shape[0],
-                                                    x.shape[0], y.shape[0])
+                " are {0}, {1} and {2}".format(yerr.shape, x.shape, y.shape)
             )
         else:
             raise IndexError(
                 "Shape of x and y should be the same but"
-                " are {0} and {1}".format(x.shape[0], y.shape[0])
+                " are {0} and {1}".format(x.shape, y.shape)
             )
 
     try:
@@ -146,39 +146,32 @@ def trap_int(x: Iterable, y: Iterable, **kwargs) -> Iterable:
     # Calculating the y and x parts of the integral (as given in the question)
     # xprime = x_(i-1) - x_i
     xprime = np.insert(x[1:] - x[:-1], 0, 0)
-    # yprime = (fx_(i-1) + fx_i) * 1/2
-    yprime = np.insert(y[1:] + y[:-1], 0, 0) * 1 / 2
+    yprime = np.insert(y[1:] + y[:-1], 0, 0) * 1/2
 
     # Calculating the integral xprime * yprime.
     prime = np.cumsum(xprime * yprime)
 
     # Calculating the attributions to error of x and y.
     # 0 + (x(i)^2 + x(i-1)^2)^(1/2)
-    xprime_err = np.sqrt(
-        np.insert(np.power(xerr[1:], 2) + np.power(xerr[:-1], 2), 0, 0))
-    # (0 + (fx(i)^2 + fx(i-1)^2)^(1/2)) * 1/2
-    yprime_err = np.sqrt(
-        np.insert(np.power(yerr[1:], 2) + np.power(yerr[:-1], 2), 0, 0)) / 2
+    xprime_err = np.sqrt(np.insert(np.power(xerr[1:], 2) + np.power(xerr[:-1], 2), 0, 0))
+    yprime_err = np.sqrt(np.insert(np.power(yerr[1:], 2) + np.power(yerr[:-1], 2), 0, 0)) / 2
 
     # Summing the error and propagating error in x and y
     # (sum(|x_i * y_i|^2 * ((errx_i / x_i)^2 * (erry_i / y_i)^2)^(1/2)))^(1/2)
     prime_err = np.sqrt(
         np.cumsum(
-            # |x_i * y_i|^2
-            np.power((np.absolute(xprime[1:] * yprime[1:]) * np.sqrt(
-                # ((errx_i / x_i)^2 * (erry_i / y_i)^2)^(1/2)
-                np.power(np.divide(xprime_err[1:], xprime[1:]),
-                         2) + np.power(
-                    np.divide(yprime_err[1:], yprime[1:]), 2)
-            )
-                      ), 2)
+            np.power(np.insert(
+                np.absolute(xprime[1:] * yprime[1:]) * np.sqrt(
+                    np.power(np.divide(xprime_err[1:], xprime[1:]), 2) + np.power(np.divide(yprime_err[1:], yprime[1:]), 2)
+                ),
+                       0, 0
+            ), 2)
         )
     )
-
     if "x_err" in kwargs or "y_err" in kwargs:
-        return np.sum(prime), prime_err
+        return prime, prime_err
     else:
-        return np.sum(prime)
+        return prime
 
 
 def dep_trap(x, y, xerr, yerr):
@@ -200,7 +193,7 @@ def dep_trap(x, y, xerr, yerr):
         assert x.shape == y.shape == xerr.shape == yerr.shape
     except AssertionError:
         raise IndexError("Shape of x and y should be the same but"
-                         " are {0} and {1}".format(x.shape[0], y.shape[0]))
+                         " are {0} and {1}".format(x.shape, y.shape))
 
     xprime = np.insert(x[1:] - x[:-1], 0, 0)
     yprime = np.insert(y[1:] + y[:-1], 0, 0) * 1 / 2
