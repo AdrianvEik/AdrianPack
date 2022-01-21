@@ -51,9 +51,9 @@ class csvread:
         """
 
     # TODO: documentation, docstrings and write support.
-    def __init__(self, path: Optional[list, str, tuple] = None,
-                 cols: Optional[list, str, tuple] = None,
-                 rows: Optional[list, str, tuple] = None,
+    def __init__(self, path: Union[list, str, tuple] = None,
+                 cols: Union[list, str, tuple] = None,
+                 rows: Union[list, str, tuple] = None,
                  delimiter: str = ';', head: bool = True,
                  start_row: int = None,
                  output: str = 'dict', dtype: str = 'object',

@@ -45,7 +45,7 @@ def calc_err_DMM(unit: str, val: float, freq=1.0) -> Iterable:
     }
     val = val * factor[factor_val]
 
-    if e_type is "dc":
+    if e_type == "dc":
         if unit in 'volt':
             unit = {0.4: 4 * 10**(-5),
                     4: 4 * 10**(-4),
@@ -67,7 +67,7 @@ def calc_err_DMM(unit: str, val: float, freq=1.0) -> Iterable:
             return unit[list(unit.keys())[
                 distance.index(min(distance))]] + val * 0.08 * 10 ** (-2)
 
-    elif e_type is "ac":
+    elif e_type == "ac":
         if unit in 'volt':
             unit_freq = {0.4: 4 * 10**(-5),
                     4: 4 * 10**(-4),
@@ -160,6 +160,7 @@ def trap_int(x: Iterable, y: Iterable, **kwargs) -> Iterable:
 
     # Summing the error and propagating error in x and y
     # (sum(|x_i * y_i|^2 * ((errx_i / x_i)^2 * (erry_i / y_i)^2)^(1/2)))^(1/2)
+    print(yprime)
     tot_err = np.sqrt(
         sum(
             # |x_i * y_i|^2
