@@ -10,7 +10,9 @@ DEPENDENCIES:
 *optional
 """
 
-
+import numpy as np
+from typing import Iterable
+from csvread import csvread
 
 def calc_err_DMM(unit: str, val: float, freq=1.0) -> Iterable:
     """
@@ -75,3 +77,151 @@ def calc_err_DMM(unit: str, val: float, freq=1.0) -> Iterable:
         elif unit in 'ampere':
             return None
 
+
+
+def trap_int(x: Iterable, y: Iterable, **kwargs) -> Iterable:
+    """
+    Return the trapezium integral of the area under x and y with optional
+    propagation of error in either (both) x_err or (and) y_err.
+    :rtype: Iterable.
+    :param x:
+        Array like of x values.
+    :param y:
+        Array like of integrand values.
+    :param: x_err:
+        Array like of error in x.
+    :param: y_err:
+        Array like of error in y.
+    :return:
+        Area under x, y graph
+    """
+    x, y = np.array(x, np.float32), np.array(y, dtype=np.float32)
+
+    xerr = np.zeros(x.shape)
+    yerr = np.zeros(y.shape)
+
+    if "x_err" in kwargs:
+        csvread.test_inp(kwargs["x_err"], (list, np.ndarray), "error in x")
+        xerr = np.array(kwargs["x_err"], np.float32)
+
+    if "y_err" in kwargs:
+        csvread.test_inp(kwargs["y_err"], (list, np.ndarray), "error in y")
+        yerr = np.array(kwargs["y_err"], np.float32)
+
+    try:
+        assert x.shape == y.shape == xerr.shape == yerr.shape
+    except AssertionError:
+        if "x_err" in kwargs:
+            raise IndexError(
+                "Shape of x_err, x and y should be the same but"
+                " are {0}, {1} and {2}".format(xerr.shape[0], x.shape[0], y.shape[1])
+            )
+        elif "y_err" in kwargs:
+            raise IndexError(
+                "Shape of y_err, x and y should be the same but"
+                " are {0}, {1} and {2}".format(yerr.shape[0], x.shape[0], y.shape[1])
+            )
+        elif "y_err" in kwargs and "x_err" in kwargs:
+            raise IndexError(
+                "Shape of x_err, y_err, x and y should be the same but"
+                " are {0}, {1}, {2} and {3}".format(xerr.shape[0], yerr.shape[0],
+                                                    x.shape[0], y.shape[1])
+            )
+        else:
+            raise IndexError(
+                "Shape of x and y should be the same but"
+                " are {0} and {1}".format(x.shape[0], y.shape[1])
+            )
+
+    try:
+        assert x.ndim == y.ndim == xerr.ndim == yerr.ndim == 1
+    except AssertionError:
+        raise NotImplementedError("The dimensions of all input arrays should be"
+                                  "1, multi dimensional integration is not"
+                                  " implemented yet")
+
+    # Calculating the y and x parts of the integral (as given in the question)
+    # xprime = x_(i-1) - x_i
+    xprime = np.insert(x[1:] - x[:-1], 0, 0)
+    # yprime = (fx_(i-1) + fx_i) * 1/2
+    yprime = np.insert(y[1:] + y[:-1], 0, 0) * 1 / 2
+
+    # Calculating the integral xprime * yprime.
+    totprime = xprime * yprime
+
+    # Calculating the attributions to error of x and y.
+    # 0 + (x(i)^2 + x(i-1)^2)^(1/2)
+    xprime_err = np.sqrt(
+        np.insert(np.power(xerr[1:], 2) + np.power(xerr[:-1], 2), 0, 0))
+    # (0 + (fx(i)^2 + fx(i-1)^2)^(1/2)) * 1/2
+    yprime_err = np.sqrt(
+        np.insert(np.power(yerr[1:], 2) + np.power(yerr[:-1], 2), 0,
+                  0)) / 2
+
+    # Summing the error and propagating error in x and y
+    # (sum(|x_i * y_i|^2 * ((errx_i / x_i)^2 * (erry_i / y_i)^2)^(1/2)))^(1/2)
+    tot_err = np.sqrt(
+        sum(
+            # |x_i * y_i|^2
+            np.power((np.absolute(xprime[1:] * yprime[1:]) * np.sqrt(
+                # ((errx_i / x_i)^2 * (erry_i / y_i)^2)^(1/2)
+                np.power(np.divide(xprime_err[1:], xprime[1:]),
+                         2) + np.power(
+                    np.divide(yprime_err[1:], yprime[1:]), 2)
+            )
+                      ), 2)
+        )
+    )
+
+    if "x_err" in kwargs or "y_err" in kwargs:
+        return np.sum(totprime), tot_err
+    else:
+        return np.sum(totprime)
+
+
+def dep_trap(x, y, xerr, yerr):
+    """
+    Calculate the area (with error) under datapoints x, y(x) with dependent error xerr, yerr
+
+    :param x: 1D array with datapoints x
+    :param y: 1D array with datapoints y(x)
+    :param xerr: 1D array with error in datapoints x
+    :param yerr: 1D array with error in datapoints y(x)
+    :return:[0] 1D array with cumulitive areas under datapoints y(x_i); y(x_i-1) for all datapoints in y(x)
+    :return:[1] 1D array with cumulitive error in areas under datapoints y(x_i); y(x_i-1) for all datapoints in y(x)
+    """
+    x, y, xerr, yerr = np.array(x, np.float32), np.array(y,
+                                                         dtype=np.float32), np.array(
+        xerr, np.float32), np.array(yerr, dtype=np.float32)
+
+    try:
+        assert x.shape == y.shape == xerr.shape == yerr.shape
+    except AssertionError:
+        raise IndexError("Shape of x and y should be the same but"
+                         " are {0} and {1}".format(x.shape[0], y.shape[1]))
+
+    xprime = np.insert(x[1:] - x[:-1], 0, 0)
+    yprime = np.insert(y[1:] + y[:-1], 0, 0) * 1 / 2
+
+    opp = np.cumsum(xprime * yprime)
+
+    xprime_err = np.sqrt(
+        np.insert(np.power(xerr[1:], 2) + np.power(xerr[:-1], 2), 0, 0))
+    yprime_err = np.sqrt(
+        np.insert(np.power(yerr[1:], 2) + np.power(yerr[:-1], 2), 0, 0)) / 2
+
+    # Calculating each area between y_i and y_(i-1)
+    # ( 0 + ||x_i * y_i|^2 * ((errx_i / x_i)^2 * (erry_i / y_i)^2)^(1/2)| + opp_err[i-1])
+    opp_err = np.cumsum(
+        np.absolute(
+            np.insert(
+                np.absolute(xprime[1:] * yprime[1:]) * np.sqrt(
+                    np.power(np.divide(xprime_err[1:], xprime[1:]),
+                             2) + np.power(
+                        np.divide(yprime_err[1:], yprime[1:]), 2)
+                ), 0, 0
+            )
+        )
+    )
+
+    return opp, opp_err
