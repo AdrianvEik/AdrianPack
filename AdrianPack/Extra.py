@@ -117,23 +117,23 @@ def trap_int(x: Iterable, y: Iterable, **kwargs) -> Iterable:
         if "x_err" in kwargs:
             raise IndexError(
                 "Shape of x_err, x and y should be the same but"
-                " are {0}, {1} and {2}".format(xerr.shape[0], x.shape[0], y.shape[1])
+                " are {0}, {1} and {2}".format(xerr.shape[0], x.shape[0], y.shape[0])
             )
         elif "y_err" in kwargs:
             raise IndexError(
                 "Shape of y_err, x and y should be the same but"
-                " are {0}, {1} and {2}".format(yerr.shape[0], x.shape[0], y.shape[1])
+                " are {0}, {1} and {2}".format(yerr.shape[0], x.shape[0], y.shape[0])
             )
         elif "y_err" in kwargs and "x_err" in kwargs:
             raise IndexError(
                 "Shape of x_err, y_err, x and y should be the same but"
                 " are {0}, {1}, {2} and {3}".format(xerr.shape[0], yerr.shape[0],
-                                                    x.shape[0], y.shape[1])
+                                                    x.shape[0], y.shape[0])
             )
         else:
             raise IndexError(
                 "Shape of x and y should be the same but"
-                " are {0} and {1}".format(x.shape[0], y.shape[1])
+                " are {0} and {1}".format(x.shape[0], y.shape[0])
             )
 
     try:
@@ -200,7 +200,7 @@ def dep_trap(x, y, xerr, yerr):
         assert x.shape == y.shape == xerr.shape == yerr.shape
     except AssertionError:
         raise IndexError("Shape of x and y should be the same but"
-                         " are {0} and {1}".format(x.shape[0], y.shape[1]))
+                         " are {0} and {1}".format(x.shape[0], y.shape[0]))
 
     xprime = np.insert(x[1:] - x[:-1], 0, 0)
     yprime = np.insert(y[1:] + y[:-1], 0, 0) * 1 / 2
