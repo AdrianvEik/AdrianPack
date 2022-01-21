@@ -12,7 +12,10 @@ DEPENDENCIES:
 
 import numpy as np
 from typing import Iterable
-from csvread import csvread
+try:
+    from csvread import csvread
+except ImportError:
+    from .csvread import csvread
 
 def calc_err_DMM(unit: str, val: float, freq=1.0) -> Iterable:
     """
