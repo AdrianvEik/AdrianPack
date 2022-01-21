@@ -159,12 +159,14 @@ def trap_int(x: Iterable, y: Iterable, **kwargs) -> Iterable:
     # Summing the error and propagating error in x and y
     # (sum(|x_i * y_i|^2 * ((errx_i / x_i)^2 * (erry_i / y_i)^2)^(1/2)))^(1/2)
     prime_err = np.sqrt(
+        np.cumsum(
             np.power(np.insert(
                 np.absolute(xprime[1:] * yprime[1:]) * np.sqrt(
                     np.power(np.divide(xprime_err[1:], xprime[1:]), 2) + np.power(np.divide(yprime_err[1:], yprime[1:]), 2)
                 ),
                        0, 0
             ), 2)
+        )
     )
     if "x_err" in kwargs or "y_err" in kwargs:
         return prime, prime_err
