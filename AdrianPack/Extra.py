@@ -11,7 +11,7 @@ DEPENDENCIES:
 """
 
 import numpy as np
-from typing import Iterable
+from typing import Iterable, Tuple
 try:
     from csvread import csvread
 except ImportError:
@@ -159,7 +159,7 @@ def trap_int(x: Iterable, y: Iterable, **kwargs) -> Iterable:
     # Summing the error and propagating error in x and y
     # (sum(|x_i * y_i|^2 * ((errx_i / x_i)^2 * (erry_i / y_i)^2)^(1/2)))^(1/2)
     prime_err = np.sqrt(
-        np.cumsum(
+        np.sum(
             np.power(np.insert(
                 np.absolute(xprime[1:] * yprime[1:]) * np.sqrt(
                     np.power(np.divide(xprime_err[1:], xprime[1:]), 2) + np.power(np.divide(yprime_err[1:], yprime[1:]), 2)
@@ -220,3 +220,69 @@ def dep_trap(x, y, xerr, yerr):
     )
 
     return opp, opp_err
+
+
+def derive(x: Iterable, y: Iterable, **kwargs) -> Tuple[np.ndarray, np.ndarray]:
+    """"
+    Derive data of x with respect to y
+    :rtype: tuple(1D numpy array, 1D numpy array)
+    :param: x
+        Array like 1D for dx or delta x
+    :param: y
+        Array like 1D for to dy or delta y
+    :return:
+        Array like 1D of dy/dx and error in this value
+    """
+    x, y = np.array(x, np.float32), np.array(y, dtype=np.float32)
+
+    xerr = np.zeros(x.shape)
+    yerr = np.zeros(y.shape)
+
+    if "x_err" in kwargs:
+        csvread.test_inp(kwargs["x_err"], (list, np.ndarray), "error in x")
+        xerr = np.array(kwargs["x_err"], np.float32)
+
+    if "y_err" in kwargs:
+        csvread.test_inp(kwargs["y_err"], (list, np.ndarray), "error in y")
+        yerr = np.array(kwargs["y_err"], np.float32)
+
+    try:
+        assert x.shape == y.shape == xerr.shape == yerr.shape
+    except AssertionError:
+        if "y_err" in kwargs and "x_err" in kwargs:
+            raise IndexError(
+                "Shape of x_err, y_err, x and y should be the same but"
+                " are {0}, {1}, {2} and {3}".format(xerr.shape, yerr.shape,
+                                                    x.shape, y.shape)
+            )
+        elif "x_err" in kwargs:
+            raise IndexError(
+                "Shape of x_err, x and y should be the same but"
+                " are {0}, {1} and {2}".format(xerr.shape, x.shape, y.shape)
+            )
+        elif "y_err" in kwargs:
+            raise IndexError(
+                "Shape of y_err, x and y should be the same but"
+                " are {0}, {1} and {2}".format(yerr.shape, x.shape, y.shape)
+            )
+        else:
+            raise IndexError(
+                "Shape of x and y should be the same but"
+                " are {0} and {1}".format(x.shape, y.shape)
+            )
+
+    try:
+        assert x.ndim == y.ndim == xerr.ndim == yerr.ndim == 1
+    except AssertionError:
+        raise NotImplementedError("The dimensions of all input arrays should be"
+                                  "1, multi dimensional integration is not"
+                                  " implemented yet")
+
+    dy, dx = y[1:] - y[:-1], x[1:] - x[:-1]
+    dy_e = np.sqrt(np.power(yerr[1:], 2) - np.power(yerr[:-1], 2))
+    dx_e = np.sqrt(np.power(xerr[1:], 2) - np.power(xerr[:-1], 2))
+    dy_dx = np.insert(np.divide(dy, dx), 0, 0)
+    return dy_dx, np.insert(dy_dx *np.sqrt(
+        np.power(np.divide(dy_e, np.absolute(dy))) + np.power(np.divide(dx_e, np.absolute(dx)))
+    ), 0, 0)
+
