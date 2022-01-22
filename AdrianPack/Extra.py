@@ -11,9 +11,10 @@ DEPENDENCIES:
 """
 
 import numpy as np
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, Union
 try:
     from csvread import csvread
+    from Helper import compress_ind, compress_width
 except ImportError:
     from .csvread import csvread
 
@@ -159,7 +160,7 @@ def trap_int(x: Iterable, y: Iterable, **kwargs) -> Iterable:
     # Summing the error and propagating error in x and y
     # (sum(|x_i * y_i|^2 * ((errx_i / x_i)^2 * (erry_i / y_i)^2)^(1/2)))^(1/2)
     prime_err = np.sqrt(
-        np.sum(
+        np.cumsum(
             np.power(np.insert(
                 np.absolute(xprime[1:] * yprime[1:]) * np.sqrt(
                     np.power(np.divide(xprime_err[1:], xprime[1:]), 2) + np.power(np.divide(yprime_err[1:], yprime[1:]), 2)
@@ -286,3 +287,52 @@ def derive(x: Iterable, y: Iterable, **kwargs) -> Tuple[np.ndarray, np.ndarray]:
         np.power(np.divide(dy_e, np.absolute(dy))) + np.power(np.divide(dx_e, np.absolute(dx)))
     ), 0, 0)
 
+
+def Compress_array(x: np.ndarray, width: Union[float, int] = 0,
+                   **kwargs) -> np.ndarray:
+    """"
+    Compress an array to have a x slice width of param width using a floating
+    average.
+
+    :rtype: 1D array
+    :param: x:
+        Array to be compressed to entries of width given by slice width.
+        OR
+        Array wherein 1 index will be with_ind indexes in the original array.
+        OR
+        List of arrays.
+    :param: width:
+        The numerical width of a slice in the compressed array
+    :param: width_ind
+        The amount of indexes to be compressed to one.
+    :param: extra_arr
+        list of arrays that should be compressed to the same (relative) width of x.
+        These should be of equal lenght
+    :param: use_same_width
+        Bool, if set to True the other compressed arrays in x will use the exact value
+        of width. Default False use when arrays in x are of unequal length.
+    :return:
+        Compressed array(s) in a tuple or array.
+    """
+    width, unequal_extra_arr = float(width), []
+    compress = compress_width
+
+    if "width_ind" in kwargs and width != 0:
+        raise NotImplementedError("Both width_ind and width have values this"
+                                  "is currently not implemented.")
+    elif "width_ind" in kwargs:
+        csvread.test_inp(kwargs["width_ind"], int, "width_ind")
+        compress = compress_ind
+        width = kwargs["width_ind"]
+
+    if isinstance(x[0], np.ndarray):
+        c_arr, i = np.zeros(len(x)), 0
+        for arr in x:
+            csvread.test_inp(arr, np.ndarray, "x")
+            c_arr[i], width = compress(arr, width)
+            i += 1
+
+    else:
+        c_arr = compress(x, width)
+
+    return c_arr
