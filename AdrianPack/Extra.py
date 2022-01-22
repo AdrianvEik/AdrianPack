@@ -17,6 +17,7 @@ try:
     from Helper import compress_ind, compress_width
 except ImportError:
     from .csvread import csvread
+    from .Helper import compress_ind, compress_width
 
 def calc_err_DMM(unit: str, val: float, freq=1.0) -> Iterable:
     """
@@ -302,7 +303,8 @@ def Compress_array(x: np.ndarray, width: Union[float, int] = 0,
         OR
         List of arrays.
     :param: width:
-        The numerical width of a slice in the compressed array
+        The numerical width of a slice in the compressed array, only used for
+        sequential data sets.
     :param: width_ind
         The new size of x.
     :param: extra_arr
@@ -326,14 +328,16 @@ def Compress_array(x: np.ndarray, width: Union[float, int] = 0,
         width = kwargs["width_ind"]
 
     if isinstance(x[0], np.ndarray):
-        c_arr, i = np.zeros(len(x)), 0
+        c_list, i = [], 0
         for arr in x:
             csvread.test_inp(arr, np.ndarray, "x")
-            c_arr[i], width = compress(arr, width)
+            res = compress(arr, width)
+            c_list.append(res[0])
+            width = res[1]
             compress = compress_ind
             i += 1
 
     else:
-        c_arr = compress(x, width)
+        c_list = compress(x, width)
 
-    return map(tuple, c_arr)
+    return tuple(c_list)
