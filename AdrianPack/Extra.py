@@ -11,7 +11,7 @@ DEPENDENCIES:
 """
 
 import numpy as np
-from typing import Iterable, Tuple, Union
+from typing import Iterable, Tuple, Union, Iterator
 try:
     from csvread import csvread
     from Helper import compress_ind, compress_width
@@ -289,7 +289,7 @@ def derive(x: Iterable, y: Iterable, **kwargs) -> Tuple[np.ndarray, np.ndarray]:
 
 
 def Compress_array(x: np.ndarray, width: Union[float, int] = 0,
-                   **kwargs) -> np.ndarray:
+                   **kwargs) -> Iterator[tuple]:
     """"
     Compress an array to have a x slice width of param width using a floating
     average.
@@ -304,7 +304,7 @@ def Compress_array(x: np.ndarray, width: Union[float, int] = 0,
     :param: width:
         The numerical width of a slice in the compressed array
     :param: width_ind
-        The amount of indexes to be compressed to one.
+        The new size of x.
     :param: extra_arr
         list of arrays that should be compressed to the same (relative) width of x.
         These should be of equal lenght
@@ -330,9 +330,10 @@ def Compress_array(x: np.ndarray, width: Union[float, int] = 0,
         for arr in x:
             csvread.test_inp(arr, np.ndarray, "x")
             c_arr[i], width = compress(arr, width)
+            compress = compress_ind
             i += 1
 
     else:
         c_arr = compress(x, width)
 
-    return c_arr
+    return map(tuple, c_arr)

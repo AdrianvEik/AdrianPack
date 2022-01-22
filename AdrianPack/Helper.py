@@ -7,7 +7,17 @@ except ImportError:
     from .csvread import csvread
 
 def compress_ind(x, width):
-    return None
+    comp_arr = np.empty(width, dtype=np.float32)
+    comp_arr[:], ind_width, i = np.NaN, int(np.round(x.size/width)), 0
+    for ind in np.arange(x.size, step=ind_width, dtype=int):
+        if i == comp_arr.size - 1:
+            comp_arr[i] = np.sum(x[ind:]) / x[ind:].size
+            return comp_arr[~np.isnan(comp_arr)], comp_arr[
+                ~np.isnan(comp_arr)].size
+        else:
+            comp_arr[i] = np.sum(x[ind:ind + ind_width]) / x[ind:ind + ind_width].size
+        i += 1
+    return comp_arr[~np.isnan(comp_arr)], comp_arr[~np.isnan(comp_arr)].size
 
 
 def compress_width(x, width):
@@ -23,12 +33,12 @@ def compress_width(x, width):
                 break
             elif x[j] == x[-1]:
                 comp_arr[i] = np.sum(x[ind:])/x[ind:].size
-                return comp_arr[~np.isnan(comp_arr)]
+                return comp_arr[~np.isnan(comp_arr)], comp_arr[~np.isnan(comp_arr)].size
             else:
                 continue
-
-    return comp_arr[~np.isnan(comp_arr)]
+    return comp_arr[~np.isnan(comp_arr)], comp_arr[~np.isnan(comp_arr)].size
 
 if __name__ == "__main__":
-    from Tests.Helper_test import test_compress_width
+    from Tests.Helper_test import test_compress_ind, test_compress_width
     test_compress_width()
+    test_compress_ind()
