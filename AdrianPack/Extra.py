@@ -281,12 +281,13 @@ def derive(x: Iterable, y: Iterable, **kwargs) -> Tuple[np.ndarray, np.ndarray]:
                                   " implemented yet")
 
     dy, dx = y[1:] - y[:-1], x[1:] - x[:-1]
-    dy_e = np.sqrt(np.power(yerr[1:], 2) - np.power(yerr[:-1], 2))
-    dx_e = np.sqrt(np.power(xerr[1:], 2) - np.power(xerr[:-1], 2))
+    dy_e = np.insert(np.sqrt(np.power(yerr[1:], 2) - np.power(yerr[:-1], 2)), 0, 0)
+    dx_e = np.insert(np.sqrt(np.power(xerr[1:], 2) - np.power(xerr[:-1], 2)), 0, 0)
     dy_dx = np.insert(np.divide(dy, dx), 0, 0)
-    return dy_dx, np.insert(dy_dx *np.sqrt(
-        np.power(np.divide(dy_e, np.absolute(dy))) + np.power(np.divide(dx_e, np.absolute(dx)))
-    ), 0, 0)
+    dy, dx = np.insert(dy, 0, 0), np.insert(dx, 0, 0)
+    return dy_dx, dy_dx *np.sqrt(
+        np.power(np.divide(dy_e, np.absolute(dy)), 2) + np.power(np.divide(dx_e, np.absolute(dx)), 2)
+    )
 
 
 def Compress_array(x: np.ndarray, width: Union[float, int] = 0,
