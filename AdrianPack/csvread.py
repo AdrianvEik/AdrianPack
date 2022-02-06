@@ -521,7 +521,5 @@ class csvread:
         :param arr: Numpy array
         :return: Filtered array
         """
-        print(arr)
-        print('filtered: ', np.array[lambda v: v == v, arr])
         return np.array[lambda v: v == v, arr]
 
