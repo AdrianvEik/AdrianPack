@@ -23,37 +23,90 @@ except ImportError:
 # TODO: plot normal distrubtion over histogram
 # TODO: plot bodeplots (maybe?)
 
+# TODO: Recheck all examples and upload to git with an example.py file
+
 test_inp = csvread.test_inp
 
 
-class Aplot: # TODO: expand the docstring
+class Aplot: # TODO: expand the docstring #TODO x and y in args.
     """"
     Plotting tool to plot files (txt, csv or xlsx), numpy arrays or
     pandas table with fit and error.
 
     Input arguments:
-        Required:
-        Either x and y or x or file is required for the input
         :param: x
-        Array with values that correspond to the input values or controll values.
+            ObjectType -> numpy.ndarry
+            Array with values that correspond to the input values or control
+             values.
         :param: y
-        Array with values that correspond to the output values f(x) or response
-        values.
+            ObjectType -> numpy.ndarry
+            Array with values that correspond to the output values f(x) or
+             response values.
         :param: file
+            # TODO: add os library based Path object support.
 
-        Either degree or fx is required for the input
+            ObjectType -> str
+            Path to the file in str.
+            EXAMPLE:
+                plot_obj = Aplot(x, y, )
+
         :param: degree
+            ObjectType -> int
+            N-th degree polynomial that correlates with input data. Currently
+            only 1st to 3rd degree polynomials are supported. For higher degree
+            polynomials (or any other function) use your own function as input.
+            This can be done with the fx and func_format params.
 
+            Example
+                plot_obj = Aplot(x, y, degree=1) # Linear fit
 
-        Optional:
         :param: mode
+            ObjectType -> str
+            Choose the type of plot/fit that will be made using input data
+
+            List of supported modes:
+                - "default"
+                - "norm_dist"
+
+            Currently supported plots/fits are:
+                - All 2d functions with one variable pair (y, x)
+                - Normal distributions
+                - Histograms
+
+            The polynomials/other 2d function plots that contain one dataset
+            are categorized as "default"
+
+            The histogram plots that are fitted with a normal distribution are
+            called "norm_dist". To only plot the normal distributions and leave out
+            the histogram (or vice versa) use the _ and _ kwargs.
+
+            Not impleneted but planned functions include (but are not limited to)
+                - Horizontal and vertical subplots with multiple datasets
+                   ("multi Union["side", "under"]")
+                - Multiple data sets in one plot ("multi one")
+                - Bodediagrams ("bodeplot")
+                - 3D plots ("3D")
+
+            EXAMPLES
+                ## Default 2d linear fit ##
+                # Load the data set and set params
+                plot_obj = Aplot(x, y, degree=1, mode="default")
+                # Show the plot by calling the function
+                plot_obj()
+
+                ## Normal distribution with histogram ##
+                # TODO: Include norm dist in docs.
 
         :param: save_as
+            # TODO: Implement save_as
 
-        kwargs:
         :param: xerr
+            ObjectType -> np.ndarray
+
 
         :param: yerr
+            ObjectType -> np.ndarray
+
 
         :param: x_label
 
@@ -64,14 +117,26 @@ class Aplot: # TODO: expand the docstring
         :param: func_format
             Objecttype -> str.
             The format of the function shown in the figure legend, this is
-            will be overwritten when used in combination with the degree
-            parameter.
+            will overwrite the default label when used in combination with
+            the degree parameter.
+
             EXAMPLE:
-            fx Contains a function which returns
-                f(x) = a * exp(-b*x)
-            For a correct label func_form should be equivalent to
-                r"${0} e^{-{1} \cdot x}$"
-            the input doesnt necessarily need to be in a latex format.
+                fx Contains a function which returns
+                    f(x) = a * exp(-b*x)
+                For a correct label func_form should be equivalent to
+                    r"${0} e^{-{1} \cdot x}$"
+                the input doesnt necessarily need to be in a latex format.
+
+            CODE EXAMPLE:
+                # Function that is equal to y = a exp(-bx)
+                def f(x: float, a: float, b: float) -> float:
+                    return a * np.exp(-1 * b * x)
+
+                format_str = r"${0} e^{-{1} \cdot x}$" # Str containing the format
+                # Initialize the plot with data and function/format pair
+                plot_obj = Aplot(x, y, fx = f, func_format = format_str)
+                # Show the plot
+                plot_obj()
 
     Usage:
 
@@ -81,10 +146,10 @@ class Aplot: # TODO: expand the docstring
     def __init__(self, x: Union[tuple, list, np.ndarray] = None,
                  y: Union[tuple, list, np.ndarray] = None,
                  save_as: str = '', file: str = '', mode: str = 'default',
-                 degree: Union[list, tuple, int] = None, **kwargs):
+                 degree: Union[list, tuple, int] = None, *args, **kwargs):
 
         self.save_as = save_as
-        test_inp(self.save_as, str, "save path")
+        test_inp(self.save_as, str, "save as")
         self.mode = mode
         test_inp(self.mode, str, "mode")
 
@@ -116,11 +181,16 @@ class Aplot: # TODO: expand the docstring
         self.kwargs = kwargs
 
         # X AND Y ARRAYS
-        if x is not None and y is not None:
+        if (x is not None and y is not None) or (len(args) == 2):
             test_inp(x, (list, tuple, np.ndarray), "x values")
             test_inp(y, (list, tuple, np.ndarray), "y values")
-            self.x = np.asarray(x, dtype=np.float32)
-            self.y = np.asarray(y, dtype=np.float32)
+
+            if x is not None and y is not None:
+                self.x = np.asarray(x, dtype=np.float32)
+                self.y = np.asarray(y, dtype=np.float32)
+            else:
+                self.x = np.asarray(args[0], dtype=np.float32)
+                self.y = np.asarray(args[1], dtype=np.float32)
 
             try:
                 assert self.x.shape == self.y.shape
@@ -134,9 +204,13 @@ class Aplot: # TODO: expand the docstring
                 raise NotImplementedError("Multi dimensional plotting is not"
                                           " supported.")
 
-        elif x is not None:
+        elif x is not None or len(args) == 1:
             test_inp(x, (list, tuple, np.ndarray), "x values")
-            self.x = x
+            if x is not None:
+                self.x = x
+            else:
+                self.x = args[0]
+
             self.mode = 'hist'
             try:
                 assert self.x.ndim == 1
@@ -288,7 +362,7 @@ class Aplot: # TODO: expand the docstring
             coefficients. When changed from default overwrites the print_error
             statement in __innit__.
 
-        EXAMPLE
+        EXAMPLES
         plot and show fig
         x, y = data
         plot_obj = Aplot(x, y, degree=1) # Linear fit to x and y data
@@ -334,8 +408,6 @@ class Aplot: # TODO: expand the docstring
             self.ax.errorbar()
 
         # FIT PLOTTING
-        # If both the show_error atr in this function and the show error in the
-        # __innit__ are turned off the error is printed as mentioned in the
 
         if show_error:
             print(self.fit_errors)
@@ -357,12 +429,19 @@ class Aplot: # TODO: expand the docstring
                          label=(lambda _: self.func_format.format(*str_fit_coeffs)
                          if self.func_format != "" else "Fit")(None))
         elif self.degree is not None:
-            self.ax.plot(fit_x,
-                         sum([fit_x ** (c) * self.fit_coeffs[abs(c - self.degree)]
-                              for c in range(self.degree + 1).__reversed__()]),
-                         linestyle="--",
-                         label=("Fit with function %s = " % self.response_var +
-                                self.degree_dict[self.degree].format(*str_fit_coeffs)))
+            if self.func_format != '':
+                self.ax.plot(fit_x,
+                             sum([fit_x ** (c) * self.fit_coeffs[abs(c - self.degree)]
+                                  for c in range(self.degree + 1).__reversed__()]),
+                             linestyle="--",
+                             label=(self.func_format.format(*str_fit_coeffs)))
+            else:
+                self.ax.plot(fit_x,
+                             sum([fit_x ** (c) * self.fit_coeffs[abs(c - self.degree)]
+                                  for c in range(self.degree + 1).__reversed__()]),
+                             linestyle="--",
+                             label=("Fit with function %s = " % self.response_var +
+                                    self.degree_dict[self.degree].format(*str_fit_coeffs)))
         else:
             raise ValueError("Either 'func' or 'degree' should be in the input"
                              "params.")
@@ -396,10 +475,45 @@ class Aplot: # TODO: expand the docstring
 
         return None
 
-    def fit(self) -> None:
+    def fit(self, show_fit: bool = False, *args) -> None:
         """
+        Calculate the fit parameters of an Aplot object.
 
-        :return:
+        This function calculates the fit parameters based on either a polyfit or
+        function fit. Where the function fit takes in a python function type,
+        with first argument x and other arguments being the parameters.
+
+        OPTIONAL:
+            :param: show_fit
+            ObjectType -> bool
+            Default false, when set to true this will make the function
+            print out the fitted parameters to given function or
+            degree of polynomial. This parameter is the first arg.
+
+        ARGS:
+            arg[0] -> show_fit
+
+        :returns:
+            None
+
+        EXAMPLE WITH FUNCTION:
+            # Function that depicts y = exp(-x + sqrt(a * x)) + b
+            def f(x: float, a: float, b: float) -> float:
+                return np.exp(-1*x + np.sqrt(a * x)) + b
+
+            # load the data into an Aplot object
+            plot_obj = Aplot(x, y, fx=f)
+
+            # Run the fit attr with show_fit set to True.
+            plot_obj.fit(True)
+
+        EXAMPLE WITHOUT FUNCTION:
+            # load the data into an Aplot object and set the degree variable
+            plot_obj = Aplot(x, y, degree=1) # Linear data
+
+            # Run the fit attr with show_fit set to True.
+            plot_obj.fit(True)
+
         """
 
         self.degree_dict = {
@@ -423,6 +537,15 @@ class Aplot: # TODO: expand the docstring
             fit, pcov = curve_fit(self.func, self.x, self.y)
             self.fit_coeffs = fit
             self.fit_errors = np.sqrt(np.diag(pcov))
+
+        if len(args) == 1:
+            test_inp(args[0], bool, "show_fit", True)
+            show_fit = args[0]
+
+        if show_fit:
+            # TODO: Fix this function
+            print("FIT PARAMETERS: ")
+            print("N/A")
         return None
 
     def single_form(self, x_label: str, y_label: str, grid: bool = True, **kwargs)\
@@ -464,7 +587,7 @@ class Aplot: # TODO: expand the docstring
             the fig, ax pair
             if not the return is of type NoneType
 
-        EXAMPLES:
+        EXAMPLE:
             # Initiate a fig, ax pair
             fig, ax = plt.subplots()
             # Plot the data
@@ -536,6 +659,6 @@ if __name__ == "__main__":
     points = 25
     x = np.linspace(-5, 5, points)
     noise = np.random.randint(2, 5, points)
-    Aplot(x=x, y=np.array([i**3 * 4.32 + 9.123*i for i in x]) + noise, degree=3, fit_precision=2,
+    Aplot(x, np.array([i**3 * 4.32 + 9.123*i for i in x]) + noise, degree=3, fit_precision=2,
           y_err=10, control_var="z")()
     print("t: ", time.time() - t_start)
