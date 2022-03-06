@@ -430,6 +430,8 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
         else:
             self.y_err = []
 
+        self.return_object = False
+
     def __call__(self, *args, **kwargs) -> Tuple[plt.figure, plt.axes]:
         """"
         OPTIONAL:
@@ -441,6 +443,8 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
                 ObjectType -> Bool
                 Default false, if true returns only the fig, ax object in a
                 tuple.
+            :param: Show_error
+                # TODO: WRITE doc for this
         :returns
             Tuple consisting of fig, ax objects
 
@@ -456,7 +460,6 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
             except IndexError:
                 save_path = ''
 
-        self.return_object = False
         if "return_object" in kwargs:
             test_inp(kwargs["return_object"], bool, "return object")
             self.return_object = kwargs["return_object"]
@@ -476,7 +479,11 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
                     pass
 
         if self.mode == 'default':
-            self.default_plot()
+            if "show_error" in kwargs:
+                test_inp(kwargs["show_error"], bool, "show_error")
+                self.default_plot(kwargs["show_error"])
+            else:
+                self.default_plot()
 
         # TODO: Implement multi fig support
         elif self.mode == 'multi':
@@ -493,7 +500,8 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
 
         return self.fig, self.ax
 
-    def default_plot(self, show_error: bool = None) -> None:
+    def default_plot(self, show_error: bool = None, return_error: bool = None) -> \
+    Optional[dict[str, Union[Union[np.ndarray, Iterable, int, float], Any]]]:
         """
         Plot a 2D data set with errors in both x and y axes. The data
         will be fitted according to the input arguments in __innit__.
@@ -502,10 +510,15 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
 
         OPTIONAL
         :param: show_error
-            ObjectType -> boolean
+            ObjectType -> bool
             Default, True when true prints out the error in the
             coefficients. When changed from default overwrites the print_error
             statement in __innit__.
+
+        :param: return_error
+            Objecttype -> bool
+            Default, False when true returns a dictionary with coefficients,
+            "coeffs" and error "error" of the fit parameters.
 
         EXAMPLES
         plot and show fig
@@ -518,7 +531,8 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
         plot_obj = Aplot(x, y, degree=1, save_as='plot.png') # Linear fit to x and y data
         plot_obj.default_plot()
 
-        :return: None
+
+        :return: Optional[dict[str, Union[Union[ndarray, Iterable, int, float], Any]]]
         """
 
         self.fig, self.ax = plt.subplots()
@@ -546,7 +560,7 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
                                  capsize=4)
         else:
             self.ax.errorbar(self.x, self.y, xerr=self.x_err, yerr=self.y_err,
-                             label=label, fmt=color + 'o', linestyle='',
+                             label=self.label, fmt=color + 'o', linestyle='',
                              capsize=4)
 
         # FIT PLOTTING
@@ -561,7 +575,6 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
         if "fit_precision" in self.kwargs:
             test_inp(self.kwargs["fit_precision"], int, "fit precision")
             fit_pr = self.kwargs["fit_precision"]
-
         str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c in self.fit_coeffs]
         if self.func is not None:
             self.ax.plot(fit_x, self.func(fit_x, *self.fit_coeffs), linestyle="--",
@@ -608,6 +621,9 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
              plt.show() if save_as == '' else plt.savefig(save_as,
                                                           bbox_inches='tight')
              )(self.save_as)
+
+        if return_error:
+            return {"Coeffs": self.fit_coeffs, "Errors": self.fit_errors}
 
         return None
 
@@ -661,11 +677,7 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
 
         if self.degree is not None:
             self.label_format = self.degree_dict[self.degree]
-            if self.degree == 1:
-                fit = scipy.stats.linregress(self.x, self.y)
-                self.fit_coeffs = np.array([fit.slope, fit.stderr], dtype=np.float32)
-                self.fit_errors = np.array([fit.intercept, fit.intercept_stderr], dtype=np.float32)
-            elif isinstance(self.degree, int):
+            if isinstance(self.degree, int):
                 fit = np.polyfit(self.x, self.y, deg=self.degree, cov=True)
                 self.fit_coeffs = fit[0]
                 self.fit_errors = np.sqrt(np.diag(fit[1]))
@@ -760,8 +772,8 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
         if "fig_ax" in kwargs:
             # TODO: test these tests and test the usability of the object
             test_inp(kwargs["fig_ax"], (tuple, list), "fig ax pair")
-            test_inp(kwargs["fig_ax"][0], type(plt.figure), "fig")
-            test_inp(kwargs["fig_ax"][1], type(plt.axes.ax), "ax")
+            test_inp(kwargs["fig_ax"][0], plt.Figure, "fig")
+            test_inp(kwargs["fig_ax"][1], plt.Axes, "ax")
 
             self.fig = kwargs["fig_ax"][0]
             self.ax = kwargs["fig_ax"][1]
@@ -809,13 +821,29 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
         self.ax.set_ylabel(y_label)
 
         if TNFormatter is not False:
-            self.ax.xaxis.set_major_formatter(TNFormatter(3))
-            self.ax.yaxis.set_major_formatter(TNFormatter(3))
+            x_pr = 3
+            if "x_precision" in self.kwargs:
+                test_inp(self.kwargs["x_precision"], int, "x_precision", True)
+                x_pr = self.kwargs["x_precision"]
+                self.ax.xaxis.set_major_formatter(TNFormatter(x_pr))
+            y_pr = 3
+            if "y_precision" in self.kwargs:
+                test_inp(self.kwargs["y_precision"], int, "y_precision", True)
+                y_pr = self.kwargs["y_precision"]
+                self.ax.yaxis.set_major_formatter(TNFormatter(y_pr))
 
         if grid:
             plt.grid()
 
-        plt.legend(loc='lower right')
+        if "legend_loc" in self.kwargs:
+            test_inp(self.kwargs["legend_loc"], str, "legenc loc")
+            plt.legend(loc=self.kwargs["legend_loc"])
+        elif "legend_loc" in kwargs:
+            test_inp(self.kwargs["legend_loc"], str, "legenc loc")
+            plt.legend(loc=kwargs["legend_loc"])
+        else:
+            plt.legend(loc='lower right')
+
         plt.tight_layout()
         if "fig_ax" in kwargs:
             return self.fig, self.ax
@@ -848,7 +876,7 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
 
             test_inp(bins, int, "binning", True)
 
-        norm_label="Label"
+        norm_label = "Label"
         if "norm_label" in self.kwargs:
             norm_label = self.kwargs["norm_label"]
             test_inp(norm_label, str, "norm label")
@@ -908,8 +936,7 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
             if "scaling_factor" in self.kwargs:
                 factor = self.kwargs["scaling_factor"]
                 test_inp(factor, (float, int), "scaling factor")
-
-            dist = dist * factor
+            dist = dist * abs(factor)
 
         return x, dist, mu
 
@@ -932,11 +959,11 @@ if __name__ == "__main__":
     def f(x: float, a: float, b: float) -> float:
         return a * x**2 + b*x
 
-    points = 25
+    points = 40
     x = np.linspace(-5, 5, points)
-    noise = np.random.randint(2, 5, points)
-    # Aplot(x, np.array([i**3 * 4.32 + 9.123*i for i in x]) + noise, degree=3,
-    #       y_err=10, x_err=0.1, x_lim=[-2, 2], y_lim=[-200, 200])()
-    hist = Aplot([3, 2, 3, 1, 3, 4, 2, 4, 5, 6, 5], mode="hist", x_lim=[0, 7],
-                 x_label="X-as", grid=False)()
+    noise = np.random.randint(-2, 2, points)
+    Aplot(x, np.array([i * -4.32 +9.123 for i in x] + noise), degree=1,
+          y_err=10, x_err=0.1, y_lim=[-50, 50]).default_plot(show_error=True)
+    # hist = Aplot([3, 2, 3, 1, 3, 4, 2, 4, 5, 6, 5], mode="hist", x_lim=[0, 7],
+    #              x_label="X-as", grid=False)()
     print("t: ", time.time() - t_start)
