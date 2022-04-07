@@ -342,3 +342,51 @@ def Compress_array(x: np.ndarray, width: Union[float, int] = 0,
         c_list = compress(x, width)
 
     return tuple(c_list)
+
+
+# TODO: maybe add somewhere else? apart math section?
+def gauss_elim(a, v) -> np.ndarray:
+    """"
+    Calculate the x vector using gauss elimination
+
+    :param: a
+        A array from standard form A * x = v
+        number or rows must match length of v
+    :param: v
+        v array from standard form A * x = v
+        length must match amount of rows of A
+    :return: x
+        :rtype: np.ndarray
+        x array from standard form A * x = v
+    """
+
+    # Test input values
+    try:
+        assert len(v) == a.shape[0]
+    except AssertionError:
+        raise IndexError("Length mismatches amount of rows of A.")
+
+    for n in range(len(v)):
+        # Divide by "first" element
+        first_elem = a[n, n]
+        a[n, :] /= first_elem
+        v[n] /= first_elem
+
+        for i in range(n + 1, len(v)):
+            # "first" element of next row is the factor the n-1 row needs
+            # to be multiplied by to subtract this element to zero
+            factor = a[i, n]
+
+            a[i, :] -= factor * a[n, :]
+            v[i] -= factor * v[n]
+
+    # Initiate x array
+    x = np.zeros(v.shape, dtype=float)
+    for i in range(len(v)).__reversed__():
+        # Work from the bottom to the top subtract previous results
+        x[i] = v[i]
+        for j in range(i + 1, len(v)):
+            x[i] -= a[i, j] * x[j]
+    return x
+
+

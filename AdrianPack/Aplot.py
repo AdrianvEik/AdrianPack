@@ -30,12 +30,13 @@ except ImportError:
 test_inp = csvread.test_inp
 
 
-class Aplot: # TODO: expand the docstring #TODO x and y in args.
-    """"
-    Plotting tool to plot files (txt, csv or xlsx), numpy arrays or
-    pandas table with fit and error.
-
-    Input arguments:
+# TODO: restructure to use base class from which to inherit standardized methods
+class Base:
+    """
+    Base class of Aplot object
+    """
+    def __init__(self, *args, **kwargs):
+        """"
         :param: x
             ObjectType -> numpy.ndarry
             Array with values that correspond to the input values or control
@@ -44,6 +45,293 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
             ObjectType -> numpy.ndarry
             Array with values that correspond to the output values f(x) or
              response values.
+        """
+        self.response_var = "y"
+        if "response_var" in kwargs:
+            self.response_var = kwargs["response_var"]
+            test_inp(self.response_var, str, "response variable")
+
+        self.control_var = "x"
+        if "control_var" in kwargs:
+            self.control_var = kwargs["control_var"]
+            test_inp(self.control_var, str, "control variable")
+
+        self.label = "Data"
+        if "data_label" in kwargs:
+            test_inp(kwargs["data_label"], str, "data label")
+            self.label = kwargs["data_label"]
+
+        if "x_lim" in kwargs:
+            self.x_lim = kwargs["x_lim"]
+            test_inp(self.x_lim, (list, tuple, np.ndarray), "x lim")
+
+            try:
+                assert len(self.x_lim) == 2
+            except AssertionError:
+                raise IndexError(
+                    "Xlim should only contain xmin and xmax but the"
+                    "length of xlim does not equal 2.")
+
+            test_inp(self.x_lim[0], (float, int), "xmin")
+            test_inp(self.x_lim[1], (float, int), "xmax")
+
+        if "y_lim" in kwargs:
+            self.y_lim = kwargs["y_lim"]
+            test_inp(self.y_lim, (list, tuple, np.ndarray), "x lim")
+
+            try:
+                assert len(self.y_lim) == 2
+            except AssertionError:
+                raise IndexError(
+                    "Ylim should only contain ymin and ymax but the"
+                    "length of ylim does not equal 2.")
+
+            test_inp(self.y_lim[0], (float, int), "ymin")
+            test_inp(self.y_lim[1], (float, int), "ymax")
+
+        # TODO: adjust base x, y when making multi mode
+        if len(args) > 2:
+            self.x = np.asarray(args[0], dtype=np.float32)
+            self.y = np.asarray(args[1], dtype=np.float32)
+
+            test_inp(self.x, (list, tuple, np.ndarray), "x values")
+            test_inp(self.y, (list, tuple, np.ndarray), "y values")
+
+            try:
+                assert self.x.shape == self.y.shape
+            except AssertionError:
+                raise ValueError("Arrays x and y should have same size but are"
+                                 " size %s and %s" % (
+                                 self.x.size, self.y.size))
+
+            try:
+                assert self.x.ndim == self.y.ndim == 1
+            except AssertionError:
+                raise NotImplementedError("Multi dimensional plotting is not"
+                                          " supported.")
+
+        elif len(args) == 1:
+            self.x = np.asarray(args[0])
+
+            try:
+                test_inp(self.x, (list, tuple, np.ndarray), "x values")
+            except TypeError:
+                test_inp(self.x, (str, csvread), "x values")
+                self.file = x
+                self.file_read()
+
+            try:
+                assert self.x.ndim == 1
+            except AssertionError:
+                # TODO: Rework this one to be more compact
+                # TODO: Rework to utilize Format function used by file_read
+                if self.x.ndim == 2:
+                    if x.shape[1] == 2:
+                        self.x = x[:, 0]
+                        self.y = x[:, 1]
+                        print('\x1b[33m' +
+                              'WARNING: Input array x has 2 dimensions and %s'
+                              ' columns, the first and second column has been used as x and'
+                              'y respectfully.' % str(x.shape[1])
+                              + '\x1b[0m')
+                    elif x.shape[1] == 3:
+                        self.x = x[:, 0]
+                        self.y = x[:, 1]
+                        self.y_err = x[:, 2]
+                        print('\x1b[33m' +
+                              'WARNING: Input array x has 2 dimensions and %s columns,'
+                              ' the matrix has been formatted as follows'
+                              ' "x y yerr"' % str(x.shape[1])
+                              + '\x1b[0m')
+                    elif x.shape[1] == 4:
+                        self.x = x[:, 0]
+                        self.y = x[:, 1]
+                        self.x_err = x[:, 2]
+                        self.y_err = x[:, 3]
+                        print('\x1b[33m' +
+                              'WARNING: Input array x has 2 dimensions and %s columns,'
+                              ' the matrix has been formatted as follows'
+                              ' "x y xerr yerr"' % str(x.shape[1])
+                              + '\x1b[0m')
+                    else:
+                        raise NotImplementedError(
+                            "Multi dimensional plotting is not supported.")
+                else:
+                    raise NotImplementedError(
+                        "Multi dimensional plotting is not"
+                        " supported.")
+
+        self.kwargs = kwargs
+
+    def single_form(self, x_label: str, y_label: str, grid: bool = True,
+                    **kwargs) \
+            -> Union[Tuple[plt.figure, plt.axes], None]:
+        """"
+        Format a figure with 1 x-axis and y-axis.
+
+        REQUIRED:
+        :param: x_label
+            ObjectType -> str
+            Label placed on the x-axis, usually uses input from __init__ kwargs
+        :param: y_label
+            ObjectType -> str
+            Label placed on the y-axis, usually uses input from __init__ kwargs
+
+        OPTIONAL:
+        :param: grid
+            ObjectType -> bool
+            True to show grid and False to turn the grid off, default True.
+            Takes input from __innit__ kwargs.
+
+        KWARGS:
+        :param: fig_ax
+            ObjectType -> Tuple
+            The tuple should contain an fig, ax pair with fig and ax being
+                fig:
+                ObjectType -> matplotlib.pyplot.fig object
+                Use this input to apply formatting on input fig
+                ax:
+                ObjectType -> matplotlib.pyplot.Axes.ax object
+                Use this input to apply formatting on input ax
+
+            EXAMPLE
+                single_form("x_label", "y_label", fig_ax=(plt.subplots()))
+
+        :param: x_lim
+            ObjectType -> Union[Tuple, List, np.ndarray]
+            The limits of the horizontal axes, contains a xmin (xlim[0]) and
+            xmax (xlim[1]) pair. Both xmin and xmax should be of type
+            float, int or numpy float.
+
+            EXAMPLE
+                single_form("x_label", "y_label", xlim=[0, 2.4])
+
+        :param: y_lim
+            ObjectType -> Union[Tuple, List, np.ndarray]
+            The limits of the vertical axes, contains a ymin (ylim[0]) and
+            ymax (ylim[1]) pair. Both ymin and ymax should be of type
+            float, int or numpy float.
+
+            EXAMPLE
+                single_form("x_label", "y_label", ylim=[-15.4, 6.9])
+
+         :returns:
+            ObjectType -> Union[Tuple[matplotlib.pyplot.fig, matplotlib.pyplot.Axes.ax], NoneType]
+            When fig_ax input is part of the input this function will return
+            the fig, ax pair
+            if not the return is of type NoneType
+
+        EXAMPLE:
+            # Initiate a fig, ax pair
+            fig, ax = plt.subplots()
+            # Plot the data
+            ax.plot(x_data, y_data)
+            # format the plot
+            Aplot().single_form("x_label", "y_label", (fig, ax))
+            # Show the formatted plot
+            plt.show()
+
+            #TODO: Add example with Aplot object
+
+        NOTES ON PARAMS  x_label, y_label and grid:
+            Direct input in this function will overwrite __innit__ inputs.
+        """
+
+        if "fig_ax" in kwargs:
+            # TODO: test these tests and test the usability of the object
+            test_inp(kwargs["fig_ax"], (tuple, list), "fig ax pair")
+            test_inp(kwargs["fig_ax"][0], plt.Figure, "fig")
+            test_inp(kwargs["fig_ax"][1], plt.Axes, "ax")
+
+            self.fig = kwargs["fig_ax"][0]
+            self.ax = kwargs["fig_ax"][1]
+
+        if "x_lim" in self.kwargs:
+            self.ax.set_xlim(self.x_lim)
+        elif "x_lim" in kwargs:
+            x_lim = kwargs["x_lim"]
+
+            test_inp(x_lim, (list, tuple, np.ndarray), "x lim")
+
+            try:
+                assert len(x_lim) == 2
+            except AssertionError:
+                raise IndexError(
+                    "Xlim should only contain xmin and xmax but the"
+                    "length of xlim does not equal 2.")
+
+            test_inp(x_lim[0], (float, int), "xmin")
+            test_inp(x_lim[1], (float, int), "xmax")
+
+            self.ax.set_xlim(x_lim)
+
+        if "y_lim" in self.kwargs:
+            self.ax.set_ylim(self.y_lim)
+        elif "y_lim" in kwargs:
+            y_lim = kwargs["y_lim"]
+
+            test_inp(y_lim, (list, tuple, np.ndarray), "y lim")
+
+            try:
+                assert len(y_lim) == 2
+            except AssertionError:
+                raise IndexError(
+                    "Ylim should only contain ymin and ymax but the"
+                    "length of ylim does not equal 2.")
+
+            test_inp(y_lim[0], (float, int), "ymin")
+            test_inp(y_lim[1], (float, int), "ymax")
+
+            self.ax.set_ylim(y_lim)
+
+        self.ax.set_xlabel(x_label)
+        self.ax.set_ylabel(y_label)
+
+        if TNFormatter is not False:
+            x_pr = 3
+            if "x_precision" in self.kwargs:
+                test_inp(self.kwargs["x_precision"], int, "x_precision",
+                         True)
+                x_pr = self.kwargs["x_precision"]
+            y_pr = 3
+            if "y_precision" in self.kwargs:
+                test_inp(self.kwargs["y_precision"], int, "y_precision",
+                         True)
+                y_pr = self.kwargs["y_precision"]
+
+            self.ax.xaxis.set_major_formatter(TNFormatter(x_pr))
+            self.ax.yaxis.set_major_formatter(TNFormatter(y_pr))
+
+        if grid:
+            plt.grid()
+
+        if "legend_loc" in self.kwargs:
+            test_inp(self.kwargs["legend_loc"], str, "legenc loc")
+            plt.legend(loc=self.kwargs["legend_loc"])
+        elif "legend_loc" in kwargs:
+            test_inp(self.kwargs["legend_loc"], str, "legenc loc")
+            plt.legend(loc=kwargs["legend_loc"])
+        else:
+            plt.legend(loc='lower right')
+
+        plt.tight_layout()
+        if "fig_ax" in kwargs:
+            return self.fig, self.ax
+        else:
+            return None
+
+    def file_read(self):
+
+
+        return None
+
+
+class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
+    """"
+    Plotting tool to plot files (txt, csv or xlsx), numpy arrays or
+    pandas table with fit and error.
+
+    Input arguments:
         :param: file
             # TODO: add os library based Path object support.
 
@@ -61,43 +349,6 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
 
             Example
                 plot_obj = Aplot(x, y, degree=1) # Linear fit
-
-        :param: mode
-            ObjectType -> str
-            Choose the type of plot/fit that will be made using input data
-
-            List of supported modes:
-                - "default"
-                - "norm_dist"
-
-            Currently supported plots/fits are:
-                - All 2d functions with one variable pair (y, x)
-                - Normal distributions
-                - Histograms
-
-            The polynomials/other 2d function plots that contain one dataset
-            are categorized as "default"
-
-            The histogram plots that are fitted with a normal distribution are
-            called "norm_dist". To only plot the normal distributions and leave out
-            the histogram (or vice versa) use the _ and _ kwargs.
-
-            Not impleneted but planned functions include (but are not limited to)
-                - Horizontal and vertical subplots with multiple datasets
-                   ("multi Union["side", "under"]")
-                - Multiple data sets in one plot ("multi one")
-                - Bodediagrams ("bodeplot")
-                - 3D plots ("3D")
-
-            EXAMPLES
-                ## Default 2d linear fit ##
-                # Load the data set and set params
-                plot_obj = Aplot(x, y, degree=1, mode="default")
-                # Show the plot by calling the function
-                plot_obj()
-
-                ## Normal distribution with histogram ##
-                # TODO: Include norm dist in docs.
 
         :param: save_as
             # TODO: Implement save_as
@@ -242,14 +493,12 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
     """
 
     def __init__(self, x: Union[tuple, list, np.ndarray] = None,
-                 y: Union[tuple, list, np.ndarray] = None,
-                 save_as: str = '', file: str = '', mode: str = 'default',
-                 degree: Union[list, tuple, int] = None, *args, **kwargs):
-
+                 y: Union[tuple, list, np.ndarray] = None, save_as: str = '',
+                 file: str = '', degree: Union[list, tuple, int] = None, *args,
+                 **kwargs):
+        super().__init__(x, y, file, *args, **kwargs)
         self.save_as = save_as
         test_inp(self.save_as, str, "save as")
-        self.mode = mode
-        test_inp(self.mode, str, "mode")
 
         self.func = None
         self.degree = degree
@@ -259,148 +508,34 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
             self.func = kwargs["fx"]
             test_inp(self.func, types.FunctionType, "f(x)")
         else:
-            if self.mode != "hist":
-                raise ValueError(
-                    "Input arguments must include degree or fx")
-
-        self.response_var = "y"
-        if "response_var" in kwargs:
-            self.response_var = kwargs["response_var"]
-            test_inp(self.response_var, str, "response variable")
-
-        self.control_var = "x"
-        if "control_var" in kwargs:
-            self.control_var = kwargs["control_var"]
-            test_inp(self.control_var, str, "control variable")
+            raise ValueError(
+                "Input arguments must include degree or fx")
 
         self.func_format = ''
         if 'func_format' in kwargs:
             self.func_format = kwargs['func_format']
-
-        if "x_lim" in kwargs:
-            self.x_lim = kwargs["x_lim"]
-            test_inp(self.x_lim, (list, tuple, np.ndarray), "x lim")
-
-            try:
-                assert len(self.x_lim) == 2
-            except AssertionError:
-                raise IndexError(
-                    "Xlim should only contain xmin and xmax but the"
-                    "length of xlim does not equal 2.")
-
-            test_inp(self.x_lim[0], (float, int), "xmin")
-            test_inp(self.x_lim[1], (float, int), "xmax")
-
-        if "y_lim" in kwargs:
-            self.y_lim = kwargs["y_lim"]
-            test_inp(self.y_lim, (list, tuple, np.ndarray), "x lim")
-
-            try:
-                assert len(self.y_lim) == 2
-            except AssertionError:
-                raise IndexError(
-                    "Ylim should only contain ymin and ymax but the"
-                    "length of ylim does not equal 2.")
-
-            test_inp(self.y_lim[0], (float, int), "ymin")
-            test_inp(self.y_lim[1], (float, int), "ymax")
 
         self.n_points = 1000
         if "custom_fit_spacing" in kwargs:
             test_inp(kwargs["custom_fit_spacing"], int, "fit array size")
             self.n_points = kwargs["custom_fit_spacing"]
 
-        self.label = "Data"
-        if "data_label" in kwargs:
-            test_inp(kwargs["data_label"], str, "data label")
-            self.label = kwargs["data_label"]
-
-        self.kwargs = kwargs
-
-        # X AND Y ARRAYS
-        if (x is not None and y is not None) or (len(args) == 2):
-            test_inp(x, (list, tuple, np.ndarray), "x values")
-            test_inp(y, (list, tuple, np.ndarray), "y values")
-
-            if x is not None and y is not None:
-                self.x = np.asarray(x, dtype=np.float32)
-                self.y = np.asarray(y, dtype=np.float32)
-            else:
-                self.x = np.asarray(args[0], dtype=np.float32)
-                self.y = np.asarray(args[1], dtype=np.float32)
-
-            try:
-                assert self.x.shape == self.y.shape
-            except AssertionError:
-                raise ValueError("Arrays x and y should have same size but are"
-                                 " size %s and %s" % (self.x.size, self.y.size))
-
-            try:
-                assert self.x.ndim == self.y.ndim == 1
-            except AssertionError:
-                raise NotImplementedError("Multi dimensional plotting is not"
-                                          " supported.")
-
-        elif x is not None or len(args) == 1:
-            test_inp(x, (list, tuple, np.ndarray), "x values")
-            if x is not None:
-                self.x = np.asarray(x)
-            else:
-                self.x = np.asarray(args[0])
-
-            self.mode = 'hist'
-            try:
-                assert self.x.ndim == 1
-            except AssertionError:
-                # TODO: Rework this one to be more compact
-                # TODO: Rework to utilize Format function used by file_read
-                if self.x.ndim == 2:
-                    self.mode = 'default'
-                    if x.shape[1] == 2:
-                        self.x = x[:, 0]
-                        self.y = x[:, 1]
-                        print('\x1b[33m' +
-                              'WARNING: Input array x has 2 dimensions and %s'
-                              ' columns, the first and second column has been used as x and'
-                              'y respectfully.' % str(x.shape[1])
-                              + '\x1b[0m' )
-                    elif x.shape[1] == 3:
-                        self.x = x[:, 0]
-                        self.y = x[:, 1]
-                        self.y_err = x[:, 2]
-                        print('\x1b[33m' +
-                              'WARNING: Input array x has 2 dimensions and %s columns,'
-                              ' the matrix has been formatted as follows'
-                              ' "x y yerr"' % str(x.shape[1])
-                              + '\x1b[0m' )
-                    elif x.shape[1] == 4:
-                        self.x = x[:, 0]
-                        self.y = x[:, 1]
-                        self.x_err = x[:, 2]
-                        self.y_err = x[:, 3]
-                        print('\x1b[33m' +
-                              'WARNING: Input array x has 2 dimensions and %s columns,'
-                              ' the matrix has been formatted as follows'
-                              ' "x y xerr yerr"' % str(x.shape[1])
-                              + '\x1b[0m' )
-                    else:
-                        raise NotImplementedError(
-                            "Multi dimensional plotting is not supported.")
-                else:
-                    raise NotImplementedError("Multi dimensional plotting is not"
-                                          " supported.")
+        if self.x is not None and self.y is not None:
+            pass
 
         elif file is not None:
             # TODO: self.read_file() func returning 4 arrays
             #  (or changing the self. vals)
             raise NotImplementedError("Function has not been implemented yet")
         else:
-            raise ValueError("Input argument must include x or x and y or file")
+            raise ValueError(
+                "Input argument must include x or x and y or file")
 
         # ERROR ARRAYS
         if 'x_err' in kwargs:
             self.x_err = kwargs["x_err"]
-            test_inp(self.x_err, (int, tuple, np.ndarray, list, float), "x error")
+            test_inp(self.x_err, (int, tuple, np.ndarray, list, float),
+                     "x error")
             try:
                 if isinstance(self.x_err, (int, float)):
                     self.x_err = np.full(self.x.size, self.x_err)
@@ -416,7 +551,8 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
 
         if 'y_err' in kwargs:
             self.y_err = kwargs["y_err"]
-            test_inp(self.y_err, (int, tuple, np.ndarray, list, float), "y error")
+            test_inp(self.y_err, (int, tuple, np.ndarray, list, float),
+                     "y error")
             try:
                 if isinstance(self.y_err, (int, float)):
                     self.y_err = np.full(self.y.size, self.y_err)
@@ -430,6 +566,7 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
         else:
             self.y_err = []
 
+        self.kwargs = kwargs
         self.return_object = False
 
     def __call__(self, *args, **kwargs) -> Tuple[plt.figure, plt.axes]:
@@ -478,30 +615,18 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
                 except IndexError:
                     pass
 
-        if self.mode == 'default':
-            if "show_error" in kwargs:
-                test_inp(kwargs["show_error"], bool, "show_error")
-                self.default_plot(kwargs["show_error"])
-            else:
-                self.default_plot()
-
-        # TODO: Implement multi fig support
-        elif self.mode == 'multi':
-            raise NotImplementedError("Multi plot mode not supported yet")
-
-        elif ["side", "under"] in self.mode.split(' '):
-            if self.mode.split(' ')[1].lower() == "side":
-                raise NotImplementedError("Multi side mode not supported yet")
-            else:
-                raise NotImplementedError("Multi under mode not supported yet")
-
-        elif self.mode in ["hist", "norm_dist"]:
-            self.histogram()
+        if "show_error" in kwargs:
+            test_inp(kwargs["show_error"], bool, "show_error")
+            self.default_plot(kwargs["show_error"])
+        else:
+            self.default_plot()
 
         return self.fig, self.ax
 
-    def default_plot(self, show_error: bool = None, return_error: bool = None) -> \
-    Optional[dict[str, Union[Union[np.ndarray, Iterable, int, float], Any]]]:
+    def default_plot(self, show_error: bool = None,
+                     return_error: bool = None) -> \
+            Optional[dict[
+                str, Union[Union[np.ndarray, Iterable, int, float], Any]]]:
         """
         Plot a 2D data set with errors in both x and y axes. The data
         will be fitted according to the input arguments in __innit__.
@@ -552,11 +677,13 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
         elif len(self.y_err) == 0 or len(self.x_err) == 0:
             if len(self.y_err) == 0:
                 self.ax.errorbar(self.x, self.y, xerr=self.x_err,
-                                 label=self.label, fmt=color+'o', linestyle='',
+                                 label=self.label, fmt=color + 'o',
+                                 linestyle='',
                                  capsize=4)
             else:
                 self.ax.errorbar(self.x, self.y, yerr=self.y_err,
-                                 label=self.label, fmt=color+'o', linestyle='',
+                                 label=self.label, fmt=color + 'o',
+                                 linestyle='',
                                  capsize=4)
         else:
             self.ax.errorbar(self.x, self.y, xerr=self.x_err, yerr=self.y_err,
@@ -568,36 +695,43 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
         if show_error:
             print(self.fit_errors)
 
-
         fit_x = np.linspace(min(self.x), max(self.x), self.n_points)
 
         fit_pr = 3
         if "fit_precision" in self.kwargs:
             test_inp(self.kwargs["fit_precision"], int, "fit precision")
             fit_pr = self.kwargs["fit_precision"]
-        str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c in self.fit_coeffs]
+        str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c in
+                          self.fit_coeffs]
         if self.func is not None:
-            self.ax.plot(fit_x, self.func(fit_x, *self.fit_coeffs), linestyle="--",
-                         label=(lambda _: self.func_format.format(*str_fit_coeffs)
-                         if self.func_format != "" else "Fit")(None))
+            self.ax.plot(fit_x, self.func(fit_x, *self.fit_coeffs),
+                         linestyle="--",
+                         label=(
+                             lambda _: self.func_format.format(*str_fit_coeffs)
+                             if self.func_format != "" else "Fit")(None))
         elif self.degree is not None:
             if self.func_format != '':
                 self.ax.plot(fit_x,
-                             sum([fit_x ** (c) * self.fit_coeffs[abs(c - self.degree)]
-                                  for c in range(self.degree + 1).__reversed__()]),
+                             sum([fit_x ** (c) * self.fit_coeffs[
+                                 abs(c - self.degree)]
+                                  for c in
+                                  range(self.degree + 1).__reversed__()]),
                              linestyle="--",
                              label=(self.func_format.format(*str_fit_coeffs)))
             else:
                 self.ax.plot(fit_x,
-                             sum([fit_x ** (c) * self.fit_coeffs[abs(c - self.degree)]
-                                  for c in range(self.degree + 1).__reversed__()]),
+                             sum([fit_x ** (c) * self.fit_coeffs[
+                                 abs(c - self.degree)]
+                                  for c in
+                                  range(self.degree + 1).__reversed__()]),
                              linestyle="--",
-                             label=("Fit with function %s = " % self.response_var +
-                                    self.degree_dict[self.degree].format(*str_fit_coeffs)))
+                             label=(
+                                         "Fit with function %s = " % self.response_var +
+                                         self.degree_dict[self.degree].format(
+                                             *str_fit_coeffs)))
         else:
             raise ValueError("Either 'func' or 'degree' should be in the input"
                              "params.")
-
 
         y_label = ''
         if "y_label" in self.kwargs:
@@ -614,7 +748,7 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
             test_inp(self.kwargs["grid"], bool, "grid")
             grid = self.kwargs["grid"]
 
-        self.single_form(x_label, y_label, grid=grid)
+        super().single_form(x_label, y_label, grid=grid, fig_ax=(self.fig, self.ax))
 
         if not self.return_object:
             (lambda save_as:
@@ -671,8 +805,10 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
         self.degree_dict = {
             0: '{0}',
             1: '${0}%s + {1}$' % self.control_var,
-            2: r'${0}%s^2 + {1}%s + {2}$' % (self.control_var, self.control_var),
-            3: r'${0}%s^3 + {1}%s^2 + {2}%s + {3}$' % tuple([self.control_var for _ in range(3)])
+            2: r'${0}%s^2 + {1}%s + {2}$' % (
+            self.control_var, self.control_var),
+            3: r'${0}%s^3 + {1}%s^2 + {2}%s + {3}$' % tuple(
+                [self.control_var for _ in range(3)])
         }
 
         if self.degree is not None:
@@ -696,167 +832,41 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
             print("N/A")
         return None
 
-    def single_form(self, x_label: str, y_label: str, grid: bool = True, **kwargs)\
-            -> Union[Tuple[plt.figure, plt.axes], None]:
-        """"
-        Format a figure with 1 x-axis and y-axis.
-
-        REQUIRED:
-        :param: x_label
-            ObjectType -> str
-            Label placed on the x-axis, usually uses input from __init__ kwargs
-        :param: y_label
-            ObjectType -> str
-            Label placed on the y-axis, usually uses input from __init__ kwargs
-
-        OPTIONAL:
-        :param: grid
-            ObjectType -> bool
-            True to show grid and False to turn the grid off, default True.
-            Takes input from __innit__ kwargs.
-
-        KWARGS:
-        :param: fig_ax
-            ObjectType -> Tuple
-            The tuple should contain an fig, ax pair with fig and ax being
-                fig:
-                ObjectType -> matplotlib.pyplot.fig object
-                Use this input to apply formatting on input fig
-                ax:
-                ObjectType -> matplotlib.pyplot.Axes.ax object
-                Use this input to apply formatting on input ax
-
-            EXAMPLE
-                single_form("x_label", "y_label", fig_ax=(plt.subplots()))
-
-        :param: x_lim
-            ObjectType -> Union[Tuple, List, np.ndarray]
-            The limits of the horizontal axes, contains a xmin (xlim[0]) and
-            xmax (xlim[1]) pair. Both xmin and xmax should be of type
-            float, int or numpy float.
-
-            EXAMPLE
-                single_form("x_label", "y_label", xlim=[0, 2.4])
-
-        :param: y_lim
-            ObjectType -> Union[Tuple, List, np.ndarray]
-            The limits of the vertical axes, contains a ymin (ylim[0]) and
-            ymax (ylim[1]) pair. Both ymin and ymax should be of type
-            float, int or numpy float.
-
-            EXAMPLE
-                single_form("x_label", "y_label", ylim=[-15.4, 6.9])
-
-         :returns:
-            ObjectType -> Union[Tuple[matplotlib.pyplot.fig, matplotlib.pyplot.Axes.ax], NoneType]
-            When fig_ax input is part of the input this function will return
-            the fig, ax pair
-            if not the return is of type NoneType
-
-        EXAMPLE:
-            # Initiate a fig, ax pair
-            fig, ax = plt.subplots()
-            # Plot the data
-            ax.plot(x_data, y_data)
-            # format the plot
-            Aplot().single_form("x_label", "y_label", (fig, ax))
-            # Show the formatted plot
-            plt.show()
-
-            #TODO: Add example with Aplot object
-
-        NOTES ON PARAMS  x_label, y_label and grid:
-            Direct input in this function will overwrite __innit__ inputs.
-        """
-
-        if "fig_ax" in kwargs:
-            # TODO: test these tests and test the usability of the object
-            test_inp(kwargs["fig_ax"], (tuple, list), "fig ax pair")
-            test_inp(kwargs["fig_ax"][0], plt.Figure, "fig")
-            test_inp(kwargs["fig_ax"][1], plt.Axes, "ax")
-
-            self.fig = kwargs["fig_ax"][0]
-            self.ax = kwargs["fig_ax"][1]
-
-        if "x_lim" in self.kwargs:
-            self.ax.set_xlim(self.x_lim)
-        elif "x_lim" in kwargs:
-            x_lim = kwargs["x_lim"]
-
-            test_inp(x_lim, (list, tuple, np.ndarray), "x lim")
-
-            try:
-                assert len(x_lim) == 2
-            except AssertionError:
-                raise IndexError(
-                    "Xlim should only contain xmin and xmax but the"
-                    "length of xlim does not equal 2.")
-
-            test_inp(x_lim[0], (float, int), "xmin")
-            test_inp(x_lim[1], (float, int), "xmax")
-
-            self.ax.set_xlim(x_lim)
-
-        if "y_lim" in self.kwargs:
-            self.ax.set_ylim(self.y_lim)
-        elif "y_lim" in kwargs:
-            y_lim = kwargs["y_lim"]
-
-            test_inp(y_lim, (list, tuple, np.ndarray), "y lim")
-
-            try:
-                assert len(y_lim) == 2
-            except AssertionError:
-                raise IndexError(
-                    "Ylim should only contain ymin and ymax but the"
-                    "length of ylim does not equal 2.")
-
-            test_inp(y_lim[0], (float, int), "ymin")
-            test_inp(y_lim[1], (float, int), "ymax")
-
-            self.ax.set_ylim(y_lim)
-
-
-        self.ax.set_xlabel(x_label)
-        self.ax.set_ylabel(y_label)
-
-        if TNFormatter is not False:
-            x_pr = 3
-            if "x_precision" in self.kwargs:
-                test_inp(self.kwargs["x_precision"], int, "x_precision", True)
-                x_pr = self.kwargs["x_precision"]
-                self.ax.xaxis.set_major_formatter(TNFormatter(x_pr))
-            y_pr = 3
-            if "y_precision" in self.kwargs:
-                test_inp(self.kwargs["y_precision"], int, "y_precision", True)
-                y_pr = self.kwargs["y_precision"]
-                self.ax.yaxis.set_major_formatter(TNFormatter(y_pr))
-
-        if grid:
-            plt.grid()
-
-        if "legend_loc" in self.kwargs:
-            test_inp(self.kwargs["legend_loc"], str, "legenc loc")
-            plt.legend(loc=self.kwargs["legend_loc"])
-        elif "legend_loc" in kwargs:
-            test_inp(self.kwargs["legend_loc"], str, "legenc loc")
-            plt.legend(loc=kwargs["legend_loc"])
-        else:
-            plt.legend(loc='lower right')
-
-        plt.tight_layout()
-        if "fig_ax" in kwargs:
-            return self.fig, self.ax
-        else:
-            return None
-
     def multi_plot(self):
         """
 
         :return:
         """
-        self.fig, self.ax = plt.subplots() # more plots in subplots
+        self.fig, self.ax = plt.subplots()  # more plots in subplots
         return None
+
+    def file_ceck(self):
+        return None
+
+    def save_figure(self):
+        """
+
+        :return:
+        """
+        return None
+
+
+class Multi:
+
+    def __innit__(self):
+        pass
+
+    def __call__(self):
+        pass
+
+
+class Hist:
+
+    def __innit__(self):
+        pass
+
+    def __call__(self):
+        pass
 
     def histogram(self):
         """
@@ -865,7 +875,7 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
         """
         self.fig, self.ax = plt.subplots()
 
-        bins = int(np.round(len(self.x)/np.sqrt(2)))
+        bins = int(np.round(len(self.x) / np.sqrt(2)))
         if "binning" in self.kwargs:
             bins = self.kwargs["binning"]
             try:
@@ -906,9 +916,6 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
 
         self.single_form(x_label, y_label, grid)
 
-
-
-
         if not self.return_object:
             (lambda save_as:
              plt.show() if save_as == '' else plt.savefig(save_as,
@@ -926,13 +933,13 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
             x = np.linspace(self.x_lim[0], self.x_lim[1], self.n_points)
         else:
             x = np.linspace(min(self.x) + max(self.x) * 1 / 10,
-                              max(self.x) + max(self.x) * 1 / 10, self.n_points)
+                            max(self.x) + max(self.x) * 1 / 10, self.n_points)
 
         mu, std = np.average(x), np.std(x)
         dist = scipy.stats.norm.pdf(x, mu, std)
 
         if scaling:
-            factor = np.average(self.x)/np.max(dist)
+            factor = np.average(self.x) / np.max(dist)
             if "scaling_factor" in self.kwargs:
                 factor = self.kwargs["scaling_factor"]
                 test_inp(factor, (float, int), "scaling factor")
@@ -941,29 +948,22 @@ class Aplot: # TODO: expand the docstring #TODO x and y in args.
         return x, dist, mu
 
 
-    def file_ceck(self):
-        return None
-
-    def save_figure(self):
-        """
-
-        :return:
-        """
-        return None
-
-
 if __name__ == "__main__":
     import time
+    import Aplot
+
     t_start = time.time()
 
+
     def f(x: float, a: float, b: float) -> float:
-        return a * x**2 + b*x
+        return a * x ** 2 + b * x
+
 
     points = 40
     x = np.linspace(-5, 5, points)
     noise = np.random.randint(-2, 2, points)
-    Aplot(x, np.array([i * -4.32 +9.123 for i in x] + noise), degree=1,
-          y_err=10, x_err=0.1, y_lim=[-50, 50]).default_plot(show_error=True)
+    Aplot.Default(x=x, y=np.array([i * -4.32 + 9.123 for i in x] + noise), degree=1,
+          y_err=10, x_err=0.1, y_lim=[-50, 50], x_label="bruh x", y_label="bruh y")()
     # hist = Aplot([3, 2, 3, 1, 3, 4, 2, 4, 5, 6, 5], mode="hist", x_lim=[0, 7],
     #              x_label="X-as", grid=False)()
     print("t: ", time.time() - t_start)
