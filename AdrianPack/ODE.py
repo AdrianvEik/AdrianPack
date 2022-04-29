@@ -5,7 +5,7 @@ from typing import Callable
 
 test_input = csvread.test_inp
 
-class Solve():
+class Base():
     def __init__(self, *args, **kwargs):
         """"
         Base function with definitions of self and shared functions
@@ -31,7 +31,7 @@ class Solve():
         pass
 
 
-class Euler(Solve):
+class Solve_ODE(Base):
     """"
 
     :param: fx
@@ -53,10 +53,7 @@ class Euler(Solve):
     :param: mode
         ObjectType -> str
 
-        Method to calculate the result either "single", "multi" or "gpu"
-        uses single core processing, multi core processing or gpu accelerated
-        processing.
-
+        Method to calculate the result either "Euler" or "GK".
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -93,42 +90,24 @@ class Euler(Solve):
 
         self.xpoints[0] = self.x0
 
-    def __call__(self):
+    def __call__(self) -> tuple:
         """
-        return calculated values as (t, x)
+        return calculated values in format tuple(t, x)
         """
-        getattr(self, self.mode)()
+        getattr(self, self.mode.lower())()
         return self.tpoints, self.xpoints
 
-    def single(self):
+    def euler(self):
+        """
+
+        """
         for i in range(len(self.tpoints) - 1):
             self.xpoints[i + 1] = self.xpoints[i] +\
                                   self.dt * self.fx(self.xpoints[i], self.tpoints[i])
 
-    def multi(self):
+    def gk(self):
         pass
 
-    def gpu(self):
-        pass
-
-
-class Runga_kutta(Solve):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def __call__(self):
-        pass
-
-    def singe(self):
-        pass
-
-    def multi(self):
-        pass
-
-    def gpu(self):
-        # Add import function in super to import cuda packages
-        # Finish later
-        pass
 
 if __name__ == "__main__":
     from Aplot import Default
