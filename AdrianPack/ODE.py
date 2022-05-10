@@ -1,6 +1,11 @@
 import numpy as np
-from csvread import csvread
 from typing import Callable
+
+try:
+    from csvread import csvread
+except ImportError:
+    from .csvread import csvread
+
 
 test_input = csvread.test_inp
 
