@@ -2,13 +2,27 @@ import numpy as np
 from typing import Callable
 
 try:
-    from csvread import csvread
+    from Helper import test_inp
 except ImportError:
-    from .csvread import csvread
+    from .Helper import test_inp
 
 
-test_input = csvread.test_inp
+def ode_decorator(func):
+    def inner(*args, **kwargs):
+        var_attr = []
+        if len(args) > 1:
+            for i in range(len(args)):
+                if args[i].__class__.__name__ == 'list':
+                    var_attr.append(i)
 
+        if "fx" in kwargs:
+            fx = kwargs["fx"]
+            if fx.__class__.__name__ == 'list':
+                var_attr.append(0)
+
+
+        return func(*args, **kwargs)
+    return inner
 
 def euler(fx: Callable, lower: float, upper: float, dt: float,
           x0: float = 0) -> tuple:
@@ -69,7 +83,7 @@ def euler(fx: Callable, lower: float, upper: float, dt: float,
         xpoints[i + 1] = xpoints[i] + dt * fx(xpoints[i], tpoints[i])
     return tpoints, xpoints
 
-
+@ode_decorator
 def runga_kutta_4(fx: Callable, lower: float, upper: float, dt: float,
                 x0: float = 0) -> tuple:
     """
@@ -205,3 +219,14 @@ def runga_kutta_2(fx: Callable, lower: float, upper: float, dt: float,
         xpoints[i + 1] = xpoints[i] + kutta_constants[1]
 
     return tpoints, xpoints
+
+if __name__ == "__main__":
+    from Aplot import Default
+
+
+    def f(x, t):
+        return -x ** 3 + t
+
+
+    data = runga_kutta_4(f, 0, 1, dt=0.1, x0=0)
+    Default(data[0], data[1], degree=2)()

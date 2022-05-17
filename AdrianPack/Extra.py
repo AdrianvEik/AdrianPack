@@ -13,11 +13,9 @@ DEPENDENCIES:
 import numpy as np
 from typing import Iterable, Tuple, Union, Iterator
 try:
-    from csvread import csvread
-    from Helper import compress_ind, compress_width
+    from Helper import compress_ind, compress_width, test_inp
 except ImportError:
-    from .csvread import csvread
-    from .Helper import compress_ind, compress_width
+    from .Helper import compress_ind, compress_width, test_inp
 
 def calc_err_DMM(unit: str, val: float, freq=1.0) -> Iterable:
     """
@@ -106,11 +104,11 @@ def trap_int(x: Iterable, y: Iterable, **kwargs) -> Iterable:
     yerr = np.zeros(y.shape)
 
     if "x_err" in kwargs:
-        csvread.test_inp(kwargs["x_err"], (list, np.ndarray), "error in x")
+        test_inp(kwargs["x_err"], (list, np.ndarray), "error in x")
         xerr = np.array(kwargs["x_err"], np.float32)
 
     if "y_err" in kwargs:
-        csvread.test_inp(kwargs["y_err"], (list, np.ndarray), "error in y")
+        test_inp(kwargs["y_err"], (list, np.ndarray), "error in y")
         yerr = np.array(kwargs["y_err"], np.float32)
 
     try:
@@ -241,11 +239,11 @@ def derive(x: Iterable, y: Iterable, **kwargs) -> Tuple[np.ndarray, np.ndarray]:
     yerr = np.zeros(y.shape)
 
     if "x_err" in kwargs:
-        csvread.test_inp(kwargs["x_err"], (list, np.ndarray), "error in x")
+        test_inp(kwargs["x_err"], (list, np.ndarray), "error in x")
         xerr = np.array(kwargs["x_err"], np.float32)
 
     if "y_err" in kwargs:
-        csvread.test_inp(kwargs["y_err"], (list, np.ndarray), "error in y")
+        test_inp(kwargs["y_err"], (list, np.ndarray), "error in y")
         yerr = np.array(kwargs["y_err"], np.float32)
 
     try:
@@ -324,14 +322,14 @@ def Compress_array(x: np.ndarray, width: Union[float, int] = 0,
         raise NotImplementedError("Both width_ind and width have values this"
                                   "is currently not implemented.")
     elif "width_ind" in kwargs:
-        csvread.test_inp(kwargs["width_ind"], int, "width_ind")
+        test_inp(kwargs["width_ind"], int, "width_ind")
         compress = compress_ind
         width = kwargs["width_ind"]
 
     if isinstance(x[0], np.ndarray):
         c_list, i = [], 0
         for arr in x:
-            csvread.test_inp(arr, np.ndarray, "x")
+            test_inp(arr, np.ndarray, "x")
             res = compress(arr, width)
             c_list.append(res[0])
             width = res[1]

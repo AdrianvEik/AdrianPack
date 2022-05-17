@@ -1,10 +1,6 @@
+
 import numpy as np
 from typing import Iterable, Tuple, Union
-
-try:
-    from csvread import csvread
-except ImportError:
-    from .csvread import csvread
 
 
 def compress_ind(x: np.ndarray, width: int):
@@ -70,6 +66,55 @@ def compress_width(x: np.ndarray, width: Union[int, float]):
             else:
                 continue
     return comp_arr[~np.isnan(comp_arr)], comp_arr[~np.isnan(comp_arr)].size
+
+
+def test_inp(test_obj, test_if, name_inp, value=False):
+    """
+    Test a value if it returns false raise an exception
+    :param: test_obj
+    Object to be tested.
+    :param:test_if
+    The input that is tested to be equal as. (in int, str, double etc)
+    :param: value
+    Bool, if True the exception also shows test_obj not recommended for
+    long lists.
+    :param: name_inp
+    String, the informal name of the object shown in exception.
+    """
+    assert isinstance(name_inp, str)
+    try:
+        assert isinstance(test_obj, test_if)
+    except AssertionError:
+        if not isinstance(test_if, tuple):
+            if not value:
+                raise TypeError(
+                    'Expected %s for %s but got %s' %
+                    (test_if.__name__,
+                     name_inp, test_obj.__class__.__name__)
+                )
+            else:
+                raise TypeError(
+                    'Expected %s for %s but got type %s with'
+                    ' value: %s' %
+                    (test_if.__name__, name_inp,
+                     test_obj.__class__.__name__, test_obj)
+                )
+        else:
+            test_if = [i.__name__ for i in test_if]
+            if not value:
+                raise TypeError(
+                    'Expected %s for %s but got %s' %
+                    (', '.join(test_if), name_inp,
+                     test_obj.__class__.__name__)
+                )
+            else:
+                raise TypeError(
+                    'Expected %s for %s but got type %s with'
+                    ' value: %s' %
+                    (', '.join(test_if), name_inp,
+                     test_obj.__class__.__name__, test_obj)
+                )
+    return None
 
 
 if __name__ == "__main__":

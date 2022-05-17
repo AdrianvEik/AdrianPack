@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 
 from scipy.optimize import curve_fit
 from typing import Sized, Iterable, Union, Optional, Any, Type, Tuple, List
-from matplotlib.ticker import EngFormatter
 
 try:
     from TISTNplot import TNFormatter
@@ -17,20 +16,17 @@ except ImportError:
     TNFormatter = False
 
 try:
-    from csvread import csvread
+    from Helper import test_inp
 except ImportError:
-    from .csvread import csvread
+    from .Helper import test_inp
 
 # TODO: plot straight from files
 # TODO: plot normal distrubtion over histogram
 # TODO: plot bodeplots (maybe?)
 
 # TODO: Recheck all examples and upload to git with an example.py file
-
-test_inp = csvread.test_inp
-
-
 # TODO: restructure to use base class from which to inherit standardized methods
+
 class Base:
     """
     Base class of Aplot object
@@ -116,9 +112,11 @@ class Base:
             try:
                 test_inp(self.x, (list, tuple, np.ndarray), "x values")
             except TypeError:
-                test_inp(self.x, (str, csvread), "x values")
-                self.file = x
+                # TODO: add csvread support
+                # test_inp(self.x, (str, csvread), "x values")
+                # self.file = x
                 self.file_read()
+                raise NotImplementedError
 
             try:
                 assert self.x.ndim == 1
@@ -508,8 +506,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             self.func = kwargs["fx"]
             test_inp(self.func, types.FunctionType, "f(x)")
         else:
-            raise ValueError(
-                "Input arguments must include degree or fx")
+            pass
 
         self.func_format = ''
         if 'func_format' in kwargs:
@@ -701,8 +698,12 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         if "fit_precision" in self.kwargs:
             test_inp(self.kwargs["fit_precision"], int, "fit precision")
             fit_pr = self.kwargs["fit_precision"]
-        str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c in
-                          self.fit_coeffs]
+
+        if self.degree is not None or self.func is not None:
+            str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c
+                              in
+                              self.fit_coeffs]
+
         if self.func is not None:
             self.ax.plot(fit_x, self.func(fit_x, *self.fit_coeffs),
                          linestyle="--",
@@ -730,8 +731,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
                                          self.degree_dict[self.degree].format(
                                              *str_fit_coeffs)))
         else:
-            raise ValueError("Either 'func' or 'degree' should be in the input"
-                             "params.")
+            pass
 
         y_label = ''
         if "y_label" in self.kwargs:
@@ -962,7 +962,7 @@ if __name__ == "__main__":
     points = 40
     x = np.linspace(-5, 5, points)
     noise = np.random.randint(-2, 2, points)
-    Aplot.Default(x=x, y=np.array([i * -4.32 + 9.123 for i in x] + noise), degree=1,
+    Aplot.Default(x=x, y=np.array([i * -4.32 + 9.123 for i in x] + noise),
           y_err=10, x_err=0.1, y_lim=[-50, 50], x_label="bruh x", y_label="bruh y")()
     # hist = Aplot([3, 2, 3, 1, 3, 4, 2, 4, 5, 6, 5], mode="hist", x_lim=[0, 7],
     #              x_label="X-as", grid=False)()
