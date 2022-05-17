@@ -508,8 +508,14 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         else:
             pass
 
+        self.connection = False
+        if 'connection' in kwargs:
+            test_inp(kwargs["connection"], bool, "connection")
+            self.connection = kwargs['connection']
+
         self.func_format = ''
         if 'func_format' in kwargs:
+            test_inp(kwargs['func_format'], str, "func_format")
             self.func_format = kwargs['func_format']
 
         self.n_points = 1000

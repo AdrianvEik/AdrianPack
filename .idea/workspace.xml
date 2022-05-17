@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="e9db8f2b-0092-46ad-9797-cd929e612058" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/AdrianPack/Aplot.py" beforeDir="false" afterPath="$PROJECT_DIR$/AdrianPack/Aplot.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="ProjectId" id="23vr99F43tyljxLA862UdUuFavm" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="false" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="Python" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RunManager" selected="Python.Aplot">
+    <configuration name="Aplot" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AdrianPack_src" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/AdrianPack" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/AdrianPack/Aplot.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Extra_test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AdrianPack_src" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Tests/Extra_test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Helper" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AdrianPack_src" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/AdrianPack" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/AdrianPack/Helper.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="ODE" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AdrianPack_src" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/AdrianPack" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/AdrianPack/ODE.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="csvread" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AdrianPack_src" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/AdrianPack" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/AdrianPack/csvread.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.Aplot" />
+        <item itemvalue="Python.Helper" />
+        <item itemvalue="Python.ODE" />
+        <item itemvalue="Python.csvread" />
+        <item itemvalue="Python.Extra_test" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e9db8f2b-0092-46ad-9797-cd929e612058" name="Default Changelist" comment="" />
+      <created>1642625250244</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1642625250244</updated>
+      <workItem from="1642625253905" duration="966000" />
+      <workItem from="1642628482440" duration="25000" />
+      <workItem from="1642628622530" duration="804000" />
+      <workItem from="1642638383667" duration="16000" />
+      <workItem from="1642705708340" duration="355000" />
+      <workItem from="1642855078443" duration="17140000" />
+      <workItem from="1642941624019" duration="4181000" />
+      <workItem from="1643142808935" duration="1219000" />
+      <workItem from="1643237521062" duration="951000" />
+      <workItem from="1644332048068" duration="62000" />
+      <workItem from="1645195986229" duration="2659000" />
+      <workItem from="1645624894907" duration="21479000" />
+      <workItem from="1645722068918" duration="14800000" />
+      <workItem from="1645794830481" duration="19236000" />
+      <workItem from="1645896878900" duration="651000" />
+      <workItem from="1646148231162" duration="6622000" />
+      <workItem from="1646309676601" duration="20641000" />
+      <workItem from="1646388028538" duration="10448000" />
+      <workItem from="1646492740970" duration="57000" />
+      <workItem from="1646608006729" duration="1259000" />
+      <workItem from="1646609310962" duration="8000" />
+      <workItem from="1647542669004" duration="8996000" />
+      <workItem from="1647599346243" duration="5726000" />
+      <workItem from="1649364813247" duration="1816000" />
+      <workItem from="1649538484373" duration="627000" />
+      <workItem from="1651250409148" duration="3578000" />
+      <workItem from="1651750747619" duration="4797000" />
+      <workItem from="1652120778549" duration="3100000" />
+      <workItem from="1652199083366" duration="3019000" />
+      <workItem from="1652207425676" duration="7366000" />
+      <workItem from="1652801898456" duration="4161000" />
+    </task>
+    <task id="LOCAL-00001" summary="Updated csvread function">
+      <created>1642627626760</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1642627626760</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Updated setup.py">
+      <created>1642628495005</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1642628495005</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Updated setup.py">
+      <created>1642628676535</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1642628676536</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Updated setup.py">
+      <created>1642628965033</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1642628965033</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Added entries to the csvread docstring">
+      <created>1642706053899</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1642706053899</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Added a function to compress 1D arrays using a floating average.">
+      <created>1642864527658</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1642864527658</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Added a function to compress 1D arrays using a floating average.">
+      <created>1642867806617</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1642867806617</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Added a function to compress 1D arrays using a floating average.">
+      <created>1642869255559</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1642869255559</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Added a function to compress 1D arrays using a floating average.">
+      <created>1642942128539</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1642942128539</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Reworked the plot function.&#10;Plot function now uses a class structure with modular blocks to plot data and fit that data. The fitted data also has errors in the fitted coefficients and data provided can include errorbars.">
+      <created>1645815532990</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1645815532990</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Aplot:&#10;Updated docs for the main class: x, y, mode, func_format&#10;and several other subfunctions&#10;csvread:&#10;Removed a print statement">
+      <created>1646317378655</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1646317378655</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Added ability to plot histogram">
+      <created>1646405436397</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1646405436397</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Several small updates">
+      <created>1646608778614</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1646608778614</updated>
+    </task>
+    <task id="LOCAL-00014" summary="VERSION 0.0.2 RELEASE&#10;&#10;CHANGES TO Aplot.py&#10;Full restructure of Aplot from single class to multiple classes with a common&#10;parent class. See documentation for further reference.&#10;Changes include but are not limited to:&#10; - Ability to plot data without adding a fit&#10; - Easier to plot different types of plots (called by their own classes IE an histogram object is build with Aplot.hist())&#10; - Easier to understand and more intuitive function parameters and documentation of these.&#10; &#10;CHANGES TO Extra.py&#10;Added a gauss elimination function to Extra.py .">
+      <created>1649366799780</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1649366799780</updated>
+    </task>
+    <task id="LOCAL-00015" summary="VERSION 0.0.2 RELEASE&#10;&#10;Added runga kutta approximation  methods for ODEs to ODE.py.">
+      <created>1652206967407</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1652206967407</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Fixed an import error in ODE.py">
+      <created>1652207485744</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1652207485744</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Fixed an error in Aplot.py, dataplotting without including a fit is now allowed.">
+      <created>1652810714782</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1652810714782</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Updated csvread function" />
+    <MESSAGE value="Updated setup.py" />
+    <MESSAGE value="Added entries to the csvread docstring" />
+    <MESSAGE value="Added a function to compress 1D arrays using a floating average." />
+    <MESSAGE value="Reworked the plot function.&#10;Plot function now uses a class structure with modular blocks to plot data and fit that data. The fitted data also has errors in the fitted coefficients and data provided can include errorbars." />
+    <MESSAGE value="Aplot:&#10;Updated docs for the main class: x, y, mode, func_format&#10;and several other subfunctions&#10;csvread:&#10;Removed a print statement" />
+    <MESSAGE value="Added ability to plot histogram" />
+    <MESSAGE value="Several small updates" />
+    <MESSAGE value="VERSION 0.0.2 RELEASE&#10;&#10;CHANGES TO Aplot.py&#10;Full restructure of Aplot from single class to multiple classes with a common&#10;parent class. See documentation for further reference.&#10;Changes include but are not limited to:&#10; - Ability to plot data without adding a fit&#10; - Easier to plot different types of plots (called by their own classes IE an histogram object is build with Aplot.hist())&#10; - Easier to understand and more intuitive function parameters and documentation of these.&#10; &#10;CHANGES TO Extra.py&#10;Added a gauss elimination function to Extra.py ." />
+    <MESSAGE value="VERSION 0.0.2 RELEASE&#10;&#10;Added runga kutta approximation  methods for ODEs to ODE.py." />
+    <MESSAGE value="Fixed an import error in ODE.py" />
+    <MESSAGE value="Fixed an error in Aplot.py, dataplotting without including a fit is now allowed." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed an error in Aplot.py, dataplotting without including a fit is now allowed." />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/setup_py$Aplot.coverage" NAME="Aplot Coverage Results" MODIFIED="1652810369013" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
+    <SUITE FILE_PATH="coverage/AdrianPack_src$Aplot.coverage" NAME="Aplot Coverage Results" MODIFIED="1646608741737" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
+    <SUITE FILE_PATH="coverage/setup_py$ODE.coverage" NAME="ODE Coverage Results" MODIFIED="1652211301254" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
+    <SUITE FILE_PATH="coverage/AdrianPack_src$utils.coverage" NAME="utils Coverage Results" MODIFIED="1642862350474" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/venv/Lib/site-packages/numpy/testing/_private" />
+    <SUITE FILE_PATH="coverage/AdrianPack_src$scratch_15.coverage" NAME="scratch_15 Coverage Results" MODIFIED="1643237869471" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
+    <SUITE FILE_PATH="coverage/AdrianPack_src$Extra_test.coverage" NAME="Extra_test Coverage Results" MODIFIED="1645624905125" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Tests" />
+    <SUITE FILE_PATH="coverage/AdrianPack_src$csvread.coverage" NAME="csvread Coverage Results" MODIFIED="1645646591754" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
+    <SUITE FILE_PATH="coverage/setup_py$Helper.coverage" NAME="Helper Coverage Results" MODIFIED="1652802594338" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
+    <SUITE FILE_PATH="coverage/AdrianPack_src$Helper.coverage" NAME="Helper Coverage Results" MODIFIED="1642867648501" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
+  </component>
+</project>
