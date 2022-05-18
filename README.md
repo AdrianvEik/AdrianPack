@@ -6,24 +6,24 @@ This is a small complilation of functions that have been made to make life easie
 1. [How to install?](#How-to-install?)
 2. [Dependecies](#Dependecies)
 3. [A Short overview](#A-Short-overview)
-4. [Aplot.py](#Aplot.py)
+4. [Aplot.py](#Aplotpy)
 
-    4.1 [Description](##4.1-Description)
+    4.1 [Description](##41-Description)
    
-    4.2 [How to use?](##4.2-How-to-use?)
+    4.2 [How to use?](##42-How-to-use?)
    
-    4.3 [Examples](##4.3-Examples)
+    4.3 [Examples](##43-Examples)
 
-      * [Creating a simple plot](###4.3.1-Creating-a-simple-plot)
-      * [Simple plot with fit and errors](###4.3.2-Simple-plot-with-fit-and-errors)
-      * [Using ODE.py to approximate the speed of falling objects with air resistance](###4.3.3-Using-ODE.py-to-approximate-the-speed-of-falling-objects-with-air-resistance) 
-5. [fileread.py](##fileread.py)
+      * [Creating a simple plot](###431-Creating-a-simple-plot)
+      * [Simple plot with fit and errors](###432-Simple-plot-with-fit-and-errors)
+      * [Using ODE.py to approximate the speed of falling objects with air resistance](###433-Using-ODE.py-to-approximate-the-speed-of-falling-objects-with-air-resistance) 
+5. [fileread.py](##filereadpy)
 
-    5.1 [Description](##5.1-Description)
+    5.1 [Description](##51-Description)
    
-    5.2 [How to use?](##5.2-How-to-use?)
+    5.2 [How to use?](##52-How-to-use?)
    
-    5.3 [Examples](##5.3-Examples)
+    5.3 [Examples](##53-Examples)
 6. 
 
 # How to install?
