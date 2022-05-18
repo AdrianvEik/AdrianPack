@@ -357,6 +357,30 @@ Data_combination = Fileread(path=[r"Data\TextData.txt", r"Data\CsvData.csv", r"D
 Plotting x and y keys from the Data_combination dictionary will result in the same plot as shown in [5.3.1](#531-reading-xlsx-csv-and-txt-files).
 
 # ODE.py
+## 6.1 Description
+The ODE.py file includes three simmilar functions
+* Runga_kutta_2
+* Runga_kutta_4
+* Euler
+All three functions approximate 1st order ODE's numerically and take the same inputs.
+
+## 6.2 How to use?
+To use the functions they require four parameters and have one optional parameter. The functions require an ODE fx in the form dx/dt = f(x, t) in python this is generally structured as
+```python
+def fx(x, t):
+     """ Function dx/dt = fx """
+    return x**3 + t
+```
+
+A lower and upper bound ("lower", "upper") both as floats or ints and a step "dt" which is a float. Two arrays will be returned a t and x array, the t array is an range between lower and upper with length |(upper - lower)|/dt (this value is rounded). The x array contains the approximated values of the prime of the ODE. Plotting these values with AdrianPack.Aplot.Default can be done with the following code
+
+```python
+runga_kuta = runga_kutta_4(**kwargs)
+Default(runga_kutta[0], runga_kutta[1])
+```
+
+## 6.3 Example
+An example to the code is provided in [4.3.3](#433-using-odepy-to-approximate-the-speed-of-falling-objects-with-air-resistance) 
 
 # Extra.py
 ## 7.1 Description
