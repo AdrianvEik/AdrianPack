@@ -19,4 +19,4 @@ plot = Default(x, y, x_err=x_err, y_err=y_err, degree=1
                save_as="simple_fit.png")
 
 # Run the plot
-print(isinstance(plot, Default))
+plot()

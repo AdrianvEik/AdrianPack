@@ -1,19 +1,59 @@
+# AdrianPack
+
+This is a small complilation of functions that have been made to make life easier. These functions can be applied in a variety of ways, mainly they are used to visualise data, parse data from files to python objects or simply manipulate data. The project is constantly updated and functions are continuesly being added. 
+
+# Contents
+1. [How to install?](#how-to-install?)
+2. [Dependecies](#dependecies)
+3. [A Short overview](#a-Short-overview)
+4. [Aplot.py](#aplotpy)
+
+    4.1 [Description](#41-description)
+   
+    4.2 [How to use?](#42-how-to-use?)
+   
+    4.3 [Examples](#43-examples)
+
+      * [Creating a simple plot](#431-creating-a-simple-plot)
+      * [Simple plot with fit and errors](#432-simple-plot-with-fit-and-errors)
+      * [Using ODE.py to approximate the speed of falling objects with air resistance](#433-using-ODEpy-to-approximate-the-speed-of-falling-objects-with-air-resistance) 
+5. [fileread.py](#filereadpy)
+
+    5.1 [Description](#51-description)
+   
+    5.2 [How to use?](#52-how-to-use?)
+   
+    5.3 [Examples](#53-examples)
+6. [ODE.py](#odepy)
+7. [Extra.py](#extrapy)
+
+    7.1 [Description](#71-description)
+   
+    7.2 [Description](#72-functions--how-to-use-them)
+8. [Future changes/to-do list](#future-changesto-do-list)
+9. [Known bugs/issues](#known-bugsissues)
+
+    9.1 [Aplot.py](#91-aplotpy)
+    
+    9.2 [fileread.py](#92-filereadpy)
+# How to install?
+
 # Dependecies
 * Numpy
 * Pandas
 * Matplotlib
 * Scipy
 
-# Short overview
+# A Short overview
 The package, currently, consists out of 4 main files.
 * Aplot.py
-* csvread.py (soon to be reworked/changed)
+* fileread.py
 * ODE.py
 * Extra.py
 
-These files work indepent from each other, although Aplot.py accepts csvread objects, and can be imported on their own. **All** files depend on Helper.py, this file should be included when using files on their own. The package as a whole is subject to constant change, the goal is to keep the readme as updated as possible. Update logs are always more accurate.
+These files work indepent from each other, although Aplot.py accepts fileread objects, and can be imported on their own. **All** files depend on Helper.py, this file should be included when using files on their own. The package as a whole is subject to constant change, the goal is to keep the readme as updated as possible. Update logs are always more accurate.
 
-The Aplot and csvread files do as their name suggest, currently Aplot.py has 2 different useable classes "Default" and "Histogram". A "Default" plot is a simple figure that can consist out of multiple attributes which are all, excluding the datapoints, optional. At the base a Default plot consists out of two arrays, x and y. It is possible to add a variety of attributes which are further specified in the Aplot.py documentation. The used class object needs to be called to construct and show/save the plot. The csvread.py file consists out of a single class "csvread" this class needs to be called to be able to convert the data file into a numpy.ndarray, pandas.df or dict object. It is possible to call multiple files although this function is not fully optimised. Next to these functions the ability to choose specific columns/rows/cells is also an option and can be specified in the input.
+The Aplot and fileread files do as their name suggest, currently Aplot.py has 2 different useable classes "Default" and "Histogram". A "Default" plot is a simple figure that can consist out of multiple attributes which are all, excluding the datapoints, optional. At the base a Default plot consists out of two arrays, x and y. It is possible to add a variety of attributes which are further specified in the Aplot.py documentation. The used class object needs to be called to construct and show/save the plot. The fileread.py file consists out of a single class "fileread" this class needs to be called to be able to convert the data file into a numpy.ndarray, pandas.df or dict object. It is possible to call multiple files although this function is not fully optimised. Next to these functions the ability to choose specific columns/rows/cells is also an option and can be specified in the input.
 
 Extra.py is a collection of functions that are used for a varied range of applications. Functions included are:
 * calc_err_DMM, TTI DMM 1604 error calculator
@@ -33,9 +73,18 @@ ODE.py consists out of three approximation methods for numerically calculating O
 All functions accept arrays/lists/tuples to make it easier to preform a parameter test or approximate with different stepsizes.
 
 # Aplot.py
+## 4.1 Description
 Aplot.py currently supports the plotting of a "Default" plot and a "Histogram". The default plot consists out x and y data arrays that are shown in a matplotlib.pyplot plot. It is possible to add a variety of options to these plots, like error bars custom labels fits and more. Currently the plots are limited to a single data set, if more than one data set is needed to be plotted the function can return fig and ax objects that contain the plot made by the Default class.
-### Examples
-##### Creating a simple plot
+
+## 4.2 How to use?
+The easiest way to plot files it to simply create a Default object and passing 2 aruments through "x" and "y". This creates a simple plot with datapoints. Things can get more complicated by adding errorbars, labels and other plots. Errorbars are supported by adding arguments "x_err" and "y_err" when creating the object in the same way an "x_label" "y_label" and a "data_label" can be included. 
+
+Adding fits is done by specifying a function with the "fx" paramter, the fit needs to follow where the first input argument needs to be x followed by constants these variables can have all names. To add a correct fit label specify the label with the "func_format" parameter which accepts a string constants are called with curly brackest per example "y = {0}x + {1}" would contain 2 constants A and B or {0} and {1} the order of constants is the same a defined in the "fx" parameter. Another way of adding fits is by specifying the degree of the polynomial to be fitted using the "degree" parameter a custom fit label can be added but standard ones are pre-included.
+
+Plots can be added to each other to have multiple graphs in a single plot to do this add the "add_plot" parameter to the plot that needs to be **added** to a base plot and set this parameter to True. To show/save the plot run the base plot to which other plots have been added to. It is important to add them with the "+=" operator and not only use the "+" operator unless addition is specified as "plot_a = plot_a + plot_b".
+
+## 4.3 Examples
+### 4.3.1 Creating a simple plot
 ```python
 
 from math import sin
@@ -56,7 +105,7 @@ Running this code results into the following plot
 
 ![alt text](https://github.com/AdrianvEik/AdrianPack/blob/main/Examples/Aplot/Plots/simple_plot.png?raw=true)
 
-##### Simple plot with fit and errors
+### 4.3.2 Simple plot with fit and errors
 ```python
 
 import random
@@ -86,7 +135,7 @@ Running this code results into the following plot
 
 ![alt text](https://github.com/AdrianvEik/AdrianPack/blob/main/Examples/Aplot/Plots/simple_fit_img.png?raw=true)
 
-##### Using ODE.py to approximate the speed of falling objects with air resistance
+### 4.3.3 Using ODE.py to approximate the speed of falling objects with air resistance
 The velocity of a falling object with air resistance can be described by the following equation:
 
 ![equation](https://latex.codecogs.com/png.image?\dpi{110}\bg{white}m&space;\dfrac{\mathrm{d}v}{\mathrm{d}t}&space;=&space;mg&space;-&space;k_2&space;v^2)
@@ -244,17 +293,24 @@ runga_kutta4_plot()
 
 ```
 
-# csvread.py
+# fileread.py
+## 5.1 Description
+fileread.py Currently works with three file types, .txt, .csv and .xlsx sometimes using .xlsx files can cause issues when converting cells to floats this issue is most commonly resolved by converting to a .csv or .txt file. It is possible to read out multiple files too the columns/rows are then specified with a dictionary in the format {file_nr (int): columns (list, int), ...} all files need to be assigned columns to read it is not yet possible to read out all files without specifying a coll or row dictionary. Columns/rows can also be assigned custom labels to do so instead of specifying the position of the column/row use a tuple in the format (int, str) wherein the int and str are position and label respectively. This label will only be useable when the returned object type is a dictionary. The function has three return options "numpy", "dataframe" and "dictionary" the default option is the "dictionary" option.  
+## 5.2 How to use?
+
+## 5.3 Examples
+
 
 # ODE.py
 
 # Extra.py
+## 7.1 Description
 The Extra.py file consists out of a varied range of functions. Each function is listed with a short explanation and example.
-#### Functions
+## 7.2 Functions & How to use them
 * calc_err_DMM
 
 calculate the AC/DC error of a TTI DMM 1604. 
-##### Example
+### Example
 ```python
 # Data array y consists out data points for a DC signal measured in milli volts.
 y = np.array([0, 1.54, 2.01, 2.89, 3.71, 4.65], dtype=float)
@@ -264,5 +320,11 @@ error = cacl_err_DMM(unit="milli volt DC", val=y)
 * trap_int
 
 # Future changes/to-do list
+
+# Known bugs/issues
+## 9.1 Aplot.py
+* Custom fit labels with latex code in curly brackets crashes the code, this is because of an issue with the formatter used to format the constants
+## 9.2 csvread.py
+* When reading xlsx files columns/rows that are specified with a tuple in the format "(int, str)" crashes the code.
 
 
