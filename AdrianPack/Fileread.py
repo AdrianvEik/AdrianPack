@@ -529,5 +529,5 @@ class csvread(Fileread):
         super().__init__(*args, **kwargs)
         print('\x1b[33m' +
               'UPDATE: csvread is now called Fileread! From update 0.0.4 and on'
-              'it will only be possible to call this function with "Fileread".'
+              ' it will only be possible to call this function with "Fileread".'
               + '\x1b[0m')
