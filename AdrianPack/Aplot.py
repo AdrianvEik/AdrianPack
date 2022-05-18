@@ -95,7 +95,7 @@ class Base:
             test_inp(self.y_lim[1], (float, int), "ymax")
 
         # TODO: adjust base x, y when making multi mode
-        if len(args) > 2:
+        if len(args) > 2 and args[1] is not None:
             self.x = np.asarray(args[0], dtype=np.float32)
             self.y = np.asarray(args[1], dtype=np.float32)
 
@@ -115,8 +115,9 @@ class Base:
                 raise NotImplementedError("Multi dimensional plotting is not"
                                           " supported.")
 
-        elif len(args) == 1:
+        elif len(args) == 1 or args[1] is None:
             self.x = np.asarray(args[0])
+            x = self.x
 
             try:
                 test_inp(self.x, (list, tuple, np.ndarray), "x values")
@@ -139,7 +140,7 @@ class Base:
                         print('\x1b[33m' +
                               'WARNING: Input array x has 2 dimensions and %s'
                               ' columns, the first and second column has been used as x and'
-                              'y respectfully.' % str(x.shape[1])
+                              ' y respectfully.' % str(x.shape[1])
                               + '\x1b[0m')
                     elif x.shape[1] == 3:
                         self.x = x[:, 0]

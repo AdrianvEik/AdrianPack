@@ -4,7 +4,7 @@ import numpy as np
 import math
 from typing import Sized, Iterable, Union, Optional, Any, Type, Tuple, List
 
-class csvread:
+class fileread:
     """
         Parse file data to a python usable output.
 

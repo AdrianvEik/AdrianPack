@@ -2,8 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e9db8f2b-0092-46ad-9797-cd929e612058" name="Default Changelist" comment="Added the ability to add multiple graphs together.">
+      <change afterPath="$PROJECT_DIR$/Examples/csvread/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Examples/csvread/.idea/csvread.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Examples/csvread/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Examples/csvread/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Examples/csvread/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Examples/csvread/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Examples/csvread/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Examples/csvread/example_txtread.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Examples/Aplot/Plots/air_res_plot.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AdrianPack/Aplot.py" beforeDir="false" afterPath="$PROJECT_DIR$/AdrianPack/Aplot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AdrianPack/csvread.py" beforeDir="false" afterPath="$PROJECT_DIR$/AdrianPack/fileread.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,6 +51,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="Python" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -139,7 +149,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="csvread" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="fileread" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="AdrianPack_src" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -152,7 +162,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/AdrianPack/csvread.py" />
+      <option name="SCRIPT_NAME" value="D:\School\Libraries\AdrianPack_src\AdrianPack\fileread.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -166,7 +176,7 @@
         <item itemvalue="Python.Aplot" />
         <item itemvalue="Python.Helper" />
         <item itemvalue="Python.ODE" />
-        <item itemvalue="Python.csvread" />
+        <item itemvalue="Python.fileread" />
         <item itemvalue="Python.Extra_test" />
       </list>
     </recent_temporary>
@@ -209,7 +219,8 @@
       <workItem from="1652120778549" duration="3100000" />
       <workItem from="1652199083366" duration="3019000" />
       <workItem from="1652207425676" duration="7366000" />
-      <workItem from="1652801898456" duration="18244000" />
+      <workItem from="1652801898456" duration="18284000" />
+      <workItem from="1652888208526" duration="4329000" />
     </task>
     <task id="LOCAL-00001" summary="Updated csvread function">
       <created>1642627626760</created>
