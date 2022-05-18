@@ -24,8 +24,18 @@ This is a small complilation of functions that have been made to make life easie
     5.2 [How to use?](#52-how-to-use?)
    
     5.3 [Examples](#53-examples)
-6. 
+6. [ODE.py](#odepy)
+7. [Extra.py](#extrapy)
 
+    7.1 [Description](#71-description)
+   
+    7.2 [Description](#72-functions--how-to-use-them)
+8. [Future changes/to-do list](#future-changesto-do-list)
+9. [Known bugs/issues](#known-bugsissues)
+
+    9.1 [Aplot.py](#91-aplotpy)
+    
+    9.2 [fileread.py](#92-filereadpy)
 # How to install?
 
 # Dependecies
@@ -294,8 +304,9 @@ fileread.py Currently works with three file types, .txt, .csv and .xlsx sometime
 # ODE.py
 
 # Extra.py
+## 7.1 Description
 The Extra.py file consists out of a varied range of functions. Each function is listed with a short explanation and example.
-## 7.1 Functions & How to use them
+## 7.2 Functions & How to use them
 * calc_err_DMM
 
 calculate the AC/DC error of a TTI DMM 1604. 
