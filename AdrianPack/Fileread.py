@@ -4,7 +4,7 @@ import numpy as np
 import math
 from typing import Sized, Iterable, Union, Optional, Any, Type, Tuple, List
 
-class fileread:
+class Fileread:
     """
         Parse file data to a python usable output.
 
@@ -523,3 +523,5 @@ class fileread:
         """
         return np.array[lambda v: v == v, arr]
 
+
+Csvread = Fileread
