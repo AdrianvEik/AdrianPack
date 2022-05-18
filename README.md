@@ -159,7 +159,7 @@ def theory(t: float) -> float:
 
 Or more generally written as
 
-![equation](https://latex.codecogs.com/png.image?\dpi{110}\bg{white}v(t)&space;=&space;A&space;\cdot&space;\tanh{(B&space;\cdot&space;t)&space;&plus;&space;C})
+![equation](https://latex.codecogs.com/png.image?\dpi{110}\bg{white}v(t)&space;=&space;A&space;\cdot&space;\tanh{(B&space;\cdot&space;t&space;&plus;&space;C)})
 
 This is consequently also the function we will fit our approximations to! In python the function is formatted as follows, the first input is **always** the variable followed by our constants.
 
