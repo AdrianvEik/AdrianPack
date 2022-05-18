@@ -42,6 +42,15 @@ class Base:
             Array with values that correspond to the output values f(x) or
              response values.
         """
+
+        add_mode = False
+        if "add_mode" in kwargs:
+            add_mode = kwargs["add_mode"]
+            test_inp(add_mode, bool, "add_mode")
+
+        if not add_mode:
+            self.fig, self.ax = plt.subplots()
+
         self.response_var = "y"
         if "response_var" in kwargs:
             self.response_var = kwargs["response_var"]
@@ -463,7 +472,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             ObjectType -> str
             Label of the data in the legend. Can include latex.
 
-        :param: data_color
+        :param: colour
             ObjectType -> str
             Color of the data in one of the matplotlib accepted colors.
             See matplotlib documentation for accepted colors.
@@ -484,6 +493,22 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
         :param: control_var
 
+        :param: add_mode
+            Default False when true doesnt initiate plt.subplots to make it
+            possible to add these graphs to another Aplot.Default plot.
+
+        :param: connecting_line
+            Default False, when True adds a connecting line in between
+            data points
+
+        :param: line_mode
+            Default False, when True ONLY draws a connecting line between
+            data points.
+
+        :param: connecting_line_label
+            Default "Connection" object type str, is used as a label for the
+            connecting line only applicable when the connecting_line or line_mode
+            parameters are set to True.
 
     Usage:
 
@@ -508,10 +533,22 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         else:
             pass
 
-        self.connection = False
-        if 'connection' in kwargs:
-            test_inp(kwargs["connection"], bool, "connection")
-            self.connection = kwargs['connection']
+        self.connecting_line = False
+        if 'connecting_line' in kwargs:
+            test_inp(kwargs["connecting_line"], bool, "connecting_line")
+            self.connecting_line = kwargs['connecting_line']
+
+        self.connecting_line_label = "Connection"
+        if 'connecting_line_label' in kwargs:
+            test_inp(kwargs["connecting_line_label"], str, "connecting_line_label")
+            self.connecting_line_label = kwargs['connecting_line_label']
+
+        self.line_mode = False
+        self.scatter = True
+        if 'line_mode' in kwargs:
+            test_inp(kwargs["line_mode"], bool, "line_mode")
+            self.connecting_line = kwargs['line_mode']
+            self.scatter = not kwargs['line_mode']
 
         self.func_format = ''
         if 'func_format' in kwargs:
@@ -618,6 +655,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
                 except IndexError:
                     pass
 
+
         if "show_error" in kwargs:
             test_inp(kwargs["show_error"], bool, "show_error")
             self.default_plot(kwargs["show_error"])
@@ -625,6 +663,83 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             self.default_plot()
 
         return self.fig, self.ax
+
+    def __add__(self, other):
+        test_inp(other, Default, "Aplot.Default")
+
+        other.fit()
+
+        if "colour" in other.kwargs:
+            test_inp(other.kwargs["colour"], str, "colour")
+            color = other.kwargs["colour"]
+        else:
+            color = "C1"
+
+        if other.scatter:
+            if len(other.y_err) == 0 and len(other.x_err) == 0:
+                self.ax.scatter(other.x, other.y, label=other.label)
+            elif len(other.y_err) == 0 or len(other.x_err) == 0:
+                if len(other.y_err) == 0:
+                    self.ax.errorbar(other.x, other.y, xerr=other.x_err,
+                                     label=other.label, fmt=color + 'o',
+                                     linestyle='',
+                                     capsize=4)
+                else:
+                    self.ax.errorbar(other.x, other.y, yerr=other.y_err,
+                                     label=other.label, fmt=color + 'o',
+                                     linestyle='',
+                                     capsize=4)
+            else:
+                self.ax.errorbar(other.x, other.y, xerr=other.x_err, yerr=other.y_err,
+                                 label=other.label, fmt=color + 'o',
+                                 linestyle='',
+                                 capsize=4)
+
+        if other.connecting_line:
+            self.ax.plot(other.x, other.y, label=other.connecting_line_label,
+                         color=color)
+
+        fit_x = np.linspace(min(self.x), max(self.x), self.n_points)
+
+        fit_pr = 3
+        if "fit_precision" in other.kwargs:
+            test_inp(other.kwargs["fit_precision"], int, "fit precision")
+            fit_pr = other.kwargs["fit_precision"]
+
+        if other.degree is not None or other.func is not None:
+            str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c
+                              in
+                              other.fit_coeffs]
+
+        if other.func is not None:
+            self.ax.plot(fit_x, other.func(fit_x, *other.fit_coeffs),
+                         linestyle="--", c=color,
+                         label=(
+                             lambda _: other.func_format.format(*str_fit_coeffs)
+                             if other.func_format != "" else "Fit")(None))
+        elif other.degree is not None:
+            if other.func_format != '':
+                self.ax.plot(fit_x,
+                             sum([fit_x ** (c) * other.fit_coeffs[
+                                 abs(c - other.degree)]
+                                  for c in
+                                  range(other.degree + 1).__reversed__()]),
+                             linestyle="--", c=color,
+                             label=(other.func_format.format(*str_fit_coeffs)))
+            else:
+                self.ax.plot(fit_x,
+                             sum([fit_x ** (c) * other.fit_coeffs[
+                                 abs(c - other.degree)]
+                                  for c in
+                                  range(other.degree + 1).__reversed__()]),
+                             linestyle="--", c=color,
+                             label=(
+                                         "Fit with function %s = " % other.response_var +
+                                         other.degree_dict[other.degree].format(
+                                             *str_fit_coeffs)))
+
+
+        return self
 
     def default_plot(self, show_error: bool = None,
                      return_error: bool = None) -> \
@@ -662,39 +777,41 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
         :return: Optional[dict[str, Union[Union[ndarray, Iterable, int, float], Any]]]
         """
-
-        self.fig, self.ax = plt.subplots()
         self.fit()
 
         # DATA PLOTTING
         # TODO: add these extra kwargs to the docs
 
-        if "data_color" in self.kwargs:
-            test_inp(self.kwargs["data_color"], str, "data color")
-            color = self.kwargs["data_color"]
+        if "colour" in self.kwargs:
+            test_inp(self.kwargs["colour"], str, "colour")
+            color = self.kwargs["colour"]
         else:
             color = "C0"
 
-        if len(self.y_err) == 0 and len(self.x_err) == 0:
-            self.ax.scatter(self.x, self.y, label=self.label, color=color)
-        elif len(self.y_err) == 0 or len(self.x_err) == 0:
-            if len(self.y_err) == 0:
-                self.ax.errorbar(self.x, self.y, xerr=self.x_err,
-                                 label=self.label, fmt=color + 'o',
-                                 linestyle='',
-                                 capsize=4)
+        if self.scatter:
+            if len(self.y_err) == 0 and len(self.x_err) == 0:
+                self.ax.scatter(self.x, self.y, label=self.label, color=color)
+            elif len(self.y_err) == 0 or len(self.x_err) == 0:
+                if len(self.y_err) == 0:
+                    self.ax.errorbar(self.x, self.y, xerr=self.x_err,
+                                     label=self.label, fmt=color + 'o',
+                                     linestyle='',
+                                     capsize=4)
+                else:
+                    self.ax.errorbar(self.x, self.y, yerr=self.y_err,
+                                     label=self.label, fmt=color + 'o',
+                                     linestyle='',
+                                     capsize=4)
             else:
-                self.ax.errorbar(self.x, self.y, yerr=self.y_err,
-                                 label=self.label, fmt=color + 'o',
-                                 linestyle='',
+                self.ax.errorbar(self.x, self.y, xerr=self.x_err, yerr=self.y_err,
+                                 label=self.label, fmt=color + 'o', linestyle='',
                                  capsize=4)
-        else:
-            self.ax.errorbar(self.x, self.y, xerr=self.x_err, yerr=self.y_err,
-                             label=self.label, fmt=color + 'o', linestyle='',
-                             capsize=4)
+
+        if self.connecting_line:
+            self.ax.plot(self.x, self.y, label=self.connecting_line_label,
+                         color=color)
 
         # FIT PLOTTING
-
         if show_error:
             print(self.fit_errors)
 
@@ -712,7 +829,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
         if self.func is not None:
             self.ax.plot(fit_x, self.func(fit_x, *self.fit_coeffs),
-                         linestyle="--",
+                         linestyle="--", c=color,
                          label=(
                              lambda _: self.func_format.format(*str_fit_coeffs)
                              if self.func_format != "" else "Fit")(None))
@@ -723,7 +840,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
                                  abs(c - self.degree)]
                                   for c in
                                   range(self.degree + 1).__reversed__()]),
-                             linestyle="--",
+                             linestyle="--", c=color,
                              label=(self.func_format.format(*str_fit_coeffs)))
             else:
                 self.ax.plot(fit_x,
@@ -731,13 +848,11 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
                                  abs(c - self.degree)]
                                   for c in
                                   range(self.degree + 1).__reversed__()]),
-                             linestyle="--",
+                             linestyle="--", c=color,
                              label=(
                                          "Fit with function %s = " % self.response_var +
                                          self.degree_dict[self.degree].format(
                                              *str_fit_coeffs)))
-        else:
-            pass
 
         y_label = ''
         if "y_label" in self.kwargs:
@@ -836,24 +951,6 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             # TODO: Fix this function
             print("FIT PARAMETERS: ")
             print("N/A")
-        return None
-
-    def multi_plot(self):
-        """
-
-        :return:
-        """
-        self.fig, self.ax = plt.subplots()  # more plots in subplots
-        return None
-
-    def file_ceck(self):
-        return None
-
-    def save_figure(self):
-        """
-
-        :return:
-        """
         return None
 
 
@@ -968,8 +1065,18 @@ if __name__ == "__main__":
     points = 40
     x = np.linspace(-5, 5, points)
     noise = np.random.randint(-2, 2, points)
-    Aplot.Default(x=x, y=np.array([i * -4.32 + 9.123 for i in x] + noise),
-          y_err=10, x_err=0.1, y_lim=[-50, 50], x_label="bruh x", y_label="bruh y")()
+    plot = Default(x=x, y=np.array([i * -4.32 + 9.123 for i in x] + noise),
+          y_err=10, x_err=0.1, y_lim=[-50, 50], x_label="bruh x", y_label="bruh y", degree=1,
+                   connecting_line=True)
+    
+    add = Default(x=x, y=np.array([i * 4.4 + 0.12 for i in x] + noise),
+          y_err=10, x_err=0.1, add_mode=True, line_mode=True, degree=1)
+    add_2 = Default(x=x, y=np.array([i * 4.4 + 4 for i in x] + noise),
+          y_err=10, x_err=0.1, add_mode=True, line_mode=True, degree=1, colour="C2")
     # hist = Aplot([3, 2, 3, 1, 3, 4, 2, 4, 5, 6, 5], mode="hist", x_lim=[0, 7],
     #              x_label="X-as", grid=False)()
+    plot += add
+    plot += add_2
+    plot()
+
     print("t: ", time.time() - t_start)
