@@ -2,6 +2,8 @@
 from AdrianPack.Fileread import Fileread, csvread
 from AdrianPack.Aplot import Default
 
+from TN_code.plotten.TISTNplot import TNFormatter
+
 Data_txt = Fileread(path=r"Data\TextData.txt", output="numpy", cols=[1, 4])()
 
 Data_csv = Fileread(path=r"Data\CsvData.csv", output="numpy", cols=[6, 7], start_row=1)()

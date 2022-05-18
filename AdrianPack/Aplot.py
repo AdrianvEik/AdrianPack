@@ -9,11 +9,12 @@ from scipy.optimize import curve_fit
 from typing import Sized, Iterable, Union, Optional, Any, Type, Tuple, List
 
 try:
-    from TISTNplot import TNFormatter
+    from TN_code.plotten.TISTNplot import TNFormatter
 except ImportError:
-    # TODO: add a replacement for TNFormatter that replaces "." with ","
-    #  notation but doesnt change decimal places
-    TNFormatter = False
+    try:
+        from .TN_code.plotten.TISTNplot import TNFormatter
+    except ImportError:
+        TNFormatter = False
 
 try:
     from Helper import test_inp
@@ -138,8 +139,8 @@ class Base:
                         self.x = x[:, 0]
                         self.y = x[:, 1]
                         print('\x1b[33m' +
-                              'WARNING: Input array x has 2 dimensions and %s'
-                              ' columns, the first and second column has been used as x and'
+                              'WARNING: Input array x has 2 dimensions (%s columns),'
+                              ' the first and second column have been used as x and'
                               ' y respectfully.' % str(x.shape[1])
                               + '\x1b[0m')
                     elif x.shape[1] == 3:
@@ -147,7 +148,7 @@ class Base:
                         self.y = x[:, 1]
                         self.y_err = x[:, 2]
                         print('\x1b[33m' +
-                              'WARNING: Input array x has 2 dimensions and %s columns,'
+                              'WARNING: Input array x has 2 dimensions (%s columns),'
                               ' the matrix has been formatted as follows'
                               ' "x y yerr"' % str(x.shape[1])
                               + '\x1b[0m')
@@ -157,7 +158,7 @@ class Base:
                         self.x_err = x[:, 2]
                         self.y_err = x[:, 3]
                         print('\x1b[33m' +
-                              'WARNING: Input array x has 2 dimensions and %s columns,'
+                              'WARNING: Input array x has 2 dimensions (%s columns),'
                               ' the matrix has been formatted as follows'
                               ' "x y xerr yerr"' % str(x.shape[1])
                               + '\x1b[0m')
@@ -502,7 +503,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             Default False, when True adds a connecting line in between
             data points
 
-        :param: line_mode
+        :param: line_only
             Default False, when True ONLY draws a connecting line between
             data points.
 
@@ -511,6 +512,9 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             connecting line only applicable when the connecting_line or line_mode
             parameters are set to True.
 
+        :param: decimal_comma
+            Default True, if set to false
+
     Usage:
 
     Examples:
@@ -518,8 +522,8 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
     def __init__(self, x: Union[tuple, list, np.ndarray] = None,
                  y: Union[tuple, list, np.ndarray] = None, save_as: str = '',
-                 file: str = '', degree: Union[list, tuple, int] = None, *args,
-                 **kwargs):
+                 file: str = '', degree: Union[list, tuple, int] = None,
+                 *args, **kwargs):
         super().__init__(x, y, file, *args, **kwargs)
         self.save_as = save_as
         test_inp(self.save_as, str, "save as")
@@ -534,6 +538,15 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         else:
             pass
 
+        self.decimal_comma = True
+        if 'decimal_comma' in kwargs:
+            test_inp(kwargs["decimal_comma"], bool, "decimal_comma")
+            self.decimal_comma = kwargs['decimal_comma']
+            # If the decimal comma is set to False the TNformatter should
+            # if available be deactivated.
+            if not self.decimal_comma:
+                TNFormatter = self.decimal_comma
+
         self.connecting_line = False
         if 'connecting_line' in kwargs:
             test_inp(kwargs["connecting_line"], bool, "connecting_line")
@@ -544,12 +557,12 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             test_inp(kwargs["connecting_line_label"], str, "connecting_line_label")
             self.connecting_line_label = kwargs['connecting_line_label']
 
-        self.line_mode = False
+        self.line_only = False
         self.scatter = True
-        if 'line_mode' in kwargs:
-            test_inp(kwargs["line_mode"], bool, "line_mode")
-            self.connecting_line = kwargs['line_mode']
-            self.scatter = not kwargs['line_mode']
+        if 'line_only' in kwargs:
+            test_inp(kwargs["line_only"], bool, "line_only")
+            self.connecting_line = kwargs['line_only']
+            self.scatter = not kwargs['line_only']
 
         self.func_format = ''
         if 'func_format' in kwargs:
@@ -708,9 +721,13 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             fit_pr = other.kwargs["fit_precision"]
 
         if other.degree is not None or other.func is not None:
-            str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c
-                              in
-                              other.fit_coeffs]
+            if self.decimal_comma is True:
+                str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c
+                                  in
+                                  other.fit_coeffs]
+            else:
+                str_fit_coeffs = [str(np.around(c, fit_pr)) for c in
+                                  other.fit_coeffs]
 
         if other.func is not None:
             self.ax.plot(fit_x, other.func(fit_x, *other.fit_coeffs),

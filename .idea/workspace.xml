@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e9db8f2b-0092-46ad-9797-cd929e612058" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AdrianPack/Aplot.py" beforeDir="false" afterPath="$PROJECT_DIR$/AdrianPack/Aplot.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Examples/csvread/example_txtread.py" beforeDir="false" afterPath="$PROJECT_DIR$/Examples/csvread/example_txtread.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -211,7 +212,7 @@
       <workItem from="1652199083366" duration="3019000" />
       <workItem from="1652207425676" duration="7366000" />
       <workItem from="1652801898456" duration="18284000" />
-      <workItem from="1652888208526" duration="8467000" />
+      <workItem from="1652888208526" duration="9866000" />
     </task>
     <task id="LOCAL-00001" summary="Updated csvread function">
       <created>1642627626760</created>
