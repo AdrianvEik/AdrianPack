@@ -3,33 +3,36 @@
 This is a small complilation of functions that have been made to make life easier. These functions can be applied in a variety of ways, mainly they are used to visualise data, parse data from files to python objects or simply manipulate data. The project is constantly updated and functions are continuesly being added. 
 
 # Contents
-1. [How to install?](#how-to-install?)
+1. [How to install?](#how-to-install)
 2. [Dependecies](#dependecies)
-3. [A Short overview](#a-Short-overview)
+3. [A short overview](#a-short-overview)
 4. [Aplot.py](#aplotpy)
 
     4.1 [Description](#41-description)
    
-    4.2 [How to use?](#42-how-to-use?)
+    4.2 [How to use?](#42-how-to-use)
    
     4.3 [Examples](#43-examples)
 
       * [Creating a simple plot](#431-creating-a-simple-plot)
       * [Simple plot with fit and errors](#432-simple-plot-with-fit-and-errors)
-      * [Using ODE.py to approximate the speed of falling objects with air resistance](#433-using-ODEpy-to-approximate-the-speed-of-falling-objects-with-air-resistance) 
+      * [Using ODE.py to approximate the speed of falling objects with air resistance](#433-using-odepy-to-approximate-the-speed-of-falling-objects-with-air-resistance) 
 5. [fileread.py](#filereadpy)
 
     5.1 [Description](#51-description)
    
-    5.2 [How to use?](#52-how-to-use?)
+    5.2 [How to use?](#52-how-to-use)
    
     5.3 [Examples](#53-examples)
+    
+      * [Reading .xlsx, .csv and .txt files](#531-reading-xlsx-csv-and-txt-files)
+      * [Combining files](#532-combining-files)
 6. [ODE.py](#odepy)
 7. [Extra.py](#extrapy)
 
     7.1 [Description](#71-description)
    
-    7.2 [Description](#72-functions--how-to-use-them)
+    7.2 [Functions & How to use them](#72-functions--how-to-use-them)
 8. [Future changes/to-do list](#future-changesto-do-list)
 9. [Known bugs/issues](#known-bugsissues)
 
@@ -296,10 +299,62 @@ runga_kutta4_plot()
 # fileread.py
 ## 5.1 Description
 fileread.py Currently works with three file types, .txt, .csv and .xlsx sometimes using .xlsx files can cause issues when converting cells to floats this issue is most commonly resolved by converting to a .csv or .txt file. It is possible to read out multiple files too the columns/rows are then specified with a dictionary in the format {file_nr (int): columns (list, int), ...} all files need to be assigned columns to read it is not yet possible to read out all files without specifying a coll or row dictionary. Columns/rows can also be assigned custom labels to do so instead of specifying the position of the column/row use a tuple in the format (int, str) wherein the int and str are position and label respectively. This label will only be useable when the returned object type is a dictionary. The function has three return options "numpy", "dataframe" and "dictionary" the default option is the "dictionary" option.  
+
 ## 5.2 How to use?
+Reading a basic .txt file can be done by creating a Fileread object with parameter path="filename.txt". This will, when the object is called, return a dictionary with the data and headers. The headers are the same as the file headers, if the data in the file does not have a header an additional parameter can be passed on "head=False" the file will now be read starting at row 0. To read .xlsx and .csv files the function can be used in the same way. Specifying the datatype of numpy arrays that the returned dictionary/numpy.ndarray will have can be done with the "dtype" parameter, this parameter takes the same input as the np.ndarray dtype parameter.
+
+Specifying columns/rows work simmilar to each other with cols being the preffered option. To specify a colomn pass an extra argument on "cols=int/tuple/list" the tuple needs to be formatted as (int, str) or (pos, name) and the list can contain ints and tuples. Standard the delimiter is a semicolon ";" this can be changed using the delimiter paramtere, this parameter is only applicable when reading .txt or .csv files. To change the starting row use the "start_row" parameter this parameter takes an integer as input.
+
+It is possible to read multiple files and return them all in a single dictionary to do so the path parameter will be a list of paths to the files. The cols/rows parameter need to be a dictionary formatted like {file_nr (int): columns (list, int), ...}, either cols or rows needs to be an included parameter not using either will result in an error.  The only return type is curently (v 0.0.2) a dictionary.
+
+To return the data object in a different object than a dictionary the parameter "output" needs to be adjusted this parameter can be
+
+['matrix', 'array', 'arr', 'numpy', 'np']
+
+for a numpy.ndarray and
+
+['df', 'dataframe']
+
+for a pandas.dataframe or
+
+['dict', 'dictionary']
+
+for a python dictionary.
 
 ## 5.3 Examples
+### 5.3.1 Reading .xlsx, .csv and .txt files
+To read a .txt file with the name "TextData.txt" placed in a "Data" folder the following line of code can be used
+```python
+Data_txt = Fileread(path=r"Data\TextData.txt", output="numpy", cols=[1, 4])()
+```
+The same concept can be used for .xlsx and .csv files
+```python
+# Define and read "ExcelData.xlsx"
+Data_xlsx = Fileread(path=r"Data\ExcelData.xlsx", output="numpy", cols=["P", "U"])()
 
+# Define and read "CsvData.csv"
+Data_csv = Fileread(path=r"Data\CsvData.csv", output="numpy", cols=[6, 7], start_row=1)()
+```
+To plot any of these data objects we can simply use AdrianPack.Aplot.Default, note that all arrays we generated are of shape (2, N) the Default class will accept this input but also throw a warning. The following code will plot our text data
+```python
+Default(Data_txt)()
+```
+This code should return the following
+```
+WARNING: Input array x has 2 dimensions (2 columns), the first and second column have been used as x and y respectfully.
+```
+
+and render a plot
+
+![alt text](https://github.com/AdrianvEik/AdrianPack/blob/main/Examples/csvread/Plot/txt_read.png)
+
+### 5.3.2 Combining files
+To combine files the cols argument will become a dictionary with requested columns and the path parameter will become a list
+```python
+Data_combination = Fileread(path=[r"Data\TextData.txt", r"Data\CsvData.csv", r"Data\ExcelData.xlsx"],
+                        cols={0: [(1, "x"), (4, "y")], 1: [0, 1], 2:[0, 2]})()
+```
+Plotting x and y keys from the Data_combination dictionary will result in the same plot as shown in [5.3.1](#531-reading-xlsx-csv-and-txt-files).
 
 # ODE.py
 
@@ -324,7 +379,7 @@ error = cacl_err_DMM(unit="milli volt DC", val=y)
 # Known bugs/issues
 ## 9.1 Aplot.py
 * Custom fit labels with latex code in curly brackets crashes the code, this is because of an issue with the formatter used to format the constants
-## 9.2 csvread.py
+## 9.2 Fileread.py
 * When reading xlsx files columns/rows that are specified with a tuple in the format "(int, str)" crashes the code.
 
 
