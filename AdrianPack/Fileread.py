@@ -524,4 +524,10 @@ class Fileread:
         return np.array[lambda v: v == v, arr]
 
 
-Csvread = Fileread
+class csvread(Fileread):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        print('\x1b[33m' +
+              'UPDATE: csvread is now called Fileread! From update 0.0.4 and on'
+              'it will only be possible to call this function with "Fileread".'
+              + '\x1b[0m')

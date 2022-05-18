@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9db8f2b-0092-46ad-9797-cd929e612058" name="Default Changelist" comment="" />
+    <list default="true" id="e9db8f2b-0092-46ad-9797-cd929e612058" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AdrianPack/Fileread.py" beforeDir="false" afterPath="$PROJECT_DIR$/AdrianPack/Fileread.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Examples/csvread/example_txtread.py" beforeDir="false" afterPath="$PROJECT_DIR$/Examples/csvread/example_txtread.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -208,7 +212,7 @@
       <workItem from="1652199083366" duration="3019000" />
       <workItem from="1652207425676" duration="7366000" />
       <workItem from="1652801898456" duration="18284000" />
-      <workItem from="1652888208526" duration="4845000" />
+      <workItem from="1652888208526" duration="5996000" />
     </task>
     <task id="LOCAL-00001" summary="Updated csvread function">
       <created>1642627626760</created>
@@ -343,7 +347,14 @@
       <option name="project" value="LOCAL" />
       <updated>1652899950331</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Added the ability to add multiple graphs together.">
+      <created>1652900669841</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1652900669841</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
