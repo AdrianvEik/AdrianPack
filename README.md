@@ -26,7 +26,8 @@ This is a small complilation of functions that have been made to make life easie
     5.3 [Examples](#53-examples)
     
       * [Reading .xlsx, .csv and .txt files](#531-reading-xlsx-csv-and-txt-files)
-      * [Combining files](#532-combining-files)
+      * [Reading, compressing and plotting](#532-reading-compressing-and-plotting)
+      * [Combining files](#533-combining-files)
 6. [ODE.py](#odepy)
 7. [Extra.py](#extrapy)
 
@@ -335,26 +336,47 @@ Data_xlsx = Fileread(path=r"Data\ExcelData.xlsx", output="numpy", cols=["P", "U"
 # Define and read "CsvData.csv"
 Data_csv = Fileread(path=r"Data\CsvData.csv", output="numpy", cols=[6, 7], start_row=1)()
 ```
-To plot any of these data objects we can simply use AdrianPack.Aplot.Default, note that all arrays we generated are of shape (2, N) the Default class will accept this input but also throw a warning. The following code will plot our text data
-```python
-Default(Data_txt)()
-```
-This code should return the following
-```
-WARNING: Input array x has 2 dimensions (2 columns), the first and second column have been used as x and y respectfully.
-```
 
-and render a plot
+### 5.3.2 Reading, compressing and plotting
+The TextData.txt file contains noisy data, to quickly plot the data we can use the following code
+```python
+# Read the TextData.txt file and return columns 1 and 4 as a numpy array.
+Data_txt = Fileread(path=r"Data\TextData.txt", output="numpy", cols=[1, 4])()
+# Create a plot object to add to the compressed data plot.
+plot_original = Default(Data_txt, add_mode = True, data_label = "Original")
+```
+This will render the following graph
 
 ![alt text](https://github.com/AdrianvEik/AdrianPack/blob/main/Examples/csvread/Plot/txt_read.png)
 
-### 5.3.2 Combining files
+The data is quite noisy as is visible at *t* = 10 and *t* = 70. To mittigate these effects and reduce the noise in the data we can smooth the line out using a floating average to compress the array. The function AdrianPack.Extra.compress_array can help with this. Compress the array using the following code.
+
+```python
+data_compress = compress_array([Data_txt[:, 0], Data_txt[:, 1]], width_ind=100)
+```
+To plot the compressed data and the original data in a single figure make another Default object and add plot_original to this plot
+
+```
+plot_compressed = Default(data_compress[0], data_compress[1], connecting_line = True, data_label = "Compressed",
+                          x_label = "Time $t$ [s]", y_label = "Acceleration $a$ [$\mathrm{ms^{-1}}$]")
+                 
+# Add the plots to each other
+plot_compressed += plot_original
+# Render the figure.
+plot_compressed()
+```
+The following graph should show up
+
+![alt text](https://github.com/AdrianvEik/AdrianPack/blob/main/Examples/csvread/Plot/compress_plot.png)
+
+
+### 5.3.3 Combining files
 To combine files the cols argument will become a dictionary with requested columns and the path parameter will become a list
 ```python
 Data_combination = Fileread(path=[r"Data\TextData.txt", r"Data\CsvData.csv", r"Data\ExcelData.xlsx"],
                         cols={0: [(1, "x"), (4, "y")], 1: [0, 1], 2:[0, 2]})()
 ```
-Plotting x and y keys from the Data_combination dictionary will result in the same plot as shown in [5.3.1](#531-reading-xlsx-csv-and-txt-files).
+Plotting x and y keys from the Data_combination dictionary will result in the same plot as shown in [5.3.2](#532-reading-compressing-and-plotting).
 
 # ODE.py
 ## 6.1 Description
