@@ -225,8 +225,10 @@ if __name__ == "__main__":
 
 
     def f(x, t):
-        return -x ** 3 + t
+        return (-x ** 3 + t**2) * np.exp(-x + t)
 
+    def fit(x, a, b, c, d, e, f, g):
+        return a * x**6 + b * x**5 + c* x**4 + d*x**3 + e*x**2 + f*x + g
 
-    data = runga_kutta_4(f, 0, 1, dt=0.1, x0=0)
-    Default(data[0], data[1], degree=2)()
+    data = runga_kutta_4(f, -10, 10, dt=1e-4, x0=1)
+    Default(data[0], data[1], fx=fit, func_format="{0} + {1} + {2} + {3} + {4} + {5} + {6}")()

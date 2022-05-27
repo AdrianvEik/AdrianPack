@@ -691,7 +691,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
         if other.scatter:
             if len(other.y_err) == 0 and len(other.x_err) == 0:
-                self.ax.scatter(other.x, other.y, label=other.label)
+                self.ax.scatter(other.x, other.y, label=other.label, color=color)
             elif len(other.y_err) == 0 or len(other.x_err) == 0:
                 if len(other.y_err) == 0:
                     self.ax.errorbar(other.x, other.y, xerr=other.x_err,
