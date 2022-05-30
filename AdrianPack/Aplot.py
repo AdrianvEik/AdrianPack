@@ -900,7 +900,8 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
         return None
 
-    def fit(self, show_fit: bool = False, *args) -> None:
+    def fit(self, show_fit: bool = False, *args) -> Optional[
+        dict[str, Union[np.ndarray, Iterable, int, float]]]:
         """
         Calculate the fit parameters of an Aplot object.
 
@@ -912,7 +913,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             :param: show_fit
             ObjectType -> bool
             Default false, when set to true this will make the function
-            print out the fitted parameters to given function or
+            return the fitted parameters to given function or
             degree of polynomial. This parameter is the first arg.
 
         ARGS:
@@ -966,9 +967,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             show_fit = args[0]
 
         if show_fit:
-            # TODO: Fix this function
-            print("FIT PARAMETERS: ")
-            print("N/A")
+            return {"coeffs": self.fit_coeffs, "error": self.fit_errors}
         return None
 
 
@@ -1088,7 +1087,7 @@ if __name__ == "__main__":
                    connecting_line=True)
     
     add = Default(x=x, y=np.array([i * 4.4 + 0.12 for i in x] + noise),
-          y_err=10, x_err=0.1, add_mode=True, line_mode=True, degree=1)
+          y_err=10, x_err=0.1, add_mode=True, line_mode=True)
     add_2 = Default(x=x, y=np.array([i * 4.4 + 4 for i in x] + noise),
           y_err=10, x_err=0.1, add_mode=True, line_mode=True, degree=1, colour="C2")
     # hist = Aplot([3, 2, 3, 1, 3, 4, 2, 4, 5, 6, 5], mode="hist", x_lim=[0, 7],

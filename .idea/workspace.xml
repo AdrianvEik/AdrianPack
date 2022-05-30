@@ -2,14 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e9db8f2b-0092-46ad-9797-cd929e612058" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Examples/Extra/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Examples/Extra/examples.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AdrianPack/Aplot.py" beforeDir="false" afterPath="$PROJECT_DIR$/AdrianPack/Aplot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AdrianPack/Extra.py" beforeDir="false" afterPath="$PROJECT_DIR$/AdrianPack/Extra.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AdrianPack/ODE.py" beforeDir="false" afterPath="$PROJECT_DIR$/AdrianPack/ODE.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Examples/csvread/example_txtread.py" beforeDir="false" afterPath="$PROJECT_DIR$/Examples/csvread/example_txtread.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/Extra_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/Extra_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AdrianPack/Helper.py" beforeDir="false" afterPath="$PROJECT_DIR$/AdrianPack/Helper.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +51,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.ODE">
+  <component name="RunManager" selected="Python.Aplot">
     <configuration name="Aplot" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="AdrianPack_src" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -170,9 +164,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.ODE" />
         <item itemvalue="Python.Aplot" />
         <item itemvalue="Python.Helper" />
+        <item itemvalue="Python.ODE" />
         <item itemvalue="Python.Fileread" />
         <item itemvalue="Python.Extra_test" />
       </list>
@@ -221,6 +215,8 @@
       <workItem from="1653341954947" duration="701000" />
       <workItem from="1653508184303" duration="4726000" />
       <workItem from="1653564518924" duration="1192000" />
+      <workItem from="1653695376758" duration="2329000" />
+      <workItem from="1653773128146" duration="607000" />
     </task>
     <task id="LOCAL-00001" summary="Updated csvread function">
       <created>1642627626760</created>
@@ -383,7 +379,14 @@
       <option name="project" value="LOCAL" />
       <updated>1652911757297</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Added the option to turn of the decimal comma and TN_code now only needs to be placed within the same folder as where the code is ran from.">
+      <created>1653695534584</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1653695534585</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -415,7 +418,7 @@
     <SUITE FILE_PATH="coverage/AdrianPack_src$scratch_15.coverage" NAME="scratch_15 Coverage Results" MODIFIED="1643237869471" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
     <SUITE FILE_PATH="coverage/AdrianPack_src$Extra_test.coverage" NAME="Extra_test Coverage Results" MODIFIED="1645624905125" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Tests" />
     <SUITE FILE_PATH="coverage/AdrianPack_src$csvread.coverage" NAME="csvread Coverage Results" MODIFIED="1645646591754" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
-    <SUITE FILE_PATH="coverage/setup_py$Helper.coverage" NAME="Helper Coverage Results" MODIFIED="1652802594338" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
+    <SUITE FILE_PATH="coverage/setup_py$Helper.coverage" NAME="Helper Coverage Results" MODIFIED="1653697669290" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
     <SUITE FILE_PATH="coverage/AdrianPack_src$Helper.coverage" NAME="Helper Coverage Results" MODIFIED="1642867648501" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
   </component>
 </project>

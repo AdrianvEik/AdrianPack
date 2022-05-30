@@ -1,4 +1,3 @@
-
 import numpy as np
 from typing import Iterable, Tuple, Union
 
@@ -117,8 +116,18 @@ def test_inp(test_obj, test_if, name_inp, value=False):
     return None
 
 
-if __name__ == "__main__":
-    from Tests.Helper_test import test_compress_ind, test_compress_width
+def format_string(s: str, rep_l: Union[list, tuple], trigger="*"):
+    """
 
-    test_compress_width()
-    test_compress_ind()
+    :param s:
+    :param rep_l:
+    :param trigger:
+    :return:
+    """
+    index = s.index(trigger)
+    print(index)
+    return
+
+
+if __name__ == "__main__":
+    format_string("A *1 B *2 *4", [2, 3, 2])
