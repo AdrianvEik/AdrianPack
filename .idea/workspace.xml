@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9db8f2b-0092-46ad-9797-cd929e612058" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AdrianPack/Helper.py" beforeDir="false" afterPath="$PROJECT_DIR$/AdrianPack/Helper.py" afterDir="false" />
-    </list>
+    <list default="true" id="e9db8f2b-0092-46ad-9797-cd929e612058" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -217,6 +214,7 @@
       <workItem from="1653564518924" duration="1192000" />
       <workItem from="1653695376758" duration="2329000" />
       <workItem from="1653773128146" duration="607000" />
+      <workItem from="1653923821433" duration="416000" />
     </task>
     <task id="LOCAL-00001" summary="Updated csvread function">
       <created>1642627626760</created>
@@ -386,7 +384,14 @@
       <option name="project" value="LOCAL" />
       <updated>1653695534585</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Add the option &quot;show_fit&quot; to .fit() method parameters, this will now return the fit coefficients and errors in a dictionary in the order specified by either fx or from n^ith polynomial where as n^i, n^i-1, n^i-2 ... n^0.">
+      <created>1653924104848</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1653924104848</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -408,10 +413,11 @@
     <MESSAGE value="Added the ability to add multiple graphs together." />
     <MESSAGE value="Changed csvread.py to Fileread.py, the class csvread is also called Fileread it is still possible to call csvread until update 0.0.4 (current update is 0.0.2)." />
     <MESSAGE value="Added the option to turn of the decimal comma and TN_code now only needs to be placed within the same folder as where the code is ran from." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added the option to turn of the decimal comma and TN_code now only needs to be placed within the same folder as where the code is ran from." />
+    <MESSAGE value="Add the option &quot;show_fit&quot; to .fit() method parameters, this will now return the fit coefficients and errors in a dictionary in the order specified by either fx or from n^ith polynomial where as n^i, n^i-1, n^i-2 ... n^0." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add the option &quot;show_fit&quot; to .fit() method parameters, this will now return the fit coefficients and errors in a dictionary in the order specified by either fx or from n^ith polynomial where as n^i, n^i-1, n^i-2 ... n^0." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/setup_py$Aplot.coverage" NAME="Aplot Coverage Results" MODIFIED="1653341981055" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
+    <SUITE FILE_PATH="coverage/setup_py$Aplot.coverage" NAME="Aplot Coverage Results" MODIFIED="1653923866755" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
     <SUITE FILE_PATH="coverage/AdrianPack_src$Aplot.coverage" NAME="Aplot Coverage Results" MODIFIED="1646608741737" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
     <SUITE FILE_PATH="coverage/setup_py$ODE.coverage" NAME="ODE Coverage Results" MODIFIED="1653341999256" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
     <SUITE FILE_PATH="coverage/AdrianPack_src$utils.coverage" NAME="utils Coverage Results" MODIFIED="1642862350474" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/venv/Lib/site-packages/numpy/testing/_private" />
