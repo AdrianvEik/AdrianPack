@@ -1,6 +1,6 @@
 # AdrianPack
 
-This is a small complilation of functions that have been made to make life easier. These functions can be applied in a variety of ways, mainly they are used to visualise data, parse data from files to python objects or simply manipulate data. The project is constantly updated and functions are continuesly being added. 
+This is a small compilation of functions that have been made to make life easier. These functions can be applied in a variety of ways, mainly they are used to visualise data, parse data from files to python objects or simply manipulate data. The project is constantly updated and functions are continuously being added. 
 
 # Contents
 1. [How to install?](#how-to-install)
@@ -49,15 +49,15 @@ This is a small complilation of functions that have been made to make life easie
 * Scipy
 
 # A Short overview
-The package, currently, consists out of 4 main files.
+The package, currently, consists of 4 main files.
 * Aplot.py
 * fileread.py
 * ODE.py
 * Extra.py
 
-These files work indepent from each other, although Aplot.py accepts fileread objects, and can be imported on their own. **All** files depend on Helper.py, this file should be included when using files on their own. The package as a whole is subject to constant change, the goal is to keep the readme as updated as possible. Update logs are always more accurate.
+These files work independent from each other, although Aplot.py accepts fileread objects, and can be imported on their own. **All** files depend on Helper.py, this file should be included when using files on their own. The package as a whole is subject to constant change, the goal is to keep the readme as updated as possible. Update logs are always more accurate.
 
-The Aplot and fileread files do as their name suggest, currently Aplot.py has 2 different useable classes "Default" and "Histogram". A "Default" plot is a simple figure that can consist out of multiple attributes which are all, excluding the datapoints, optional. At the base a Default plot consists out of two arrays, x and y. It is possible to add a variety of attributes which are further specified in the Aplot.py documentation. The used class object needs to be called to construct and show/save the plot. The fileread.py file consists out of a single class "fileread" this class needs to be called to be able to convert the data file into a numpy.ndarray, pandas.df or dict object. It is possible to call multiple files although this function is not fully optimised. Next to these functions the ability to choose specific columns/rows/cells is also an option and can be specified in the input.
+The Aplot and fileread files do as their name suggests. Currently, Aplot.py has 2 different useable classes "Default" and "Histogram". A "Default" plot is a simple figure that can consist out of multiple attributes which are all, excluding the data points, optional. At the base, a Default plot consists of two arrays, x and y. It is possible to add a variety of attributes which are further specified in the Aplot.py documentation. The used class object needs to be called to construct and show/save the plot. The fileread.py file consists of a single class "fileread" this class needs to be called to be able to convert the data file into a numpy.ndarray, pandas.df or dict object. It is possible to call multiple files although this function is not fully optimised. Next, to these functions the ability to choose specific columns/rows/cells is also an option and can be specified in the input.
 
 Extra.py is a collection of functions that are used for a varied range of applications. Functions included are:
 * calc_err_DMM, TTI DMM 1604 error calculator
@@ -69,21 +69,21 @@ Extra.py is a collection of functions that are used for a varied range of applic
 
 Most of the functions have test cases which are placed in Extra_test.py and for Compress_array in Helper_test.py
 
-ODE.py consists out of three approximation methods for numerically calculating ODE's
+ODE.py consists of three approximation methods for numerically calculating ODE's
 * Euler approximation
 * Runga-Kutta 2nd order
 * Runga-Kutta 4th order
 
-All functions accept arrays/lists/tuples to make it easier to preform a parameter test or approximate with different stepsizes.
+All functions accept arrays/lists/tuples to make it easier to perform a parameter test or approximate with different stepsizes.
 
 # Aplot.py
 ## 4.1 Description
-Aplot.py currently supports the plotting of a "Default" plot and a "Histogram". The default plot consists out x and y data arrays that are shown in a matplotlib.pyplot plot. It is possible to add a variety of options to these plots, like error bars custom labels fits and more. Currently the plots are limited to a single data set, if more than one data set is needed to be plotted the function can return fig and ax objects that contain the plot made by the Default class.
+Aplot.py currently supports the plotting of a "Default" plot and a "Histogram". The default plot consists of x and y data arrays that are shown in a matplotlib.pyplot plot. It is possible to add a variety of options to these plots, like error bars custom labels fits and more. Currently, the plots are limited to a single data set, if more than one data set is needed to be plotted the function can return fig and ax objects that contain the plot made by the Default class.
 
 ## 4.2 How to use?
-The easiest way to plot files it to simply create a Default object and passing 2 aruments through "x" and "y". This creates a simple plot with datapoints. Things can get more complicated by adding errorbars, labels and other plots. Errorbars are supported by adding arguments "x_err" and "y_err" when creating the object in the same way an "x_label" "y_label" and a "data_label" can be included. 
+The easiest way to plot files it to simply create a Default object and passing 2 arguments through "x" and "y". This creates a simple plot with data points. Things can get more complicated by adding error bars, labels and other plots. Errorbars are supported by adding arguments "x_err" and "y_err" when creating the object in the same way an "x_label" "y_label" and a "data_label" can be included. 
 
-Adding fits is done by specifying a function with the "fx" paramter, the fit needs to follow where the first input argument needs to be x followed by constants these variables can have all names. To add a correct fit label specify the label with the "func_format" parameter which accepts a string constants are called with curly brackest per example "y = {0}x + {1}" would contain 2 constants A and B or {0} and {1} the order of constants is the same a defined in the "fx" parameter. Another way of adding fits is by specifying the degree of the polynomial to be fitted using the "degree" parameter a custom fit label can be added but standard ones are pre-included.
+Adding fits is done by specifying a function with the "fx" parameter, the fit needs to follow where the first input argument needs to be x followed by constants these variables can have all names. To add a correct fit label specifies the label with the "func_format" parameter which accepts a string constants are called with curly brackets per example "y = {0}x + {1}" would contain 2 constants A and B or {0} and {1} the order of constants is the same a defined in the "fx" parameter. Another way of adding fits is by specifying the degree of the polynomial to be fitted using the "degree" parameter a custom fit label can be added but standard ones are pre-included.
 
 Plots can be added to each other to have multiple graphs in a single plot to do this add the "add_plot" parameter to the plot that needs to be **added** to a base plot and set this parameter to True. To show/save the plot run the base plot to which other plots have been added to. It is important to add them with the "+=" operator and not only use the "+" operator unless addition is specified as "plot_a = plot_a + plot_b".
 
@@ -119,7 +119,7 @@ a, b = 4, 1
 
 # Create a list with 200 x values between -10 and 10
 x = [val * 0.1 for val in list(range(-10, 10))]
-# Calculate values of the function y = sin(x) between 0 and 20
+# Calculate values of the function y = ax + b between 0 and 20
 y = [(a * val + b) + random.random() for val in x]
 
 # Defining x and y errors
@@ -135,7 +135,7 @@ plot = Default(x, y, x_err=x_err, y_err=y_err, degree=1
 plot()
 
 ```
-Running this code results into the following plot
+Running this code results in the following plot
 
 ![alt text](https://github.com/AdrianvEik/AdrianPack/blob/main/Examples/Aplot/Plots/simple_fit_img.png?raw=true)
 
@@ -144,7 +144,7 @@ The velocity of a falling object with air resistance can be described by the fol
 
 ![equation](https://latex.codecogs.com/png.image?\dpi{110}\bg{white}m&space;\dfrac{\mathrm{d}v}{\mathrm{d}t}&space;=&space;mg&space;-&space;k_2&space;v^2)
 
-We can, after a small rewrtiting, add this ODE to python. Notice that the function is not dependant on t yet it is still included, **all** functions in ODE.py require an input function that takes to variables an x, y pair or in our case a v, t pair.
+We can, after a small rewriting, add this ODE to python. Notice that the function is not dependent on t yet it is still included, **all** functions in ODE.py require an input function that takes to variables an x, y pair or in our case a v, t pair.
 ```python
 def fx(v: float, t: float) -> float:
     return g - k_2/m * v**2
@@ -172,7 +172,7 @@ def fit(x: float, a: float, b: float, c: float) -> float:
     return a * np.tanh(x * b + c)
 ```
 
-It is possible to numerically determine the constants A, B and C and compare these to the analytical solution using ODE.py and Aplot.py. For this problem it is important to define certain constants. The following values and restrictions will be used for solving the problem
+It is possible to numerically determine the constants A, B and C and compare these to the analytical solution using ODE.py and Aplot.py. For this problem, it is important to define certain constants. The following values and restrictions will be used for solving the problem
 * *m* = 2 kg
 * *k2* = 0,04 kg/m
 * *g* = 9.81 m/s^2
@@ -214,7 +214,7 @@ euler_plot = Default(x=euler_data[0], y=euler_data[1],
                      data_label="Euler's approximation")
 ```
 
-The theoretical line should only contain a line, to realise this use the "line_mode" attribute and set this to True. To make the line more smooth it is usefull to define a new time array with more points than the runga-kutta and euler arrays.
+The theoretical line should only contain a line, to realise this use the "line_mode" attribute and set this to True. To make the line more smooth it is useful to define a new time array with more points than the runga-kutta and euler arrays.
 
 ```python
 t = np.linspace(0, 5, 1000)
@@ -304,9 +304,9 @@ fileread.py Currently works with three file types, .txt, .csv and .xlsx sometime
 ## 5.2 How to use?
 Reading a basic .txt file can be done by creating a Fileread object with parameter path="filename.txt". This will, when the object is called, return a dictionary with the data and headers. The headers are the same as the file headers, if the data in the file does not have a header an additional parameter can be passed on "head=False" the file will now be read starting at row 0. To read .xlsx and .csv files the function can be used in the same way. Specifying the datatype of numpy arrays that the returned dictionary/numpy.ndarray will have can be done with the "dtype" parameter, this parameter takes the same input as the np.ndarray dtype parameter.
 
-Specifying columns/rows work simmilar to each other with cols being the preffered option. To specify a colomn pass an extra argument on "cols=int/tuple/list" the tuple needs to be formatted as (int, str) or (pos, name) and the list can contain ints and tuples. Standard the delimiter is a semicolon ";" this can be changed using the delimiter paramtere, this parameter is only applicable when reading .txt or .csv files. To change the starting row use the "start_row" parameter this parameter takes an integer as input.
+Specifying columns/rows work similarly to each other with cols being the preferred option. To specify a column pass an extra argument on "cols=int/tuple/list" the tuple needs to be formatted as (int, str) or (pos, name) and the list can contain ints and tuples. Standard the delimiter is a semicolon ";" this can be changed using the delimiter parameter, this parameter is only applicable when reading .txt or .csv files. To change the starting row use the "start_row" parameter this parameter takes an integer as input.
 
-It is possible to read multiple files and return them all in a single dictionary to do so the path parameter will be a list of paths to the files. The cols/rows parameter need to be a dictionary formatted like {file_nr (int): columns (list, int), ...}, either cols or rows needs to be an included parameter not using either will result in an error.  The only return type is curently (v 0.0.2) a dictionary.
+It is possible to read multiple files and return them all in a single dictionary to do so the path parameter will be a list of paths to the files. The cols/rows parameter needs to be a dictionary formatted like {file_nr (int): columns (list, int), ...}, either cols or rows need to be an included parameter not using either will result in an error.  The only return type is currently (v 0.0.2) a dictionary.
 
 To return the data object in a different object than a dictionary the parameter "output" needs to be adjusted this parameter can be
 
@@ -349,7 +349,7 @@ This will render the following graph
 
 ![alt text](https://github.com/AdrianvEik/AdrianPack/blob/main/Examples/csvread/Plot/txt_read.png)
 
-The data is quite noisy as is visible at *t* = 10 and *t* = 70. To mittigate these effects and reduce the noise in the data we can smooth the line out using a floating average to compress the array. The function AdrianPack.Extra.compress_array can help with this. Compress the array using the following code.
+The data is quite noisy as is visible at *t* = 10 and *t* = 70. To mitigate these effects and reduce the noise in the data we can smooth the line out using a floating average to compress the array. The function AdrianPack.Extra.compress_array can help with this. Compress the array using the following code.
 
 ```python
 data_compress = compress_array([Data_txt[:, 0], Data_txt[:, 1]], width_ind=100)
@@ -394,7 +394,7 @@ def fx(x, t):
     return x**3 + t
 ```
 
-A lower and upper bound ("lower", "upper") both as floats or ints and a step "dt" which is a float. Two arrays will be returned a t and x array, the t array is an range between lower and upper with length |(upper - lower)|/dt (this value is rounded). The x array contains the approximated values of the prime of the ODE. Plotting these values with AdrianPack.Aplot.Default can be done with the following code
+A lower and upper bound ("lower", "upper") both as floats or ints and a step "dt" which is a float. Two arrays will be returned as a t and x array, the t array is a range between lower and upper with length |(upper - lower)|/dt (this value is rounded). The x array contains the approximated values of the prime of the ODE. Plotting these values with AdrianPack.Aplot.Default can be done with the following code
 
 ```python
 runga_kuta = runga_kutta_4(**kwargs)
@@ -402,11 +402,11 @@ Default(runga_kutta[0], runga_kutta[1])
 ```
 
 ## 6.3 Example
-An example to the code is provided in [4.3.3](#433-using-odepy-to-approximate-the-speed-of-falling-objects-with-air-resistance) 
+An example of the code is provided in [4.3.3](#433-using-odepy-to-approximate-the-speed-of-falling-objects-with-air-resistance) 
 
 # Extra.py
 ## 7.1 Description
-The Extra.py file consists out of a varied range of functions. Each function is listed with a short explanation and example.
+The Extra.py file consists of a varied range of functions. Each function is listed with a short explanation and example.
 ## 7.2 Functions & How to use them
 * calc_err_DMM
 
@@ -427,5 +427,3 @@ error = cacl_err_DMM(unit="milli volt DC", val=y)
 * Custom fit labels with latex code in curly brackets crashes the code, this is because of an issue with the formatter used to format the constants
 ## 9.2 Fileread.py
 * When reading xlsx files columns/rows that are specified with a tuple in the format "(int, str)" crashes the code.
-
-

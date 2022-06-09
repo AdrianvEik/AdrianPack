@@ -288,7 +288,7 @@ def derive(x: Iterable, y: Iterable, **kwargs) -> Tuple[np.ndarray, np.ndarray]:
     )
 
 
-def Compress_array(x: np.ndarray, width: Union[float, int] = 0,
+def compress_array(x: np.ndarray, width: Union[float, int] = 0,
                    **kwargs) -> Iterator[tuple]:
     """"
     Compress an array to have a x slice width of param width using a floating
@@ -320,7 +320,7 @@ def Compress_array(x: np.ndarray, width: Union[float, int] = 0,
 
     if "width_ind" in kwargs and width != 0:
         raise NotImplementedError("Both width_ind and width have values this"
-                                  "is currently not implemented.")
+                                  " is currently not implemented.")
     elif "width_ind" in kwargs:
         test_inp(kwargs["width_ind"], int, "width_ind")
         compress = compress_ind
