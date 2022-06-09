@@ -713,7 +713,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             self.ax.plot(other.x, other.y, label=other.connecting_line_label,
                          color=color)
 
-        fit_x = np.linspace(min(self.x), max(self.x), self.n_points)
+        fit_x = np.linspace(min(other.x), max(other.x), other.n_points)
 
         fit_pr = 3
         if "fit_precision" in other.kwargs:
