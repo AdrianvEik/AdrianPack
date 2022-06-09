@@ -760,9 +760,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         return self
 
     def default_plot(self, show_error: bool = None,
-                     return_error: bool = None) -> \
-            Optional[dict[
-                str, Union[Union[np.ndarray, Iterable, int, float], Any]]]:
+                     return_error: bool = None):
         """
         Plot a 2D data set with errors in both x and y axes. The data
         will be fitted according to the input arguments in __innit__.

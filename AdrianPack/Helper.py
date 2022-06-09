@@ -1,7 +1,7 @@
 
 import numpy as np
 from typing import Iterable, Tuple, Union
-
+from math import factorial
 
 def compress_ind(x: np.ndarray, width: int):
     """
@@ -116,6 +116,46 @@ def test_inp(test_obj, test_if, name_inp, value=False):
                 )
     return None
 
+
+def binomial(a: float, b: float):
+    """
+    Compute the value of (a b) using a^b / b!
+    :param: a, float value
+    :param: b, float value
+    :return: binomial
+    """
+    return a**b / factorial(b)
+
+
+def central_point_derivative(*args, **kwargs):
+    try:
+        if "fx" not in kwargs:
+            fx = args[0]
+        elif ["fx", "lower"] not in kwargs:
+            lower = args[1]
+        elif ["fx", "lower", "upper"] not in kwargs:
+            upper = args[2]
+        elif ["fx", "lower", "upper", "n"] not in kwargs:
+            n = args[3]
+        elif ["fx", "lower", "upper", "n", "h"] not in kwargs:
+            h = args[4]
+        else:
+            pass
+    except IndexError:
+        # TODO: update this error message
+        raise IndexError("Not all required parameters inlcuded")
+
+    return None
+
+
+def backward_point_derivative(*args, **kwargs):
+
+    return None
+
+
+def forward_point_derivative(*args, **kwargs):
+
+    return None
 
 if __name__ == "__main__":
     from Tests.Helper_test import test_compress_ind, test_compress_width

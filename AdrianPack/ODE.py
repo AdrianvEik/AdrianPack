@@ -2,9 +2,11 @@ import numpy as np
 from typing import Callable
 
 try:
-    from Helper import test_inp
+    from Helper import test_inp, binomial, central_point_derivative,\
+        backward_point_derivative, forward_point_derivative
 except ImportError:
-    from .Helper import test_inp
+    from .Helper import test_inp, binomial, central_point_derivative,\
+        backward_point_derivative, forward_point_derivative
 
 
 def ode_decorator(func):
@@ -220,6 +222,12 @@ def runga_kutta_2(fx: Callable, lower: float, upper: float, dt: float,
 
     return tpoints, xpoints
 
+
+def num_der(fx, lower, upper, n, h, mode="central"):
+
+    return None
+
+
 if __name__ == "__main__":
     from Aplot import Default
 
@@ -227,6 +235,4 @@ if __name__ == "__main__":
     def f(x, t):
         return -x ** 3 + t
 
-
-    data = runga_kutta_4(f, 0, 1, dt=0.1, x0=0)
-    Default(data[0], data[1], degree=2)()
+    central_point_derivative(fx="iers", lower="iets")
