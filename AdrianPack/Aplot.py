@@ -45,6 +45,16 @@ class Base:
              response values.
         """
 
+        self.decimal_comma = True
+        self.TNFormatter = TNFormatter
+        if 'decimal_comma' in kwargs:
+            test_inp(kwargs["decimal_comma"], bool, "decimal_comma")
+            self.decimal_comma = kwargs['decimal_comma']
+            # If the decimal comma is set to False the TNformatter should
+            # if available be deactivated.
+            if not self.decimal_comma:
+                self.TNFormatter = self.decimal_comma
+
         add_mode = False
         if "add_mode" in kwargs:
             add_mode = kwargs["add_mode"]
@@ -124,7 +134,7 @@ class Base:
             else:
                 self.array_parse(self.x)
 
-
+        # File
         elif self.x.__class__.__name__ == "str" or self.x.__class__.__name__ == "Fileread":
             # File
             try:
@@ -135,6 +145,7 @@ class Base:
                 except ImportError:
                     raise ImportError("Fileread not available for use, include"
                                       " Fileread in the script folder to read files.")
+
             # If the type is a string turn it in to a Fileread object else use
             # the Fileread object
             data_obj = Fileread(path=self.x, **kwargs) if type(self.x) is str else self.x
@@ -294,7 +305,7 @@ class Base:
         self.ax.set_xlabel(x_label)
         self.ax.set_ylabel(y_label)
 
-        if TNFormatter is not False:
+        if self.TNFormatter:
             x_pr = 3
             if "x_precision" in self.kwargs:
                 test_inp(self.kwargs["x_precision"], int, "x_precision",
@@ -473,6 +484,10 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             Color of the data in one of the matplotlib accepted colors.
             See matplotlib documentation for accepted colors.
 
+        :param: marker_fmt
+            ObjectType -> str
+            Marker of data points.
+
         :param: custom_fit_spacing
             ObjectType -> int
             Length of the fitted data array. Min and Max are determined
@@ -521,6 +536,13 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             the headers of the file will need to be "x", "y", "x_err", "y_err"
             for this to work.
 
+        :param: sigma_uncertainty
+            Either false or an Integer,
+            Adds an n-sigma uncertainty 'field' to the plot.
+
+        :param: uncertainty colour
+            Colour of the uncertainty lines
+
     Usage:
 
     Examples:
@@ -533,15 +555,6 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         super().__init__(x, y, *args, **kwargs)
         self.save_as = save_as
         test_inp(self.save_as, str, "save as")
-
-        self.decimal_comma = True
-        if 'decimal_comma' in kwargs:
-            test_inp(kwargs["decimal_comma"], bool, "decimal_comma")
-            self.decimal_comma = kwargs['decimal_comma']
-            # If the decimal comma is set to False the TNformatter should
-            # if available be deactivated.
-            if not self.decimal_comma:
-                TNFormatter = self.decimal_comma
 
         self.func = None
         self.degree = degree
@@ -582,16 +595,10 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             test_inp(kwargs["custom_fit_spacing"], int, "fit array size")
             self.n_points = kwargs["custom_fit_spacing"]
 
-        if self.x is not None and self.y is not None:
-            pass
-
-        elif file is not None:
-            # TODO: self.read_file() func returning 4 arrays
-            #  (or changing the self. vals)
-            raise NotImplementedError("Function has not been implemented yet")
-        else:
-            raise ValueError(
-                "Input argument must include x or x and y or file")
+        self.sigma_uncertainty = False
+        if "sigma_uncertainty" in kwargs:
+            self.sigma_uncertainty = kwargs["sigma_uncertainty"]
+            test_inp(self.sigma_uncertainty, (bool, int), "sigma_uncertainty")
 
         # ERROR ARRAYS
         if 'x_err' in kwargs:
@@ -714,6 +721,9 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             self.ax.plot(other.x, other.y, label=other.connecting_line_label,
                          color=color)
 
+        if other.sigma_uncertainty:
+            self.sigma_uncertainty(base=other)
+
         fit_x = np.linspace(min(other.x), max(other.x), other.n_points)
 
         fit_pr = 3
@@ -722,7 +732,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             fit_pr = other.kwargs["fit_precision"]
 
         if other.degree is not None or other.func is not None:
-            if self.decimal_comma is True:
+            if self.decimal_comma:
                 str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c
                                   in
                                   other.fit_coeffs]
@@ -803,23 +813,29 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         else:
             color = "C0"
 
+        if "marker_fmt" in self.kwargs:
+            test_inp(self.kwargs["marker_fmt"], str, "marker format")
+            mark = self.kwargs["marker_fmt"]
+        else:
+            mark = "C0"
+
         if self.scatter:
             if len(self.y_err) == 0 and len(self.x_err) == 0:
                 self.ax.scatter(self.x, self.y, label=self.label, color=color)
             elif len(self.y_err) == 0 or len(self.x_err) == 0:
                 if len(self.y_err) == 0:
                     self.ax.errorbar(self.x, self.y, xerr=self.x_err,
-                                     label=self.label, fmt=color + 'o',
+                                     label=self.label, fmt=color + mark,
                                      linestyle='',
                                      capsize=4)
                 else:
                     self.ax.errorbar(self.x, self.y, yerr=self.y_err,
-                                     label=self.label, fmt=color + 'o',
+                                     label=self.label, fmt=color + mark,
                                      linestyle='',
                                      capsize=4)
             else:
                 self.ax.errorbar(self.x, self.y, xerr=self.x_err, yerr=self.y_err,
-                                 label=self.label, fmt=color + 'o', linestyle='',
+                                 label=self.label, fmt=color + mark, linestyle='',
                                  capsize=4)
 
         if self.connecting_line:
@@ -837,10 +853,14 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             test_inp(self.kwargs["fit_precision"], int, "fit precision")
             fit_pr = self.kwargs["fit_precision"]
 
-        if self.degree is not None or self.func is not None:
-            str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c
-                              in
-                              self.fit_coeffs]
+        if TNFormatter:
+            if self.degree is not None or self.func is not None:
+                str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c
+                                  in
+                                  self.fit_coeffs]
+        else:
+            if self.degree is not None or self.func is not None:
+                str_fit_coeffs = [str(np.around(c, fit_pr)) for c in self.fit_coeffs]
 
         if self.func is not None:
             self.ax.plot(fit_x, self.func(fit_x, *self.fit_coeffs),
@@ -868,6 +888,9 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
                                          "Fit with function %s = " % self.response_var +
                                          self.degree_dict[self.degree].format(
                                              *str_fit_coeffs)))
+
+        if self.sigma_uncertainty:
+            self.add_sigma_uncertainty()
 
         y_label = ''
         if "y_label" in self.kwargs:
@@ -986,6 +1009,49 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
                  coefficients.
         """
         return {"c": self.fit_coeffs, "e": self.fit_errors}
+
+    def add_sigma_uncertainty(self, base=None, linestyle: str = "--"):
+        """
+        Uses the sum of the errors in the fit to calculate an n-sigma
+        fit boundary. The method uses the SUM meaning this method is only feasible
+        for linear regressions.
+        :param base:
+            Base object from which the data is being pulled
+        :param linestyle:
+            Linestyle of the sigma line.
+        :return:
+        """
+        if base is None:
+            base = self
+
+        sigma_label: str = base.kwargs["sigma_label"] if "sigma_label" in\
+                                                         base.kwargs else\
+                                                        "%s sigma boundary" % base.sigma_uncertainty
+        sigma_colour: str = base.kwargs["sigma_colour"] if "sigma_colour" in\
+                                                         base.kwargs else "gray"
+
+        x_vals = np.linspace(min(self.x), max(self.x), self.n_points)
+        if self.func is not None:
+            # Plot the lower bound
+            self.ax.plot(x_vals,
+                         y=base.func(x_vals, *base.fit_coeffs) - sum(base.fit_errors),
+                         linestyle=linestyle,
+                         c=sigma_colour, label=sigma_label)
+            self.ax.plot(x_vals,
+                         base.func(x_vals, *base.fit_coeffs) + sum(base.fit_errors),
+                         linestyle=linestyle,
+                         c=sigma_colour)
+        else:
+            lower_y = np.asarray(sum([x_vals ** (c) * base.fit_coeffs[abs(c - self.degree)]
+                           for c in range(self.degree + 1).__reversed__()])) - sum(base.fit_errors)
+            upper_y = np.asarray(sum([x_vals ** (c) * base.fit_coeffs[abs(c - self.degree)]
+                           for c in range(self.degree + 1).__reversed__()])) + sum(base.fit_errors)
+
+            self.ax.plot(x_vals, lower_y, linestyle=linestyle,
+                         c=sigma_colour, label=sigma_label)
+            self.ax.plot(x_vals, upper_y, linestyle=linestyle,
+                         c=sigma_colour)
+        return None
 
 
 class Multi:
