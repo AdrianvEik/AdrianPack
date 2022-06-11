@@ -11,12 +11,17 @@ This is a small compilation of functions that have been made to make life easier
     4.1 [Description](#41-description)
    
     4.2 [How to use?](#42-how-to-use)
-   
-    4.3 [Examples](#43-examples)
 
-      * [Creating a simple plot](#431-creating-a-simple-plot)
-      * [Simple plot with fit and errors](#432-simple-plot-with-fit-and-errors)
-      * [Using ODE.py to approximate the speed of falling objects with air resistance](#433-using-odepy-to-approximate-the-speed-of-falling-objects-with-air-resistance) 
+    4.3 [Methods](#43-Methods)
+
+      * [Returning fitted parameters](#431-returning-fitted-parameters)
+      * [Returning the fitted line as a function](#432-returning-the-fitted-line-as-a-function)
+   
+    4.4 [Examples](#44-examples)
+
+      * [Creating a simple plot](#441-creating-a-simple-plot)
+      * [Simple plot with fit and errors](#442-simple-plot-with-fit-and-errors)
+      * [Using ODE.py to approximate the speed of falling objects with air resistance](#443-using-odepy-to-approximate-the-speed-of-falling-objects-with-air-resistance) 
 5. [fileread.py](#filereadpy)
 
     5.1 [Description](#51-description)
@@ -87,8 +92,15 @@ Adding fits is done by specifying a function with the "fx" parameter, the fit ne
 
 Plots can be added to each other to have multiple graphs in a single plot to do this add the "add_plot" parameter to the plot that needs to be **added** to a base plot and set this parameter to True. To show/save the plot run the base plot to which other plots have been added to. It is important to add them with the "+=" operator and not only use the "+" operator unless addition is specified as "plot_a = plot_a + plot_b".
 
-## 4.3 Examples
-### 4.3.1 Creating a simple plot
+
+## 4.3 Methods
+
+### 4.3.1 Returnng fit parameters.
+
+### 4.3.2 Returning the fitted line as a function.
+
+## 4.4 Examples
+### 4.4.1 Creating a simple plot
 ```python
 
 from math import sin
@@ -109,7 +121,7 @@ Running this code results into the following plot
 
 ![alt text](https://github.com/AdrianvEik/AdrianPack/blob/main/Examples/Aplot/Plots/simple_plot.png?raw=true)
 
-### 4.3.2 Simple plot with fit and errors
+### 4.4.2 Simple plot with fit and errors
 ```python
 
 import random
@@ -139,7 +151,7 @@ Running this code results in the following plot
 
 ![alt text](https://github.com/AdrianvEik/AdrianPack/blob/main/Examples/Aplot/Plots/simple_fit_img.png?raw=true)
 
-### 4.3.3 Using ODE.py to approximate the speed of falling objects with air resistance
+### 4.4.3 Using ODE.py to approximate the speed of falling objects with air resistance
 The velocity of a falling object with air resistance can be described by the following equation:
 
 ![equation](https://latex.codecogs.com/png.image?\dpi{110}\bg{white}m&space;\dfrac{\mathrm{d}v}{\mathrm{d}t}&space;=&space;mg&space;-&space;k_2&space;v^2)
