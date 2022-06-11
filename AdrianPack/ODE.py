@@ -3,33 +3,17 @@ from typing import Callable
 
 try:
     from Helper import test_inp, binomial, central_point_derivative,\
-        backward_point_derivative, forward_point_derivative
+        backward_point_derivative, forward_point_derivative, ode_decorator
 except ImportError:
     from .Helper import test_inp, binomial, central_point_derivative,\
-        backward_point_derivative, forward_point_derivative
+        backward_point_derivative, forward_point_derivative, ode_decorator
 
 
-def ode_decorator(func):
-    def inner(*args, **kwargs):
-        var_attr = []
-        if len(args) > 1:
-            for i in range(len(args)):
-                if args[i].__class__.__name__ == 'list':
-                    var_attr.append(i)
-
-        if "fx" in kwargs:
-            fx = kwargs["fx"]
-            if fx.__class__.__name__ == 'list':
-                var_attr.append(0)
-
-
-        return func(*args, **kwargs)
-    return inner
-
+@ode_decorator
 def euler(fx: Callable, lower: float, upper: float, dt: float,
           x0: float = 0) -> tuple:
     """
-    Evaluate differential equations using eulers method
+    Evaluate differential equations (df/dx = f(x, t)) using eulers method
 
     USAGE:
         # define the derivative of a function fx that takes an "x" and a "t"
@@ -50,7 +34,11 @@ def euler(fx: Callable, lower: float, upper: float, dt: float,
 
     :param: fx
         ObjectType -> Function
-        Function that takes the input fx(x, t) and returns a value y.
+        Function, dx/dt = f(x, t), that takes x, t and returns a value y.
+        EXAMPLE:
+        The function df/dx = x * t is defined as:
+        def f(x, t):
+            return x * t
 
     :param: lower
         ObjectType -> float
@@ -75,7 +63,7 @@ def euler(fx: Callable, lower: float, upper: float, dt: float,
 
     """
 
-    N = round(np.abs((lower - upper)) / dt)
+    N = int(np.abs((lower - upper)) / dt)
 
     tpoints: np.ndarray = np.linspace(lower, upper, N)
     xpoints: np.ndarray = np.zeros(N)
@@ -89,8 +77,8 @@ def euler(fx: Callable, lower: float, upper: float, dt: float,
 def runga_kutta_4(fx: Callable, lower: float, upper: float, dt: float,
                 x0: float = 0) -> tuple:
     """
-        Evaluate differential equations using a 4th order Runga-Kutta
-         approximation
+        Evaluate differential equations (df/dx = f(x, t)) using a 4th order
+         Runga-Kutta approximation
 
         USAGE:
             # define the derivative of a function fx that takes an "x" and a "t"
@@ -111,8 +99,11 @@ def runga_kutta_4(fx: Callable, lower: float, upper: float, dt: float,
 
         :param: fx
             ObjectType -> Function
-            Function that takes the input fx(x, t) and returns a value y.
-
+            Function, dx/dt = f(x, t), that takes x, t and returns a value y.
+            EXAMPLE:
+            The function df/dx = x * t is defined as:
+            def f(x, t):
+                return x * t
         :param: lower
             ObjectType -> float
             Lower boundary for the solution of the differential equation.
@@ -136,7 +127,7 @@ def runga_kutta_4(fx: Callable, lower: float, upper: float, dt: float,
 
         """
 
-    N = round(np.abs((lower - upper)) / dt)
+    N = int(np.abs((lower - upper)) / dt)
 
     tpoints: np.ndarray = np.linspace(lower, upper, N)
     xpoints: np.ndarray = np.zeros(N)
@@ -156,12 +147,12 @@ def runga_kutta_4(fx: Callable, lower: float, upper: float, dt: float,
                                              kutta_constants[0] + kutta_constants[-1])
     return tpoints, xpoints
 
-
+@ode_decorator
 def runga_kutta_2(fx: Callable, lower: float, upper: float, dt: float,
                   x0: float = 0) -> tuple:
     """
-        Evaluate differential equations using a 2nd order Runga-Kutta
-         approximation
+        Evaluate differential equations (df/dx = f(x, t))
+         using a 2nd order Runga-Kutta approximation
 
         USAGE:
             # define the derivative of a function fx that takes an "x" and a "t"
@@ -182,7 +173,11 @@ def runga_kutta_2(fx: Callable, lower: float, upper: float, dt: float,
 
         :param: fx
             ObjectType -> Function
-            Function that takes the input fx(x, t) and returns a value y.
+            Function, dx/dt = f(x, t), that takes x, t and returns a value y.
+            EXAMPLE:
+            The function df/dx = x * t is defined as:
+            def f(x, t):
+                return x * t
 
         :param: lower
             ObjectType -> float
@@ -207,7 +202,7 @@ def runga_kutta_2(fx: Callable, lower: float, upper: float, dt: float,
 
         """
 
-    N = round(np.abs((lower - upper)) / dt)
+    N = int(np.abs((lower - upper)) / dt)
 
     tpoints: np.ndarray = np.linspace(lower, upper, N)
     xpoints: np.ndarray = np.zeros(N)
@@ -222,8 +217,8 @@ def runga_kutta_2(fx: Callable, lower: float, upper: float, dt: float,
 
     return tpoints, xpoints
 
-
-def num_der(fx, lower, upper, n, h, mode="central"):
+@ode_decorator
+def num_der(fx, lower, upper, dt, x0, mode="central"):
 
     return None
 
@@ -231,8 +226,6 @@ def num_der(fx, lower, upper, n, h, mode="central"):
 if __name__ == "__main__":
     from Aplot import Default
 
-
     def f(x, t):
-        return -x ** 3 + t
-
-    central_point_derivative(fx="iers", lower="iets")
+        return x * t
+    print(runga_kutta_2(f, 0, [1, 2, 3, 5], dt=[0, 1]))

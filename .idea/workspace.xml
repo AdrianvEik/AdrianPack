@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9db8f2b-0092-46ad-9797-cd929e612058" name="Default Changelist" comment="Fixed bug where the added fitline would take the base objects starting and ending point.">
+    <list default="true" id="e9db8f2b-0092-46ad-9797-cd929e612058" name="Default Changelist" comment="Aplot.py: Added two new methods to Default, &quot;lambdify_fit&quot; and &quot;fit_stats&quot;. The &quot;lambdify_fit&quot; function takes the fitted line and turns this into a lambda function. To return fitted parameters and errors use the new &quot;fit_stats&quot; method.&#10;ODE.py: Completed the ode_decorator used to be able to take lists as arguments and compute the function with given extra parameters, works with all existing functions within ODE.py.&#10;Helper.py: Placed the ode_decorator function here since it might have functionality for other methods or functions.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AdrianPack/Aplot.py" beforeDir="false" afterPath="$PROJECT_DIR$/AdrianPack/Aplot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AdrianPack/Helper.py" beforeDir="false" afterPath="$PROJECT_DIR$/AdrianPack/Helper.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AdrianPack/ODE.py" beforeDir="false" afterPath="$PROJECT_DIR$/AdrianPack/ODE.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -50,7 +54,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.ODE">
+  <component name="RunManager" selected="Python.Aplot">
     <configuration name="Aplot" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="AdrianPack_src" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -163,8 +167,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.ODE" />
         <item itemvalue="Python.Aplot" />
+        <item itemvalue="Python.ODE" />
         <item itemvalue="Python.Helper" />
         <item itemvalue="Python.Fileread" />
         <item itemvalue="Python.Extra_test" />
@@ -210,9 +214,14 @@
       <workItem from="1652199083366" duration="3019000" />
       <workItem from="1652207425676" duration="7366000" />
       <workItem from="1652801898456" duration="18284000" />
-      <workItem from="1652888208526" duration="9866000" />
-      <workItem from="1653036474415" duration="4993000" />
-      <workItem from="1654776117886" duration="663000" />
+      <workItem from="1652888208526" duration="13703000" />
+      <workItem from="1653341954947" duration="701000" />
+      <workItem from="1653508184303" duration="4726000" />
+      <workItem from="1653564518924" duration="1192000" />
+      <workItem from="1653695376758" duration="2329000" />
+      <workItem from="1653773128146" duration="607000" />
+      <workItem from="1653923821433" duration="416000" />
+      <workItem from="1654894755084" duration="9941000" />
     </task>
     <task id="LOCAL-00001" summary="Updated csvread function">
       <created>1642627626760</created>
@@ -368,43 +377,32 @@
       <option name="project" value="LOCAL" />
       <updated>1652902087174</updated>
     </task>
-    <task id="LOCAL-00023" summary="Fixed faulty type hints in Aplot.py, added setup for numerical derivatives in ODE.py with helper functions in helper.py">
-      <created>1654776332982</created>
+    <task id="LOCAL-00023" summary="Added the option to turn of the decimal comma and TN_code now only needs to be placed within the same folder as where the code is ran from.">
+      <created>1652911757297</created>
       <option name="number" value="00023" />
       <option name="presentableId" value="LOCAL-00023" />
       <option name="project" value="LOCAL" />
-      <updated>1654776332982</updated>
+      <updated>1652911757297</updated>
     </task>
-    <task id="LOCAL-00024" summary="Fixed faulty type hints in Aplot.py, added setup for numerical derivatives in ODE.py with helper functions in helper.py">
-      <created>1654776397591</created>
+    <task id="LOCAL-00024" summary="Added the option to turn of the decimal comma and TN_code now only needs to be placed within the same folder as where the code is ran from.">
+      <created>1653695534584</created>
       <option name="number" value="00024" />
       <option name="presentableId" value="LOCAL-00024" />
       <option name="project" value="LOCAL" />
-      <updated>1654776397591</updated>
+      <updated>1653695534585</updated>
     </task>
-    <task id="LOCAL-00025" summary="Fixed bug where the added fitline would take the base objects starting and ending point.">
-      <created>1654780971020</created>
+    <task id="LOCAL-00025" summary="Add the option &quot;show_fit&quot; to .fit() method parameters, this will now return the fit coefficients and errors in a dictionary in the order specified by either fx or from n^ith polynomial where as n^i, n^i-1, n^i-2 ... n^0.">
+      <created>1653924104848</created>
       <option name="number" value="00025" />
       <option name="presentableId" value="LOCAL-00025" />
       <option name="project" value="LOCAL" />
-      <updated>1654780971020</updated>
+      <updated>1653924104848</updated>
     </task>
     <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Updated csvread function" />
@@ -421,19 +419,19 @@
     <MESSAGE value="Fixed an error in Aplot.py, dataplotting without including a fit is now allowed." />
     <MESSAGE value="Added the ability to add multiple graphs together." />
     <MESSAGE value="Changed csvread.py to Fileread.py, the class csvread is also called Fileread it is still possible to call csvread until update 0.0.4 (current update is 0.0.2)." />
-    <MESSAGE value="Fixed faulty type hints in Aplot.py, added setup for numerical derivatives in ODE.py with helper functions in helper.py" />
-    <MESSAGE value="Fixed bug where the added fitline would take the base objects starting and ending point." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed bug where the added fitline would take the base objects starting and ending point." />
+    <MESSAGE value="Added the option to turn of the decimal comma and TN_code now only needs to be placed within the same folder as where the code is ran from." />
+    <MESSAGE value="Add the option &quot;show_fit&quot; to .fit() method parameters, this will now return the fit coefficients and errors in a dictionary in the order specified by either fx or from n^ith polynomial where as n^i, n^i-1, n^i-2 ... n^0." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add the option &quot;show_fit&quot; to .fit() method parameters, this will now return the fit coefficients and errors in a dictionary in the order specified by either fx or from n^ith polynomial where as n^i, n^i-1, n^i-2 ... n^0." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/setup_py$Aplot.coverage" NAME="Aplot Coverage Results" MODIFIED="1652830158687" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
+    <SUITE FILE_PATH="coverage/setup_py$Aplot.coverage" NAME="Aplot Coverage Results" MODIFIED="1654914413264" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
     <SUITE FILE_PATH="coverage/AdrianPack_src$Aplot.coverage" NAME="Aplot Coverage Results" MODIFIED="1646608741737" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
-    <SUITE FILE_PATH="coverage/setup_py$ODE.coverage" NAME="ODE Coverage Results" MODIFIED="1653040805036" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
+    <SUITE FILE_PATH="coverage/setup_py$ODE.coverage" NAME="ODE Coverage Results" MODIFIED="1654911831435" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
     <SUITE FILE_PATH="coverage/AdrianPack_src$utils.coverage" NAME="utils Coverage Results" MODIFIED="1642862350474" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/venv/Lib/site-packages/numpy/testing/_private" />
     <SUITE FILE_PATH="coverage/AdrianPack_src$scratch_15.coverage" NAME="scratch_15 Coverage Results" MODIFIED="1643237869471" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
     <SUITE FILE_PATH="coverage/AdrianPack_src$Extra_test.coverage" NAME="Extra_test Coverage Results" MODIFIED="1645624905125" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Tests" />
     <SUITE FILE_PATH="coverage/AdrianPack_src$csvread.coverage" NAME="csvread Coverage Results" MODIFIED="1645646591754" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
-    <SUITE FILE_PATH="coverage/setup_py$Helper.coverage" NAME="Helper Coverage Results" MODIFIED="1652802594338" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
+    <SUITE FILE_PATH="coverage/setup_py$Helper.coverage" NAME="Helper Coverage Results" MODIFIED="1653697669290" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
     <SUITE FILE_PATH="coverage/AdrianPack_src$Helper.coverage" NAME="Helper Coverage Results" MODIFIED="1642867648501" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
   </component>
 </project>

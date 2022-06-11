@@ -6,7 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from scipy.optimize import curve_fit
-from typing import Sized, Iterable, Union, Optional, Any, Type, Tuple, List
+from typing import Sized, Iterable, Union, Optional, Any, Type, Tuple, List, \
+    Dict, Callable
 
 try:
     from TN_code.plotten.TISTNplot import TNFormatter
@@ -528,16 +529,6 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         self.save_as = save_as
         test_inp(self.save_as, str, "save as")
 
-        self.func = None
-        self.degree = degree
-        if degree is not None:
-            test_inp(self.degree, (list, tuple, int, type(None)), "x values")
-        elif 'fx' in kwargs:
-            self.func = kwargs["fx"]
-            test_inp(self.func, types.FunctionType, "f(x)")
-        else:
-            pass
-
         self.decimal_comma = True
         if 'decimal_comma' in kwargs:
             test_inp(kwargs["decimal_comma"], bool, "decimal_comma")
@@ -546,6 +537,18 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             # if available be deactivated.
             if not self.decimal_comma:
                 TNFormatter = self.decimal_comma
+
+        self.func = None
+        self.degree = degree
+        if degree is not None:
+            test_inp(self.degree, (list, tuple, int, type(None)), "x values")
+            self.fit()
+        elif 'fx' in kwargs:
+            self.func = kwargs["fx"]
+            test_inp(self.func, types.FunctionType, "f(x)")
+            self.fit()
+        else:
+            pass
 
         self.connecting_line = False
         if 'connecting_line' in kwargs:
@@ -793,8 +796,6 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
         :return: Optional[dict[str, Union[Union[ndarray, Iterable, int, float], Any]]]
         """
-        self.fit()
-
         # DATA PLOTTING
         # TODO: add these extra kwargs to the docs
 
@@ -898,8 +899,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
         return None
 
-    def fit(self, show_fit: bool = False, *args) -> Optional[
-        dict[str, Union[np.ndarray, Iterable, int, float]]]:
+    def fit(self) -> Optional[Dict[str, Union[np.ndarray, Iterable, int, float]]]:
         """
         Calculate the fit parameters of an Aplot object.
 
@@ -907,15 +907,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         function fit. Where the function fit takes in a python function type,
         with first argument x and other arguments being the parameters.
 
-        OPTIONAL:
-            :param: show_fit
-            ObjectType -> bool
-            Default false, when set to true this will make the function
-            return the fitted parameters to given function or
-            degree of polynomial. This parameter is the first arg.
-
-        ARGS:
-            arg[0] -> show_fit
+        param show_fit -> moved to the fit_stats function
 
         :returns:
             None
@@ -946,7 +938,11 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             2: r'${0}%s^2 + {1}%s + {2}$' % (
             self.control_var, self.control_var),
             3: r'${0}%s^3 + {1}%s^2 + {2}%s + {3}$' % tuple(
-                [self.control_var for _ in range(3)])
+                [self.control_var for _ in range(3)]),
+            4: r'${0}%s^4 + {1}%s^3 + {2}%s^2 + {3}%s + {4}$' % tuple(
+                [self.control_var for _ in range(4)]),
+            5: r'${0}%s^5 + {1}%s^4 + {2}%s^3 + {3}%s^2 + {4}%s + {5}$' % tuple(
+                [self.control_var for _ in range(5)])
         }
 
         if self.degree is not None:
@@ -960,13 +956,38 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             self.fit_coeffs = fit
             self.fit_errors = np.sqrt(np.diag(pcov))
 
-        if len(args) == 1:
-            test_inp(args[0], bool, "show_fit", True)
-            show_fit = args[0]
-
-        if show_fit:
-            return {"coeffs": self.fit_coeffs, "error": self.fit_errors}
         return None
+
+    def lambdify_fit(self) -> Callable:
+        """
+        Turn the fitted line into a lambda function to manually calculate
+        desired values.
+        :return: lambda function, Object type Callable
+        """
+        if self.func is not None:
+            return lambda x: self.func(x, *self.fit_coeffs)
+        elif self.degree is not None:
+            return lambda x: sum([x ** (c) * self.fit_coeffs[abs(c - self.degree)]
+                                  for c in range(self.degree + 1).__reversed__()])
+        else:
+            raise AttributeError("Missing parameters to compute fit"
+                                 " coefficients, add either 'degree' or 'fx'"
+                                 "to the parameters.")
+
+    def fit_stats(self) -> Dict:
+        """
+        Return fit values in a dictionary.
+
+        The dictionary format is {"c": list of coefficients, "e": list of errors}
+
+        Where the order of coefficients and errors is the same as defined in the
+        given fit function or from highest order to lowest order when defined
+        by the degree parameter.
+
+        :return: Dictionary consisting out of fit coefficients and error in the
+                 coefficients.
+        """
+        return {"c": self.fit_coeffs, "e": self.fit_errors}
 
 
 class Multi:
@@ -1085,13 +1106,11 @@ if __name__ == "__main__":
                    connecting_line=True)
     
     add = Default(x=x, y=np.array([i * 4.4 + 0.12 for i in x] + noise),
-          y_err=10, x_err=0.1, add_mode=True, line_mode=True)
-    add_2 = Default(x=x, y=np.array([i * 4.4 + 4 for i in x] + noise),
-          y_err=10, x_err=0.1, add_mode=True, line_mode=True, degree=1, colour="C2")
+          y_err=10, x_err=0.1, add_mode=True, line_mode=True, degree=2)
     # hist = Aplot([3, 2, 3, 1, 3, 4, 2, 4, 5, 6, 5], mode="hist", x_lim=[0, 7],
     #              x_label="X-as", grid=False)()
     plot += add
-    plot += add_2
+
     plot()
 
     print("t: ", time.time() - t_start)

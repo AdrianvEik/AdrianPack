@@ -1,6 +1,6 @@
 
 import numpy as np
-from typing import Iterable, Tuple, Union
+from typing import Iterable, Tuple, Union, Callable
 from math import factorial
 
 def compress_ind(x: np.ndarray, width: int):
@@ -127,25 +127,20 @@ def binomial(a: float, b: float):
     return a**b / factorial(b)
 
 
-def central_point_derivative(*args, **kwargs):
-    try:
-        if "fx" not in kwargs:
-            fx = args[0]
-        elif ["fx", "lower"] not in kwargs:
-            lower = args[1]
-        elif ["fx", "lower", "upper"] not in kwargs:
-            upper = args[2]
-        elif ["fx", "lower", "upper", "n"] not in kwargs:
-            n = args[3]
-        elif ["fx", "lower", "upper", "n", "h"] not in kwargs:
-            h = args[4]
-        else:
-            pass
-    except IndexError:
-        # TODO: update this error message
-        raise IndexError("Not all required parameters inlcuded")
+def central_point_derivative(fx: Callable, lower: float, upper: float,
+                             n: int, h: float):
+    """
 
-    return None
+    :param fx:
+    :param lower:
+    :param upper:
+    :param n:
+    :param h:
+    :return:
+    """
+    x = np.linspace(lower, upper, size=n)
+    func = np.vectorize(fx)
+    return
 
 
 def backward_point_derivative(*args, **kwargs):
@@ -157,6 +152,73 @@ def forward_point_derivative(*args, **kwargs):
 
     return None
 
+
+def ode_decorator(func):
+    """
+    Decorator used by the ODE.py functions to be able to easily compute
+    integrals for different inputs.
+    """
+    def inner(*args, **kwargs):
+        # defining the possible inputs
+        fx: Callable = None
+        lower, upper, dt, x0 = None, None, None, 0
+        var_attr = [fx, lower, upper, dt, x0]
+        list_attr = []
+
+        # Checking for args
+        if len(args) > 1:
+            for i in range(len(args)):
+                var_attr[i] = args[i]
+
+                if args[i].__class__.__name__ == 'list':
+                    list_attr.append((i, args[i]))
+
+        # Checking for kwargs
+        if "fx" in kwargs:
+            var_attr[0] = kwargs["fx"]
+            if kwargs["fx"].__class__.__name__ == 'list':
+                list_attr.append((0, kwargs["fx"]))
+        if "lower" in kwargs:
+            var_attr[1] = kwargs["lower"]
+            if kwargs["lower"].__class__.__name__ == 'list':
+                list_attr.append((1, kwargs["lower"]))
+        if "upper" in kwargs:
+            var_attr[2] = kwargs["upper"]
+            if kwargs["upper"].__class__.__name__ == 'list':
+                list_attr.append((2, kwargs["upper"]))
+        if "dt" in kwargs:
+            var_attr[3] = kwargs["dt"]
+            if kwargs["dt"].__class__.__name__ == 'list':
+                list_attr.append((3, kwargs["dt"]))
+        if "x0" in kwargs:
+            var_attr[4] = kwargs["x0"]
+            if kwargs["x0"].__class__.__name__ == 'list':
+                list_attr.append((4, kwargs["x0"]))
+
+        print(list_attr)
+        if len(list_attr) > 1:
+            raise Exception("Only one input can be turned into a list.")
+
+        results = []
+        for i in list_attr:
+            for j in i[1]:
+                var_attr[i[0]] = j
+                results.append(func(*var_attr))
+        return tuple(results)
+
+    return inner
+
+
+def string_formatter(s, ls):
+    """
+
+    :param s:
+        Given string.
+    :param ls:
+        List of values to be placed in the string.
+    :return:
+    """
+    return None
 if __name__ == "__main__":
     from Tests.Helper_test import test_compress_ind, test_compress_width
 
