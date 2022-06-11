@@ -1,3 +1,4 @@
+import string
 
 import numpy as np
 from typing import Iterable, Tuple, Union, Callable
@@ -195,30 +196,24 @@ def ode_decorator(func):
             if kwargs["x0"].__class__.__name__ == 'list':
                 list_attr.append((4, kwargs["x0"]))
 
-        print(list_attr)
         if len(list_attr) > 1:
             raise Exception("Only one input can be turned into a list.")
 
-        results = []
-        for i in list_attr:
-            for j in i[1]:
-                var_attr[i[0]] = j
-                results.append(func(*var_attr))
-        return tuple(results)
+        if len(list_attr) == 1:
+            results = []
+            for i in list_attr:
+                for j in i[1]:
+                    var_attr[i[0]] = j
+                    results.append(func(*var_attr))
+            return tuple(results)
+        else:
+            return func(*args, **kwargs)
+
 
     return inner
 
 
-def string_formatter(s, ls):
-    """
 
-    :param s:
-        Given string.
-    :param ls:
-        List of values to be placed in the string.
-    :return:
-    """
-    return None
 if __name__ == "__main__":
     from Tests.Helper_test import test_compress_ind, test_compress_width
 

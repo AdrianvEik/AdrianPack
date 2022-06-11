@@ -96,82 +96,79 @@ class Base:
             test_inp(self.y_lim[0], (float, int), "ymin")
             test_inp(self.y_lim[1], (float, int), "ymax")
 
-        # TODO: adjust base x, y when making multi mode
-        if len(args) > 2 and args[1] is not None:
-            self.x = np.asarray(args[0], dtype=np.float32)
-            self.y = np.asarray(args[1], dtype=np.float32)
+        # Read x and y values
+        self.file_format = kwargs["file_format"] if "file_format" in kwargs else ["x", "y", "x_err", "y_err"]
+        test_inp(self.file_format, list, "File format")
 
-            test_inp(self.x, (list, tuple, np.ndarray), "x values")
-            test_inp(self.y, (list, tuple, np.ndarray), "y values")
-
-            try:
-                assert self.x.shape == self.y.shape
-            except AssertionError:
-                raise ValueError("Arrays x and y should have same size but are"
-                                 " size %s and %s" % (
-                                 self.x.size, self.y.size))
-
-            try:
-                assert self.x.ndim == self.y.ndim == 1
-            except AssertionError:
-                raise NotImplementedError("Multi dimensional plotting is not"
-                                          " supported.")
-
+        if len(args) >= 2 and args[1] is not None:
+            self.x = args[0]
+            self.y = args[1]
         elif len(args) == 1 or args[1] is None:
-            self.x = np.asarray(args[0])
-            x = self.x
+            self.x = args[0]
+            self.y = None
+        elif "file" in kwargs:
+            self.x = kwargs["file"]
 
-            try:
-                test_inp(self.x, (list, tuple, np.ndarray), "x values")
-            except TypeError:
-                # TODO: add csvread support
-                # test_inp(self.x, (str, csvread), "x values")
-                # self.file = x
-                self.file_read()
-                raise NotImplementedError
+        if self.x.__class__.__name__ in ["ndarray", "list", "tuple"]:
+            # either matrix or normal x and y
+            self.x = np.asarray(self.x, dtype=np.float32)
+            if self.y is not None:
+                self.y = np.asarray(self.y, dtype=np.float32)
+            # 1 Dimensional array
+            if self.x.ndim == 1:
+                if self.y is None:
+                    self.y = self.x
+                    self.x = range(len(self.x))
 
+            # Matrix
+            else:
+                self.array_parse(self.x)
+
+
+        elif self.x.__class__.__name__ == "str" or self.x.__class__.__name__ == "Fileread":
+            # File
             try:
-                assert self.x.ndim == 1
-            except AssertionError:
-                # TODO: Rework this one to be more compact
-                # TODO: Rework to utilize Format function used by file_read
-                if self.x.ndim == 2:
-                    if x.shape[1] == 2:
-                        self.x = x[:, 0]
-                        self.y = x[:, 1]
-                        print('\x1b[33m' +
-                              'WARNING: Input array x has 2 dimensions (%s columns),'
-                              ' the first and second column have been used as x and'
-                              ' y respectfully.' % str(x.shape[1])
-                              + '\x1b[0m')
-                    elif x.shape[1] == 3:
-                        self.x = x[:, 0]
-                        self.y = x[:, 1]
-                        self.y_err = x[:, 2]
-                        print('\x1b[33m' +
-                              'WARNING: Input array x has 2 dimensions (%s columns),'
-                              ' the matrix has been formatted as follows'
-                              ' "x y yerr"' % str(x.shape[1])
-                              + '\x1b[0m')
-                    elif x.shape[1] == 4:
-                        self.x = x[:, 0]
-                        self.y = x[:, 1]
-                        self.x_err = x[:, 2]
-                        self.y_err = x[:, 3]
-                        print('\x1b[33m' +
-                              'WARNING: Input array x has 2 dimensions (%s columns),'
-                              ' the matrix has been formatted as follows'
-                              ' "x y xerr yerr"' % str(x.shape[1])
-                              + '\x1b[0m')
-                    else:
-                        raise NotImplementedError(
-                            "Multi dimensional plotting is not supported.")
-                else:
-                    raise NotImplementedError(
-                        "Multi dimensional plotting is not"
-                        " supported.")
+                from .Fileread import Fileread
+            except ImportError:
+                try:
+                    from AdrianPack.Fileread import Fileread
+                except ImportError:
+                    raise ImportError("Fileread not available for use, include"
+                                      " Fileread in the script folder to read files.")
+            # If the type is a string turn it in to a Fileread object else use
+            # the Fileread object
+            data_obj = Fileread(path=self.x, **kwargs) if type(self.x) is str else self.x
+            data = data_obj()
+
+            for key in data.keys():
+                if key in "x":
+                    self.x = data[key]
+                if key in "y":
+                    self.y = data[key]
+                if key in "x_err":
+                    self.x_err = data[key]
+                if key in "y_err":
+                    self.y_err = data[key]
+
+            if type(self.x) in [None, str] or self.y is None:
+                data_obj.output = "numpy"
+                self.array_parse(data_obj())
 
         self.kwargs = kwargs
+
+    def array_parse(self, data):
+        self.x = data[:, self.file_format.index("x")]
+        self.y = data[:, self.file_format.index("y")]
+
+        if data.shape[1] == 3:
+            if "x_err" in self.file_format:
+                self.x_err = data[:, self.file_format.index("x_err")]
+            else:
+                self.y_err = data[:, self.file_format.index("y_err")]
+        elif data.shape[1] > 4:
+            self.x_err = data[:, self.file_format.index("x_err")]
+            self.y_err = data[:, self.file_format.index("y_err")]
+        return None
 
     def single_form(self, x_label: str, y_label: str, grid: bool = True,
                     **kwargs) \
@@ -330,10 +327,6 @@ class Base:
         else:
             return None
 
-    def file_read(self):
-
-
-        return None
 
 
 class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
@@ -516,16 +509,28 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         :param: decimal_comma
             Default True, if set to false
 
+        :param: file
+
+        :param: file_format
+            The format of the columns within the files, default is set to:
+             ["x", "y", "x_err", "y_err"]
+            Indicating that the first column is the x column, the second y, etc.
+
+            If the headers within the file are equal to the names in the file_format
+            the reader will detect these columns within the file note that
+            the headers of the file will need to be "x", "y", "x_err", "y_err"
+            for this to work.
+
     Usage:
 
     Examples:
     """
 
-    def __init__(self, x: Union[tuple, list, np.ndarray] = None,
+    def __init__(self, x: Union[tuple, list, np.ndarray, str] = None,
                  y: Union[tuple, list, np.ndarray] = None, save_as: str = '',
-                 file: str = '', degree: Union[list, tuple, int] = None,
+                 degree: Union[list, tuple, int] = None,
                  *args, **kwargs):
-        super().__init__(x, y, file, *args, **kwargs)
+        super().__init__(x, y, *args, **kwargs)
         self.save_as = save_as
         test_inp(self.save_as, str, "save as")
 
@@ -602,7 +607,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
                 assert self.x_err.size == self.x.size
             except AssertionError:
-                raise IndexError("The error")
+                raise IndexError("x Error and y list are not of the same size.")
         else:
             self.x_err = []
 
@@ -619,7 +624,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
                 assert self.y_err.size == self.y.size
             except AssertionError:
-                raise IndexError("The error")
+                raise IndexError("y Error and y list are not of the same size.")
         else:
             self.y_err = []
 
@@ -637,8 +642,6 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
                 ObjectType -> Bool
                 Default false, if true returns only the fig, ax object in a
                 tuple.
-            :param: Show_error
-                # TODO: WRITE doc for this
         :returns
             Tuple consisting of fig, ax objects
 
@@ -672,12 +675,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
                 except IndexError:
                     pass
 
-
-        if "show_error" in kwargs:
-            test_inp(kwargs["show_error"], bool, "show_error")
-            self.default_plot(kwargs["show_error"])
-        else:
-            self.default_plot()
+        self.default_plot()
 
         return self.fig, self.ax
 
@@ -1102,8 +1100,9 @@ if __name__ == "__main__":
     x = np.linspace(-5, 5, points)
     noise = np.random.randint(-2, 2, points)
     plot = Default(x=x, y=np.array([i * -4.32 + 9.123 for i in x] + noise),
-          y_err=10, x_err=0.1, y_lim=[-50, 50], x_label="bruh x", y_label="bruh y", degree=1,
-                   connecting_line=True)
+          y_err=10, x_err=0.1, y_lim=[-50, 50], x_label="bruh x", y_label="bruh y", degree=2,
+                   connecting_line=True,
+                   func_format="$y_{{result}} = {0} \cdot \cos{{ (x_{{func}} \cdot {1}) }} + {0}^{{x_{{func}} + {2}}}$")
     
     add = Default(x=x, y=np.array([i * 4.4 + 0.12 for i in x] + noise),
           y_err=10, x_err=0.1, add_mode=True, line_mode=True, degree=2)

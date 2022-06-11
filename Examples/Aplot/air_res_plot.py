@@ -46,7 +46,7 @@ euler_plot = Default(x=euler_data[0], y=euler_data[1],
 
 t = np.linspace(0, 5, 1000)
 theory_plot = Default(x=t, y=theory(t),
-                      line_mode=True, add_mode=True, colour="gray",
+                      line_only=True, add_mode=True, colour="gray",
                       connecting_line_label="Theory")
 
 # Adding the plots together

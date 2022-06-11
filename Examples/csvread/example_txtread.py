@@ -1,7 +1,6 @@
 
 from AdrianPack.Fileread import Fileread, csvread
 from AdrianPack.Aplot import Default
-from AdrianPack.Extra import Compress_array
 
 from TN_code.plotten.TISTNplot import TNFormatter
 

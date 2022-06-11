@@ -228,4 +228,4 @@ if __name__ == "__main__":
 
     def f(x, t):
         return x * t
-    print(runga_kutta_2(f, 0, [1, 2, 3, 5], dt=[0, 1]))
+    print(runga_kutta_2(f, 0, [3, 4], dt=1))
