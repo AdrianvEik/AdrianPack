@@ -560,14 +560,12 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         self.degree = degree
         if degree is not None:
             test_inp(self.degree, (list, tuple, int, type(None)), "x values")
-            self.fit()
         elif 'fx' in kwargs:
             self.func = kwargs["fx"]
             test_inp(self.func, types.FunctionType, "f(x)")
-            self.fit()
-        else:
-            pass
 
+        self.fit()
+        
         self.connecting_line = False
         if 'connecting_line' in kwargs:
             test_inp(kwargs["connecting_line"], bool, "connecting_line")
@@ -817,7 +815,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             test_inp(self.kwargs["marker_fmt"], str, "marker format")
             mark = self.kwargs["marker_fmt"]
         else:
-            mark = "C0"
+            mark = "o"
 
         if self.scatter:
             if len(self.y_err) == 0 and len(self.x_err) == 0:
