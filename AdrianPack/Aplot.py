@@ -338,6 +338,90 @@ class Base:
         else:
             return None
 
+    def add_default_plot(self, other):
+        """
+        Render another Aplot.Default graph on a Aplot.Base object
+        :param other:
+            Other object to be added
+        """
+        other.fit()
+
+        if "colour" in other.kwargs:
+            test_inp(other.kwargs["colour"], str, "colour")
+            color = other.kwargs["colour"]
+        else:
+            color = "C1"
+
+        if other.scatter:
+            if len(other.y_err) == 0 and len(other.x_err) == 0:
+                self.ax.scatter(other.x, other.y, label=other.label, color=color)
+            elif len(other.y_err) == 0 or len(other.x_err) == 0:
+                if len(other.y_err) == 0:
+                    self.ax.errorbar(other.x, other.y, xerr=other.x_err,
+                                     label=other.label, fmt=color + 'o',
+                                     linestyle='',
+                                     capsize=4)
+                else:
+                    self.ax.errorbar(other.x, other.y, yerr=other.y_err,
+                                     label=other.label, fmt=color + 'o',
+                                     linestyle='',
+                                     capsize=4)
+            else:
+                self.ax.errorbar(other.x, other.y, xerr=other.x_err, yerr=other.y_err,
+                                 label=other.label, fmt=color + 'o',
+                                 linestyle='',
+                                 capsize=4)
+
+        if other.connecting_line:
+            self.ax.plot(other.x, other.y, label=other.connecting_line_label,
+                         color=color)
+
+        if other.sigma_uncertainty:
+            self.sigma_uncertainty(base=other)
+
+        fit_x = np.linspace(min(other.x), max(other.x), other.n_points)
+
+        fit_pr = 3
+        if "fit_precision" in other.kwargs:
+            test_inp(other.kwargs["fit_precision"], int, "fit precision")
+            fit_pr = other.kwargs["fit_precision"]
+
+        if other.degree is not None or other.func is not None:
+            if self.decimal_comma:
+                str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c
+                                  in
+                                  other.fit_coeffs]
+            else:
+                str_fit_coeffs = [str(np.around(c, fit_pr)) for c in
+                                  other.fit_coeffs]
+
+        if other.func is not None:
+            self.ax.plot(fit_x, other.func(fit_x, *other.fit_coeffs),
+                         linestyle="--", c=color,
+                         label=(
+                             lambda _: other.func_format.format(*str_fit_coeffs)
+                             if other.func_format != "" else "Fit")(None))
+        elif other.degree is not None:
+            if other.func_format != '':
+                self.ax.plot(fit_x,
+                             sum([fit_x ** (c) * other.fit_coeffs[
+                                 abs(c - other.degree)]
+                                  for c in
+                                  range(other.degree + 1).__reversed__()]),
+                             linestyle="--", c=color,
+                             label=(other.func_format.format(*str_fit_coeffs)))
+            else:
+                self.ax.plot(fit_x,
+                             sum([fit_x ** (c) * other.fit_coeffs[
+                                 abs(c - other.degree)]
+                                  for c in
+                                  range(other.degree + 1).__reversed__()]),
+                             linestyle="--", c=color,
+                             label=(
+                                         "Fit with function %s = " % other.response_var +
+                                         other.degree_dict[other.degree].format(
+                                             *str_fit_coeffs)))
+        return None
 
 
 class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
@@ -565,7 +649,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             test_inp(self.func, types.FunctionType, "f(x)")
 
         self.fit()
-        
+
         self.connecting_line = False
         if 'connecting_line' in kwargs:
             test_inp(kwargs["connecting_line"], bool, "connecting_line")
@@ -685,86 +769,10 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         return self.fig, self.ax
 
     def __add__(self, other):
-        test_inp(other, Default, "Aplot.Default")
-
-        other.fit()
-
-        if "colour" in other.kwargs:
-            test_inp(other.kwargs["colour"], str, "colour")
-            color = other.kwargs["colour"]
-        else:
-            color = "C1"
-
-        if other.scatter:
-            if len(other.y_err) == 0 and len(other.x_err) == 0:
-                self.ax.scatter(other.x, other.y, label=other.label, color=color)
-            elif len(other.y_err) == 0 or len(other.x_err) == 0:
-                if len(other.y_err) == 0:
-                    self.ax.errorbar(other.x, other.y, xerr=other.x_err,
-                                     label=other.label, fmt=color + 'o',
-                                     linestyle='',
-                                     capsize=4)
-                else:
-                    self.ax.errorbar(other.x, other.y, yerr=other.y_err,
-                                     label=other.label, fmt=color + 'o',
-                                     linestyle='',
-                                     capsize=4)
-            else:
-                self.ax.errorbar(other.x, other.y, xerr=other.x_err, yerr=other.y_err,
-                                 label=other.label, fmt=color + 'o',
-                                 linestyle='',
-                                 capsize=4)
-
-        if other.connecting_line:
-            self.ax.plot(other.x, other.y, label=other.connecting_line_label,
-                         color=color)
-
-        if other.sigma_uncertainty:
-            self.sigma_uncertainty(base=other)
-
-        fit_x = np.linspace(min(other.x), max(other.x), other.n_points)
-
-        fit_pr = 3
-        if "fit_precision" in other.kwargs:
-            test_inp(other.kwargs["fit_precision"], int, "fit precision")
-            fit_pr = other.kwargs["fit_precision"]
-
-        if other.degree is not None or other.func is not None:
-            if self.decimal_comma:
-                str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c
-                                  in
-                                  other.fit_coeffs]
-            else:
-                str_fit_coeffs = [str(np.around(c, fit_pr)) for c in
-                                  other.fit_coeffs]
-
-        if other.func is not None:
-            self.ax.plot(fit_x, other.func(fit_x, *other.fit_coeffs),
-                         linestyle="--", c=color,
-                         label=(
-                             lambda _: other.func_format.format(*str_fit_coeffs)
-                             if other.func_format != "" else "Fit")(None))
-        elif other.degree is not None:
-            if other.func_format != '':
-                self.ax.plot(fit_x,
-                             sum([fit_x ** (c) * other.fit_coeffs[
-                                 abs(c - other.degree)]
-                                  for c in
-                                  range(other.degree + 1).__reversed__()]),
-                             linestyle="--", c=color,
-                             label=(other.func_format.format(*str_fit_coeffs)))
-            else:
-                self.ax.plot(fit_x,
-                             sum([fit_x ** (c) * other.fit_coeffs[
-                                 abs(c - other.degree)]
-                                  for c in
-                                  range(other.degree + 1).__reversed__()]),
-                             linestyle="--", c=color,
-                             label=(
-                                         "Fit with function %s = " % other.response_var +
-                                         other.degree_dict[other.degree].format(
-                                             *str_fit_coeffs)))
-
+        if other.__class__.__name__ == "Default":
+            self.add_default_plot(other)
+        elif other.__class__.__name__ ==  "Histogram":
+            raise NotImplementedError
 
         return self
 
@@ -1061,24 +1069,12 @@ class Multi:
         pass
 
 
-class Hist:
+class Histogram:
 
-    def __innit__(self):
-        pass
-
-    def __call__(self):
-        pass
-
-    def histogram(self):
-        """
-
-        :return:
-        """
-        self.fig, self.ax = plt.subplots()
-
-        bins = int(np.round(len(self.x) / np.sqrt(2)))
-        if "binning" in self.kwargs:
-            bins = self.kwargs["binning"]
+    def __innit__(self, x: Union[tuple, list, np.ndarray, str] = None, **kwargs):
+        bins = int(np.round(len(x) / np.sqrt(2)))
+        if "binning" in kwargs:
+            bins = kwargs["binning"]
             try:
                 bins = int(bins)
             except ValueError:
@@ -1088,65 +1084,21 @@ class Hist:
             test_inp(bins, int, "binning", True)
 
         norm_label = "Label"
-        if "norm_label" in self.kwargs:
-            norm_label = self.kwargs["norm_label"]
+        if "norm_label" in kwargs:
+            norm_label = kwargs["norm_label"]
             test_inp(norm_label, str, "norm label")
 
-        if "sigma_lines" in self.kwargs:
+        if "sigma_lines" in kwargs:
             pass
 
-        self.ax.hist(self.x, bins=bins, label=self.label)
+    def __call__(self):
+        pass
 
-        norm_dist = self.norm_dist_plot()
-        self.ax.plot(norm_dist[0], norm_dist[1], label=norm_label)
+    def __add__(self, other):
+        pass
 
-        y_label = ''
-        if "y_label" in self.kwargs:
-            test_inp(self.kwargs["y_label"], str, "y_label")
-            y_label = self.kwargs["y_label"]
-
-        x_label = ''
-        if "x_label" in self.kwargs:
-            test_inp(self.kwargs["x_label"], str, "x_label")
-            x_label = self.kwargs["x_label"]
-
-        grid = True
-        if "grid" in self.kwargs:
-            test_inp(self.kwargs["grid"], bool, "grid")
-            grid = self.kwargs["grid"]
-
-        self.single_form(x_label, y_label, grid)
-
-        if not self.return_object:
-            (lambda save_as:
-             plt.show() if save_as == '' else plt.savefig(save_as,
-                                                          bbox_inches='tight')
-             )(self.save_as)
-
-        return None
-
-    def norm_dist_plot(self, scaling: bool = True):
-        """
-
-        :return:
-        """
-        if "x_lim" in self.kwargs:
-            x = np.linspace(self.x_lim[0], self.x_lim[1], self.n_points)
-        else:
-            x = np.linspace(min(self.x) + max(self.x) * 1 / 10,
-                            max(self.x) + max(self.x) * 1 / 10, self.n_points)
-
-        mu, std = np.average(x), np.std(x)
-        dist = scipy.stats.norm.pdf(x, mu, std)
-
-        if scaling:
-            factor = np.average(self.x) / np.max(dist)
-            if "scaling_factor" in self.kwargs:
-                factor = self.kwargs["scaling_factor"]
-                test_inp(factor, (float, int), "scaling factor")
-            dist = dist * abs(factor)
-
-        return x, dist, mu
+    def histogram(self):
+        pass
 
 
 if __name__ == "__main__":
@@ -1173,6 +1125,7 @@ if __name__ == "__main__":
     # hist = Aplot([3, 2, 3, 1, 3, 4, 2, 4, 5, 6, 5], mode="hist", x_lim=[0, 7],
     #              x_label="X-as", grid=False)()
     plot += add
+
 
     plot()
 
