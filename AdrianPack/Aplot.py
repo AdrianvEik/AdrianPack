@@ -165,9 +165,29 @@ class Base:
                 data_obj.output = "numpy"
                 self.array_parse(data_obj())
 
+        self.length = 1
         self.kwargs = kwargs
 
+    def __add__(self, other):
+        if other.__class__.__name__ == "Default":
+            self.add_default_plot(other)
+        elif other.__class__.__name__ ==  "Histogram":
+            raise NotImplementedError
+
+        self.length += 1
+
+        return self
+
+    def __len__(self):
+        return self.length
+
     def array_parse(self, data):
+        """
+        Parse an array to x, y and optional x_err and y_err attributes from
+        given format ('file_format').
+        :param data: Array to be parsed
+        :return: None
+        """
         self.x = data[:, self.file_format.index("x")]
         self.y = data[:, self.file_format.index("y")]
 
@@ -768,13 +788,13 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
         return self.fig, self.ax
 
-    def __add__(self, other):
-        if other.__class__.__name__ == "Default":
-            self.add_default_plot(other)
-        elif other.__class__.__name__ ==  "Histogram":
-            raise NotImplementedError
+    def __repr__(self):
+        # len(x, y, xerr, yerr); fitcoeffs; file format
+        return f"Default({len(self.x)}, {len(self.y)}, {len(self.x_err)}," \
+               f" {len(self.y_err)}; {self.fit_stats()}; {self.file_format})"
 
-        return self
+    def __str__(self):
+        return self.__repr__()
 
     def default_plot(self, show_error: bool = None,
                      return_error: bool = None):
@@ -1059,20 +1079,11 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
                          c=sigma_colour)
         return None
 
-
-class Multi:
-
-    def __innit__(self):
-        pass
-
-    def __call__(self):
-        pass
-
-
-class Histogram:
+class Histogram(Base):
 
     def __innit__(self, x: Union[tuple, list, np.ndarray, str] = None, **kwargs):
-        bins = int(np.round(len(x) / np.sqrt(2)))
+        self.x = x
+        bins = int(np.round(len(self.x) / np.sqrt(2)))
         if "binning" in kwargs:
             bins = kwargs["binning"]
             try:
@@ -1094,13 +1105,48 @@ class Histogram:
     def __call__(self):
         pass
 
-    def __add__(self, other):
-        pass
-
     def histogram(self):
         pass
 
 
+def multi_plot(plots: list):
+    test_inp(plots, list, "plot grid")
+
+    if type(plots[0]) is not list:
+        plots = [plots, ]
+
+    for i in plots:
+        test_inp(i, list, "row %s" % i)
+        try:
+            assert len(i) == len(plots[0])
+        except AssertionError:
+            raise IndexError("Plots must be given in an mxn matrix or m long"
+                             "row/column vector.")
+
+    for i in plots:
+        for j in i:
+            test_inp(j, (Default, Histogram), "row %s" % i)
+
+    rows = len(plots[0])
+    columns = len(plots)
+
+    plt.clf()
+
+    fig, axes = plt.subplots(rows, columns)
+
+    # Column vector
+    if rows == 1:
+        for ax in range(axes):
+            pass
+    # Row vector
+    elif columns == 1:
+        pass
+
+    # Matrix
+    else:
+        pass
+
+    return None
 if __name__ == "__main__":
     import time
     import Aplot
@@ -1118,7 +1164,7 @@ if __name__ == "__main__":
     plot = Default(x=x, y=np.array([i * -4.32 + 9.123 for i in x] + noise),
           y_err=10, x_err=0.1, y_lim=[-50, 50], x_label="bruh x", y_label="bruh y", degree=2,
                    connecting_line=True,
-                   func_format="$y_{{result}} = {0} \cdot \cos{{ (x_{{func}} \cdot {1}) }} + {0}^{{x_{{func}} + {2}}}$")
+                   func_format="$y_{{result}} = \dfrac{{ {0} }}{{ {1} }}$")
     
     add = Default(x=x, y=np.array([i * 4.4 + 0.12 for i in x] + noise),
           y_err=10, x_err=0.1, add_mode=True, line_mode=True, degree=2)
@@ -1127,6 +1173,7 @@ if __name__ == "__main__":
     plot += add
 
 
-    plot()
+    multi_plot([[plot], [add]])
+    print(len(plot))
 
     print("t: ", time.time() - t_start)
