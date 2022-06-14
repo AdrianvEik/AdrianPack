@@ -672,6 +672,12 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
         self.fit()
 
+        if "colour" in self.kwargs:
+            test_inp(self.kwargs["colour"], str, "colour")
+            self.colour = self.kwargs["colour"]
+        else:
+            self.colour = False
+
         self.connecting_line = False
         if 'connecting_line' in kwargs:
             test_inp(kwargs["connecting_line"], bool, "connecting_line")
@@ -843,11 +849,11 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         if not fig:
             fig = self.fig
 
-        if "colour" in self.kwargs:
-            test_inp(self.kwargs["colour"], str, "colour")
-            color = self.kwargs["colour"]
-        else:
-            color = "C0"
+        colour = self.colour
+        if not self.colour:
+            colour = "C0"
+
+        print(colour, self.colour)
 
         if "marker_fmt" in self.kwargs:
             test_inp(self.kwargs["marker_fmt"], str, "marker format")
@@ -857,26 +863,26 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
         if self.scatter:
             if len(self.y_err) == 0 and len(self.x_err) == 0:
-                ax.scatter(self.x, self.y, label=self.label, color=color)
+                ax.scatter(self.x, self.y, label=self.label, color=colour)
             elif len(self.y_err) == 0 or len(self.x_err) == 0:
                 if len(self.y_err) == 0:
                     ax.errorbar(self.x, self.y, xerr=self.x_err,
-                                     label=self.label, fmt=color + mark,
+                                     label=self.label, fmt=colour + mark,
                                      linestyle='',
                                      capsize=4)
                 else:
                     ax.errorbar(self.x, self.y, yerr=self.y_err,
-                                     label=self.label, fmt=color + mark,
+                                     label=self.label, fmt=colour + mark,
                                      linestyle='',
                                      capsize=4)
             else:
                 ax.errorbar(self.x, self.y, xerr=self.x_err, yerr=self.y_err,
-                                 label=self.label, fmt=color + mark, linestyle='',
+                                 label=self.label, fmt=colour + mark, linestyle='',
                                  capsize=4)
 
         if self.connecting_line:
             ax.plot(self.x, self.y, label=self.connecting_line_label,
-                         color=color)
+                         color=colour)
 
         # FIT PLOTTING
         if show_error:
@@ -900,7 +906,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
         if self.func is not None:
             ax.plot(fit_x, self.func(fit_x, *self.fit_coeffs),
-                         linestyle="--", c=color,
+                         linestyle="--", c=colour,
                          label=(
                              lambda _: self.func_format.format(*str_fit_coeffs)
                              if self.func_format != "" else "Fit")(None))
@@ -911,7 +917,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
                                  abs(c - self.degree)]
                                   for c in
                                   range(self.degree + 1).__reversed__()]),
-                             linestyle="--", c=color,
+                             linestyle="--", c=colour,
                              label=(self.func_format.format(*str_fit_coeffs)))
             else:
                 ax.plot(fit_x,
@@ -919,7 +925,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
                                  abs(c - self.degree)]
                                   for c in
                                   range(self.degree + 1).__reversed__()]),
-                             linestyle="--", c=color,
+                             linestyle="--", c=colour,
                              label=(
                                          "Fit with function %s = " % self.response_var +
                                          self.degree_dict[self.degree].format(
@@ -1166,6 +1172,8 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = ""):
     rows = len(plots)
     columns = len(plots[0])
 
+    colours = ["C%s" % i for i in range(1, 10)]
+
     plt.clf()
 
     fig, axes = plt.subplots(rows, columns)
@@ -1174,8 +1182,14 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = ""):
         for ax in range(len(axes)):
             if len(plots[ax][0].plots) >= 1:
                 for extra_plot in plots[ax][0].plots:
+                    colour = extra_plot.colour
+
+                    if not colour:
+                        extra_plot.colour = colours[plots[ax][0].plots.index(extra_plot)]
+                        
                     extra_plot.default_plot(ax=axes[ax], fig=fig, return_error=True,
                                             fig_format=False)
+                    extra_plot.colour = colour
 
             plots[ax][0].default_plot(ax=axes[ax], fig=fig, return_error=True)
 
@@ -1184,8 +1198,14 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = ""):
         for ax in range(len(axes)):
             if len(plots[0][ax].plots) >= 1:
                 for extra_plot in plots[0][ax].plots:
+                    colour = extra_plot.colour
+
+                    if not colour:
+                        extra_plot.colour = colours[plots[0][ax].plots.index(extra_plot)]
+
                     extra_plot.default_plot(ax=axes[ax], fig=fig, return_error=True,
                                             fig_format=False)
+                    extra_plot.colour = colour
 
             plots[0][ax].default_plot(ax=axes[ax], fig=fig, return_error=True)
 
@@ -1196,10 +1216,16 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = ""):
             for ax in range(len(axes[row])):
                 if len(plots[row][ax].plots) >= 1:
                     for extra_plot in plots[row][ax].plots:
-                        print(axes[ax])
+                        colour = extra_plot.colour
+
+                        if not colour:
+                            extra_plot.colour = colours[plots[row][ax].plots.index(extra_plot)]
+
                         extra_plot.default_plot(ax=axes[row][ax], fig=fig,
                                                 return_error=True,
                                                 fig_format=False)
+
+                        extra_plot.colour = colour
 
                 plots[row][ax].default_plot(ax=axes[row][ax], fig=fig,
                                             return_error=True)
@@ -1214,7 +1240,6 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = ""):
 
 if __name__ == "__main__":
     import time
-    import Aplot
 
     t_start = time.time()
 
@@ -1235,10 +1260,7 @@ if __name__ == "__main__":
           y_err=10, x_err=0.1, line_mode=True, degree=2, add_mode=True)
     # hist = Aplot([3, 2, 3, 1, 3, 4, 2, 4, 5, 6, 5], mode="hist", x_lim=[0, 7],
     #              x_label="X-as", grid=False)()
-
     plot += add
-    print(plot.plots)
-    multi_plot([[plot, add], [add, plot]], fig_size=(32, 16))
-    print(len(plot))
+    multi_plot([[plot, add], [add, plot]], fig_size=(16, 8))
 
     print("t: ", time.time() - t_start)
