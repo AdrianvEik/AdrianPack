@@ -1186,7 +1186,7 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = ""):
 
                     if not colour:
                         extra_plot.colour = colours[plots[ax][0].plots.index(extra_plot)]
-                        
+
                     extra_plot.default_plot(ax=axes[ax], fig=fig, return_error=True,
                                             fig_format=False)
                     extra_plot.colour = colour
