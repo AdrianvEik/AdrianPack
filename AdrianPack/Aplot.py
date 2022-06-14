@@ -853,8 +853,6 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         if not self.colour:
             colour = "C0"
 
-        print(colour, self.colour)
-
         if "marker_fmt" in self.kwargs:
             test_inp(self.kwargs["marker_fmt"], str, "marker format")
             mark = self.kwargs["marker_fmt"]

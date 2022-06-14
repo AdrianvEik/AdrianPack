@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9db8f2b-0092-46ad-9797-cd929e612058" name="Default Changelist" comment="Fixed a bug with the colour of plots in">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_14_06_2022_12_51__Default_Changelist_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_14_06_2022_12_51__Default_Changelist_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AdrianPack/Aplot.py" beforeDir="false" afterPath="$PROJECT_DIR$/AdrianPack/Aplot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
-    </list>
+    <list default="true" id="e9db8f2b-0092-46ad-9797-cd929e612058" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -56,7 +51,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.Aplot">
+  <component name="RunManager" selected="Python.plot_from_file">
     <configuration name="Aplot" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="AdrianPack_src" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -169,8 +164,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Aplot" />
         <item itemvalue="Python.plot_from_file" />
+        <item itemvalue="Python.Aplot" />
         <item itemvalue="Python.Aplot" />
         <item itemvalue="Python.scratch_3" />
         <item itemvalue="Python.setup" />
@@ -436,7 +431,21 @@
       <option name="project" value="LOCAL" />
       <updated>1655064905925</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="Fixed a bug with the colour of graphs in a grid of subplots.">
+      <created>1655248544137</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1655248544137</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Fixed a bug with the colour of graphs in a grid of subplots.">
+      <created>1655248835841</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1655248835841</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -475,7 +484,8 @@
     <MESSAGE value="Aplot.py:" />
     <MESSAGE value="Aplot.py:&#10; Added the ability to plot files and reworked the matrix plot function to utilise the same formatter.&#10; &#10;ODE.py:&#10; Fixed a bug in the new decorator that disabled the ability to use the functions without a listed argument.&#10; &#10;Since the file and plot integration is added the package is now in release 0.0.3" />
     <MESSAGE value="Fixed some small bugs within Aplot.py" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed some small bugs within Aplot.py" />
+    <MESSAGE value="Fixed a bug with the colour of graphs in a grid of subplots." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed a bug with the colour of graphs in a grid of subplots." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/setup_py$setup.coverage" NAME="setup Coverage Results" MODIFIED="1655064889360" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
