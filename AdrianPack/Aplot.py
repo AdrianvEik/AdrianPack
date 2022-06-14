@@ -1138,7 +1138,7 @@ def format_figure(x_label: str, y_label: str, grid: bool = True, **kwargs):
     """
     return Default(**kwargs).single_form(x_label, y_label, grid, **kwargs)
 
-def multi_plot(plots: list, fig_size: tuple = (10, 6)):
+def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = ""):
     """
 
     :param plots:
@@ -1181,13 +1181,34 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6)):
 
     # Row vector
     elif rows == 1:
-        pass
+        for ax in range(len(axes)):
+            if len(plots[0][ax].plots) >= 1:
+                for extra_plot in plots[0][ax].plots:
+                    extra_plot.default_plot(ax=axes[ax], fig=fig, return_error=True,
+                                            fig_format=False)
+
+            plots[0][ax].default_plot(ax=axes[ax], fig=fig, return_error=True)
+
 
     # Matrix
     else:
-        pass
+        for row in range(rows):
+            for ax in range(len(axes[row])):
+                if len(plots[row][ax].plots) >= 1:
+                    for extra_plot in plots[row][ax].plots:
+                        print(axes[ax])
+                        extra_plot.default_plot(ax=axes[row][ax], fig=fig,
+                                                return_error=True,
+                                                fig_format=False)
 
-    plt.show()
+                plots[row][ax].default_plot(ax=axes[row][ax], fig=fig,
+                                            return_error=True)
+
+    plt.tight_layout()
+    (lambda save_as:
+     plt.show() if save_as == '' else plt.savefig(save_as,
+                                                  bbox_inches='tight')
+     )(save_as)
     return None
 
 
@@ -1217,7 +1238,7 @@ if __name__ == "__main__":
 
     plot += add
     print(plot.plots)
-    multi_plot([[plot], [add], [add]])
+    multi_plot([[plot, add], [add, plot]], fig_size=(32, 16))
     print(len(plot))
 
     print("t: ", time.time() - t_start)
