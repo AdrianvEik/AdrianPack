@@ -61,6 +61,7 @@ class Base:
             test_inp(add_mode, bool, "add_mode")
 
         if not add_mode:
+            plt.clf()
             self.fig, self.ax = plt.subplots()
 
         self.response_var = "y"
@@ -165,7 +166,7 @@ class Base:
                 data_obj.output = "numpy"
                 self.array_parse(data_obj())
 
-        self.length = 1
+        self.plots = []
         self.kwargs = kwargs
 
     def __add__(self, other):
@@ -174,12 +175,11 @@ class Base:
         elif other.__class__.__name__ ==  "Histogram":
             raise NotImplementedError
 
-        self.length += 1
-
+        self.plots.append(other)
         return self
 
     def __len__(self):
-        return self.length
+        return len(self.plots) + 1
 
     def array_parse(self, data):
         """
@@ -281,11 +281,14 @@ class Base:
             test_inp(kwargs["fig_ax"][0], plt.Figure, "fig")
             test_inp(kwargs["fig_ax"][1], plt.Axes, "ax")
 
-            self.fig = kwargs["fig_ax"][0]
-            self.ax = kwargs["fig_ax"][1]
+            fig = kwargs["fig_ax"][0]
+            ax = kwargs["fig_ax"][1]
+        else:
+            fig = self.fig
+            ax = self.ax
 
         if "x_lim" in self.kwargs:
-            self.ax.set_xlim(self.x_lim)
+            ax.set_xlim(self.x_lim)
         elif "x_lim" in kwargs:
             x_lim = kwargs["x_lim"]
 
@@ -301,10 +304,10 @@ class Base:
             test_inp(x_lim[0], (float, int), "xmin")
             test_inp(x_lim[1], (float, int), "xmax")
 
-            self.ax.set_xlim(x_lim)
+            ax.set_xlim(x_lim)
 
         if "y_lim" in self.kwargs:
-            self.ax.set_ylim(self.y_lim)
+            ax.set_ylim(self.y_lim)
         elif "y_lim" in kwargs:
             y_lim = kwargs["y_lim"]
 
@@ -320,10 +323,10 @@ class Base:
             test_inp(y_lim[0], (float, int), "ymin")
             test_inp(y_lim[1], (float, int), "ymax")
 
-            self.ax.set_ylim(y_lim)
+            ax.set_ylim(y_lim)
 
-        self.ax.set_xlabel(x_label)
-        self.ax.set_ylabel(y_label)
+        ax.set_xlabel(x_label)
+        ax.set_ylabel(y_label)
 
         if self.TNFormatter:
             x_pr = 3
@@ -337,24 +340,23 @@ class Base:
                          True)
                 y_pr = self.kwargs["y_precision"]
 
-            self.ax.xaxis.set_major_formatter(TNFormatter(x_pr))
-            self.ax.yaxis.set_major_formatter(TNFormatter(y_pr))
+            ax.xaxis.set_major_formatter(TNFormatter(x_pr))
+            ax.yaxis.set_major_formatter(TNFormatter(y_pr))
 
         if grid:
-            plt.grid()
+            ax.grid()
 
         if "legend_loc" in self.kwargs:
             test_inp(self.kwargs["legend_loc"], str, "legenc loc")
-            plt.legend(loc=self.kwargs["legend_loc"])
+            ax.legend(loc=self.kwargs["legend_loc"])
         elif "legend_loc" in kwargs:
             test_inp(self.kwargs["legend_loc"], str, "legenc loc")
-            plt.legend(loc=kwargs["legend_loc"])
+            ax.legend(loc=kwargs["legend_loc"])
         else:
-            plt.legend(loc='lower right')
+            ax.legend(loc='lower right')
 
-        plt.tight_layout()
         if "fig_ax" in kwargs:
-            return self.fig, self.ax
+            return fig, ax
         else:
             return None
 
@@ -797,7 +799,9 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         return self.__repr__()
 
     def default_plot(self, show_error: bool = None,
-                     return_error: bool = None):
+                     return_error: bool = None,
+                     fig: bool = False, ax: bool = False,
+                     fig_format: bool = True):
         """
         Plot a 2D data set with errors in both x and y axes. The data
         will be fitted according to the input arguments in __innit__.
@@ -833,6 +837,12 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         # DATA PLOTTING
         # TODO: add these extra kwargs to the docs
 
+        if not ax:
+            ax = self.ax
+
+        if not fig:
+            fig = self.fig
+
         if "colour" in self.kwargs:
             test_inp(self.kwargs["colour"], str, "colour")
             color = self.kwargs["colour"]
@@ -847,25 +857,25 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
         if self.scatter:
             if len(self.y_err) == 0 and len(self.x_err) == 0:
-                self.ax.scatter(self.x, self.y, label=self.label, color=color)
+                ax.scatter(self.x, self.y, label=self.label, color=color)
             elif len(self.y_err) == 0 or len(self.x_err) == 0:
                 if len(self.y_err) == 0:
-                    self.ax.errorbar(self.x, self.y, xerr=self.x_err,
+                    ax.errorbar(self.x, self.y, xerr=self.x_err,
                                      label=self.label, fmt=color + mark,
                                      linestyle='',
                                      capsize=4)
                 else:
-                    self.ax.errorbar(self.x, self.y, yerr=self.y_err,
+                    ax.errorbar(self.x, self.y, yerr=self.y_err,
                                      label=self.label, fmt=color + mark,
                                      linestyle='',
                                      capsize=4)
             else:
-                self.ax.errorbar(self.x, self.y, xerr=self.x_err, yerr=self.y_err,
+                ax.errorbar(self.x, self.y, xerr=self.x_err, yerr=self.y_err,
                                  label=self.label, fmt=color + mark, linestyle='',
                                  capsize=4)
 
         if self.connecting_line:
-            self.ax.plot(self.x, self.y, label=self.connecting_line_label,
+            ax.plot(self.x, self.y, label=self.connecting_line_label,
                          color=color)
 
         # FIT PLOTTING
@@ -889,14 +899,14 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
                 str_fit_coeffs = [str(np.around(c, fit_pr)) for c in self.fit_coeffs]
 
         if self.func is not None:
-            self.ax.plot(fit_x, self.func(fit_x, *self.fit_coeffs),
+            ax.plot(fit_x, self.func(fit_x, *self.fit_coeffs),
                          linestyle="--", c=color,
                          label=(
                              lambda _: self.func_format.format(*str_fit_coeffs)
                              if self.func_format != "" else "Fit")(None))
         elif self.degree is not None:
             if self.func_format != '':
-                self.ax.plot(fit_x,
+                ax.plot(fit_x,
                              sum([fit_x ** (c) * self.fit_coeffs[
                                  abs(c - self.degree)]
                                   for c in
@@ -904,7 +914,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
                              linestyle="--", c=color,
                              label=(self.func_format.format(*str_fit_coeffs)))
             else:
-                self.ax.plot(fit_x,
+                ax.plot(fit_x,
                              sum([fit_x ** (c) * self.fit_coeffs[
                                  abs(c - self.degree)]
                                   for c in
@@ -933,18 +943,18 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             test_inp(self.kwargs["grid"], bool, "grid")
             grid = self.kwargs["grid"]
 
-        super().single_form(x_label, y_label, grid=grid, fig_ax=(self.fig, self.ax))
+        if fig_format:
+            self.single_form(x_label, y_label, grid=grid, fig_ax=(fig, ax))
 
-        if not self.return_object:
+        if not return_error:
+            plt.tight_layout()
             (lambda save_as:
              plt.show() if save_as == '' else plt.savefig(save_as,
                                                           bbox_inches='tight')
              )(self.save_as)
 
-        if return_error:
-            return {"Coeffs": self.fit_coeffs, "Errors": self.fit_errors}
-
-        return None
+        else:
+            return None
 
     def fit(self) -> Optional[Dict[str, Union[np.ndarray, Iterable, int, float]]]:
         """
@@ -1109,8 +1119,34 @@ class Histogram(Base):
         pass
 
 
-def multi_plot(plots: list):
+def format_figure(x_label: str, y_label: str, grid: bool = True, **kwargs):
+    """
+
+    :param x_label:
+    :param y_label:
+    :param grid:
+    Kwargs
+    :param legend_loc:
+
+    :param x_lim:
+    :param y_lim:
+
+    :param x_precision:
+    :param y_precision:
+
+    :return:
+    """
+    return Default(**kwargs).single_form(x_label, y_label, grid, **kwargs)
+
+def multi_plot(plots: list, fig_size: tuple = (10, 6)):
+    """
+
+    :param plots:
+    :return:
+    """
     test_inp(plots, list, "plot grid")
+
+    plt.rcParams["figure.figsize"] = fig_size
 
     if type(plots[0]) is not list:
         plots = [plots, ]
@@ -1127,26 +1163,34 @@ def multi_plot(plots: list):
         for j in i:
             test_inp(j, (Default, Histogram), "row %s" % i)
 
-    rows = len(plots[0])
-    columns = len(plots)
+    rows = len(plots)
+    columns = len(plots[0])
 
     plt.clf()
 
     fig, axes = plt.subplots(rows, columns)
-
     # Column vector
-    if rows == 1:
-        for ax in range(axes):
-            pass
+    if columns == 1:
+        for ax in range(len(axes)):
+            if len(plots[ax][0].plots) >= 1:
+                for extra_plot in plots[ax][0].plots:
+                    extra_plot.default_plot(ax=axes[ax], fig=fig, return_error=True,
+                                            fig_format=False)
+
+            plots[ax][0].default_plot(ax=axes[ax], fig=fig, return_error=True)
+
     # Row vector
-    elif columns == 1:
+    elif rows == 1:
         pass
 
     # Matrix
     else:
         pass
 
+    plt.show()
     return None
+
+
 if __name__ == "__main__":
     import time
     import Aplot
@@ -1158,7 +1202,7 @@ if __name__ == "__main__":
         return a * x ** 2 + b * x
 
 
-    points = 40
+    points = 10
     x = np.linspace(-5, 5, points)
     noise = np.random.randint(-2, 2, points)
     plot = Default(x=x, y=np.array([i * -4.32 + 9.123 for i in x] + noise),
@@ -1167,13 +1211,13 @@ if __name__ == "__main__":
                    func_format="$y_{{result}} = \dfrac{{ {0} }}{{ {1} }}$")
     
     add = Default(x=x, y=np.array([i * 4.4 + 0.12 for i in x] + noise),
-          y_err=10, x_err=0.1, add_mode=True, line_mode=True, degree=2)
+          y_err=10, x_err=0.1, line_mode=True, degree=2, add_mode=True)
     # hist = Aplot([3, 2, 3, 1, 3, 4, 2, 4, 5, 6, 5], mode="hist", x_lim=[0, 7],
     #              x_label="X-as", grid=False)()
+
     plot += add
-
-
-    multi_plot([[plot], [add]])
+    print(plot.plots)
+    multi_plot([[plot], [add], [add]])
     print(len(plot))
 
     print("t: ", time.time() - t_start)
