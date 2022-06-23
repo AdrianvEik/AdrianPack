@@ -409,7 +409,7 @@ class Base:
             fit_pr = other.kwargs["fit_precision"]
 
         if other.degree is not None or other.func is not None:
-            if other.decimal_comma:
+            if self.decimal_comma:
                 str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c
                                   in
                                   other.fit_coeffs]
