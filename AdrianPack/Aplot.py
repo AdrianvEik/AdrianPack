@@ -172,7 +172,7 @@ class Base:
     def __add__(self, other):
         if other.__class__.__name__ == "Default":
             self.add_default_plot(other)
-        elif other.__class__.__name__ ==  "Histogram":
+        elif other.__class__.__name__ == "Histogram":
             raise NotImplementedError
 
         self.plots.append(other)
@@ -409,7 +409,7 @@ class Base:
             fit_pr = other.kwargs["fit_precision"]
 
         if other.degree is not None or other.func is not None:
-            if self.decimal_comma:
+            if other.decimal_comma:
                 str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c
                                   in
                                   other.fit_coeffs]
@@ -893,7 +893,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             test_inp(self.kwargs["fit_precision"], int, "fit precision")
             fit_pr = self.kwargs["fit_precision"]
 
-        if TNFormatter:
+        if self.TNFormatter:
             if self.degree is not None or self.func is not None:
                 str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c
                                   in
@@ -1252,13 +1252,13 @@ if __name__ == "__main__":
     plot = Default(x=x, y=np.array([i * -4.32 + 9.123 for i in x] + noise),
           y_err=10, x_err=0.1, y_lim=[-50, 50], x_label="bruh x", y_label="bruh y", degree=2,
                    connecting_line=True,
-                   func_format="$y_{{result}} = \dfrac{{ {0} }}{{ {1} }}$")
+                   func_format="$y_{{result}} = \dfrac{{ {0} }}{{ {1} }}$", decimal_comma=False)
     
     add = Default(x=x, y=np.array([i * 4.4 + 0.12 for i in x] + noise),
-          y_err=10, x_err=0.1, line_mode=True, degree=2, add_mode=True)
+          y_err=10, x_err=0.1, line_mode=True, degree=2, add_mode=True, decimal_comma=False)
     # hist = Aplot([3, 2, 3, 1, 3, 4, 2, 4, 5, 6, 5], mode="hist", x_lim=[0, 7],
     #              x_label="X-as", grid=False)()
     plot += add
-    multi_plot([[plot, add], [add, plot]], fig_size=(16, 8))
+    plot()
 
     print("t: ", time.time() - t_start)
