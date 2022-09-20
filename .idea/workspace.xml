@@ -1,7 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9db8f2b-0092-46ad-9797-cd929e612058" name="Default Changelist" comment="" />
+    <list default="true" id="e9db8f2b-0092-46ad-9797-cd929e612058" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Examples/Aplot/Data/WaterCup/dataf1.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Examples/Aplot/Data/WaterCup/dataf2.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Examples/Aplot/Data/WaterCup/dataf3.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Examples/Aplot/Data/sample_data_lib.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Examples/Aplot/grid_plot.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Examples/Aplot/simple_fit.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Examples/Aplot/simple_plot.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_09_06_2022_17_37_[Default_Changelist]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_09_06_2022_17_37__Default_Changelist_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_06_2022_20_43_[Default_Changelist]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_06_2022_20_43__Default_Changelist_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_14_06_2022_12_51_[Default_Changelist]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_14_06_2022_12_51__Default_Changelist_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_15_06_2022_00_51_[Default_Changelist]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_15_06_2022_00_51__Default_Changelist_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AdrianPack/Aplot.py" beforeDir="false" afterPath="$PROJECT_DIR$/AdrianPack/Aplot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Examples/Aplot/plot_from_file.py" beforeDir="false" afterPath="$PROJECT_DIR$/Examples/Aplot/plot_from_file.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -51,8 +70,8 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.plot_from_file">
-    <configuration name="Aplot" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python.grid_plot">
+    <configuration name="grid_plot" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="AdrianPack_src" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -60,12 +79,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/AdrianPack" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Examples/Aplot" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/AdrianPack/Aplot.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Examples/Aplot/grid_plot.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -96,7 +115,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="scratch_3" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="scratch_16" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="AdrianPack_src" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -109,29 +128,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch_3.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="setup" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="AdrianPack_src" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/setup.py" />
+      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch_16.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -162,13 +159,35 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="simple_plot" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AdrianPack_src" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Examples/Aplot" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Examples/Aplot/simple_plot.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.grid_plot" />
+        <item itemvalue="Python.scratch_16" />
+        <item itemvalue="Python.simple_fit" />
+        <item itemvalue="Python.simple_plot" />
         <item itemvalue="Python.plot_from_file" />
-        <item itemvalue="Python.Aplot" />
-        <item itemvalue="Python.Aplot" />
-        <item itemvalue="Python.scratch_3" />
-        <item itemvalue="Python.setup" />
       </list>
     </recent_temporary>
   </component>
@@ -220,6 +239,12 @@
       <workItem from="1653923821433" duration="416000" />
       <workItem from="1654894755084" duration="9941000" />
       <workItem from="1655152284690" duration="7936000" />
+      <workItem from="1655324607911" duration="1032000" />
+      <workItem from="1655413771400" duration="1153000" />
+      <workItem from="1655481295877" duration="4596000" />
+      <workItem from="1656622684834" duration="674000" />
+      <workItem from="1663084646000" duration="8339000" />
+      <workItem from="1663193057461" duration="2548000" />
     </task>
     <task id="LOCAL-00001" summary="Updated csvread function">
       <created>1642627626760</created>
@@ -445,7 +470,14 @@
       <option name="project" value="LOCAL" />
       <updated>1655248835841</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="Fixed a bug with the colour of graphs in a grid of subplots.">
+      <created>1655248921539</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1655248921539</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -492,17 +524,20 @@
     <SUITE FILE_PATH="coverage/AdrianPack_src$Aplot.coverage" NAME="Aplot Coverage Results" MODIFIED="1646608741737" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
     <SUITE FILE_PATH="coverage/AdrianPack_src$utils.coverage" NAME="utils Coverage Results" MODIFIED="1642862350474" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/venv/Lib/site-packages/numpy/testing/_private" />
     <SUITE FILE_PATH="coverage/setup_py$scratch_3.coverage" NAME="scratch_3 Coverage Results" MODIFIED="1655066820801" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
-    <SUITE FILE_PATH="coverage/setup_py$plot_from_file.coverage" NAME="plot_from_file Coverage Results" MODIFIED="1655167670054" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Examples/Aplot" />
+    <SUITE FILE_PATH="coverage/setup_py$plot_from_file.coverage" NAME="plot_from_file Coverage Results" MODIFIED="1663099600130" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Examples/Aplot" />
     <SUITE FILE_PATH="coverage/AdrianPack_src$Helper.coverage" NAME="Helper Coverage Results" MODIFIED="1642867648501" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
+    <SUITE FILE_PATH="coverage/setup_py$grid_plot.coverage" NAME="grid_plot Coverage Results" MODIFIED="1663193137692" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Examples/Aplot" />
     <SUITE FILE_PATH="coverage/setup_py$label_formatter.coverage" NAME="label_formatter Coverage Results" MODIFIED="1654960735366" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Examples/Aplot" />
     <SUITE FILE_PATH="coverage/setup_py$example_txtread.coverage" NAME="example_txtread Coverage Results" MODIFIED="1654960677288" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Examples/csvread" />
-    <SUITE FILE_PATH="coverage/setup_py$Aplot.coverage" NAME="Aplot Coverage Results" MODIFIED="1655248487212" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
+    <SUITE FILE_PATH="coverage/setup_py$Aplot.coverage" NAME="Aplot Coverage Results" MODIFIED="1663087685128" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
     <SUITE FILE_PATH="coverage/setup_py$ODE.coverage" NAME="ODE Coverage Results" MODIFIED="1654911831435" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
     <SUITE FILE_PATH="coverage/setup_py$air_res_plot.coverage" NAME="air_res_plot Coverage Results" MODIFIED="1654967044232" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Examples/Aplot" />
+    <SUITE FILE_PATH="coverage/setup_py$simple_plot.coverage" NAME="simple_plot Coverage Results" MODIFIED="1663099662991" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Examples/Aplot" />
     <SUITE FILE_PATH="coverage/AdrianPack_src$scratch_15.coverage" NAME="scratch_15 Coverage Results" MODIFIED="1643237869471" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
     <SUITE FILE_PATH="coverage/AdrianPack_src$Extra_test.coverage" NAME="Extra_test Coverage Results" MODIFIED="1645624905125" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Tests" />
-    <SUITE FILE_PATH="coverage/setup_py$simple_fit.coverage" NAME="simple_fit Coverage Results" MODIFIED="1654969215688" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Examples/Aplot" />
+    <SUITE FILE_PATH="coverage/setup_py$simple_fit.coverage" NAME="simple_fit Coverage Results" MODIFIED="1663100174937" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Examples/Aplot" />
     <SUITE FILE_PATH="coverage/AdrianPack_src$csvread.coverage" NAME="csvread Coverage Results" MODIFIED="1645646591754" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
     <SUITE FILE_PATH="coverage/setup_py$Helper.coverage" NAME="Helper Coverage Results" MODIFIED="1653697669290" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AdrianPack" />
+    <SUITE FILE_PATH="coverage/setup_py$scratch_16.coverage" NAME="scratch_16 Coverage Results" MODIFIED="1663100853691" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
   </component>
 </project>

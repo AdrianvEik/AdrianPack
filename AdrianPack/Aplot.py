@@ -22,6 +22,7 @@ try:
 except ImportError:
     from .Helper import test_inp
 
+
 # TODO: plot straight from files
 # TODO: plot normal distrubtion over histogram
 # TODO: plot bodeplots (maybe?)
@@ -33,6 +34,7 @@ class Base:
     """
     Base class of Aplot object
     """
+
     def __init__(self, *args, **kwargs):
         """"
         :param: x
@@ -108,7 +110,9 @@ class Base:
             test_inp(self.y_lim[1], (float, int), "ymax")
 
         # Read x and y values
-        self.file_format = kwargs["file_format"] if "file_format" in kwargs else ["x", "y", "x_err", "y_err"]
+        self.file_format = kwargs[
+            "file_format"] if "file_format" in kwargs else ["x", "y", "x_err",
+                                                            "y_err"]
         test_inp(self.file_format, list, "File format")
 
         if len(args) >= 2 and args[1] is not None:
@@ -149,7 +153,8 @@ class Base:
 
             # If the type is a string turn it in to a Fileread object else use
             # the Fileread object
-            data_obj = Fileread(path=self.x, **kwargs) if type(self.x) is str else self.x
+            data_obj = Fileread(path=self.x, **kwargs) if type(
+                self.x) is str else self.x
             data = data_obj()
 
             for key in data.keys():
@@ -172,7 +177,7 @@ class Base:
     def __add__(self, other):
         if other.__class__.__name__ == "Default":
             self.add_default_plot(other)
-        elif other.__class__.__name__ ==  "Histogram":
+        elif other.__class__.__name__ == "Histogram":
             raise NotImplementedError
 
         self.plots.append(other)
@@ -376,7 +381,8 @@ class Base:
 
         if other.scatter:
             if len(other.y_err) == 0 and len(other.x_err) == 0:
-                self.ax.scatter(other.x, other.y, label=other.label, color=color)
+                self.ax.scatter(other.x, other.y, label=other.label,
+                                color=color)
             elif len(other.y_err) == 0 or len(other.x_err) == 0:
                 if len(other.y_err) == 0:
                     self.ax.errorbar(other.x, other.y, xerr=other.x_err,
@@ -389,7 +395,8 @@ class Base:
                                      linestyle='',
                                      capsize=4)
             else:
-                self.ax.errorbar(other.x, other.y, xerr=other.x_err, yerr=other.y_err,
+                self.ax.errorbar(other.x, other.y, xerr=other.x_err,
+                                 yerr=other.y_err,
                                  label=other.label, fmt=color + 'o',
                                  linestyle='',
                                  capsize=4)
@@ -410,7 +417,8 @@ class Base:
 
         if other.degree is not None or other.func is not None:
             if self.decimal_comma:
-                str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c
+                str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",")
+                                  for c
                                   in
                                   other.fit_coeffs]
             else:
@@ -421,7 +429,8 @@ class Base:
             self.ax.plot(fit_x, other.func(fit_x, *other.fit_coeffs),
                          linestyle="--", c=color,
                          label=(
-                             lambda _: other.func_format.format(*str_fit_coeffs)
+                             lambda _: other.func_format.format(
+                                 *str_fit_coeffs)
                              if other.func_format != "" else "Fit")(None))
         elif other.degree is not None:
             if other.func_format != '':
@@ -440,9 +449,9 @@ class Base:
                                   range(other.degree + 1).__reversed__()]),
                              linestyle="--", c=color,
                              label=(
-                                         "Fit with function %s = " % other.response_var +
-                                         other.degree_dict[other.degree].format(
-                                             *str_fit_coeffs)))
+                                     "Fit with function %s = " % other.response_var +
+                                     other.degree_dict[other.degree].format(
+                                         *str_fit_coeffs)))
         return None
 
 
@@ -685,7 +694,8 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
         self.connecting_line_label = "Connection"
         if 'connecting_line_label' in kwargs:
-            test_inp(kwargs["connecting_line_label"], str, "connecting_line_label")
+            test_inp(kwargs["connecting_line_label"], str,
+                     "connecting_line_label")
             self.connecting_line_label = kwargs['connecting_line_label']
 
         self.line_only = False
@@ -724,7 +734,8 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
                 assert self.x_err.size == self.x.size
             except AssertionError:
-                raise IndexError("x Error and y list are not of the same size.")
+                raise IndexError(
+                    "x Error and y list are not of the same size.")
         else:
             self.x_err = []
 
@@ -741,7 +752,8 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
                 assert self.y_err.size == self.y.size
             except AssertionError:
-                raise IndexError("y Error and y list are not of the same size.")
+                raise IndexError(
+                    "y Error and y list are not of the same size.")
         else:
             self.y_err = []
 
@@ -812,7 +824,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         Plot a 2D data set with errors in both x and y axes. The data
         will be fitted according to the input arguments in __innit__.
 
-        Requires a Aplot object to plot with x, y or file input.
+        Requires an Aplot object to plot with x, y or file input.
 
         OPTIONAL
         :param: show_error
@@ -865,24 +877,25 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             elif len(self.y_err) == 0 or len(self.x_err) == 0:
                 if len(self.y_err) == 0:
                     ax.errorbar(self.x, self.y, xerr=self.x_err,
-                                     label=self.label, fmt=colour + mark,
-                                     linestyle='',
-                                     capsize=4)
+                                label=self.label, fmt=colour + mark,
+                                linestyle='',
+                                capsize=4)
                 else:
                     ax.errorbar(self.x, self.y, yerr=self.y_err,
-                                     label=self.label, fmt=colour + mark,
-                                     linestyle='',
-                                     capsize=4)
+                                label=self.label, fmt=colour + mark,
+                                linestyle='',
+                                capsize=4)
             else:
                 ax.errorbar(self.x, self.y, xerr=self.x_err, yerr=self.y_err,
-                                 label=self.label, fmt=colour + mark, linestyle='',
-                                 capsize=4)
+                            label=self.label, fmt=colour + mark, linestyle='',
+                            capsize=4)
 
         if self.connecting_line:
             ax.plot(self.x, self.y, label=self.connecting_line_label,
-                         color=colour)
+                    color=colour)
 
         # FIT PLOTTING
+        # dead code?
         if show_error:
             print(self.fit_errors)
 
@@ -895,39 +908,41 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
         if TNFormatter:
             if self.degree is not None or self.func is not None:
-                str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",") for c
+                str_fit_coeffs = [str(np.around(c, fit_pr)).replace(".", ",")
+                                  for c
                                   in
                                   self.fit_coeffs]
         else:
             if self.degree is not None or self.func is not None:
-                str_fit_coeffs = [str(np.around(c, fit_pr)) for c in self.fit_coeffs]
+                str_fit_coeffs = [str(np.around(c, fit_pr)) for c in
+                                  self.fit_coeffs]
 
         if self.func is not None:
             ax.plot(fit_x, self.func(fit_x, *self.fit_coeffs),
-                         linestyle="--", c=colour,
-                         label=(
-                             lambda _: self.func_format.format(*str_fit_coeffs)
-                             if self.func_format != "" else "Fit")(None))
+                    linestyle="--", c=colour,
+                    label=(
+                        lambda _: self.func_format.format(*str_fit_coeffs)
+                        if self.func_format != "" else "Fit")(None))
         elif self.degree is not None:
             if self.func_format != '':
                 ax.plot(fit_x,
-                             sum([fit_x ** (c) * self.fit_coeffs[
-                                 abs(c - self.degree)]
-                                  for c in
-                                  range(self.degree + 1).__reversed__()]),
-                             linestyle="--", c=colour,
-                             label=(self.func_format.format(*str_fit_coeffs)))
+                        sum([fit_x ** (c) * self.fit_coeffs[
+                            abs(c - self.degree)]
+                             for c in
+                             range(self.degree + 1).__reversed__()]),
+                        linestyle="--", c=colour,
+                        label=(self.func_format.format(*str_fit_coeffs)))
             else:
                 ax.plot(fit_x,
-                             sum([fit_x ** (c) * self.fit_coeffs[
-                                 abs(c - self.degree)]
-                                  for c in
-                                  range(self.degree + 1).__reversed__()]),
-                             linestyle="--", c=colour,
-                             label=(
-                                         "Fit with function %s = " % self.response_var +
-                                         self.degree_dict[self.degree].format(
-                                             *str_fit_coeffs)))
+                        sum([fit_x ** (c) * self.fit_coeffs[
+                            abs(c - self.degree)]
+                             for c in
+                             range(self.degree + 1).__reversed__()]),
+                        linestyle="--", c=colour,
+                        label=(
+                                "Fit with function %s = " % self.response_var +
+                                self.degree_dict[self.degree].format(
+                                    *str_fit_coeffs)))
 
         if self.sigma_uncertainty:
             self.add_sigma_uncertainty()
@@ -950,6 +965,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         if fig_format:
             self.single_form(x_label, y_label, grid=grid, fig_ax=(fig, ax))
 
+        # dead code?
         if not return_error:
             plt.tight_layout()
             (lambda save_as:
@@ -960,7 +976,8 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         else:
             return None
 
-    def fit(self) -> Optional[Dict[str, Union[np.ndarray, Iterable, int, float]]]:
+    def fit(self) -> Optional[
+        Dict[str, Union[np.ndarray, Iterable, int, float]]]:
         """
         Calculate the fit parameters of an Aplot object.
 
@@ -997,7 +1014,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             0: '{0}',
             1: '${0}%s + {1}$' % self.control_var,
             2: r'${0}%s^2 + {1}%s + {2}$' % (
-            self.control_var, self.control_var),
+                self.control_var, self.control_var),
             3: r'${0}%s^3 + {1}%s^2 + {2}%s + {3}$' % tuple(
                 [self.control_var for _ in range(3)]),
             4: r'${0}%s^4 + {1}%s^3 + {2}%s^2 + {3}%s + {4}$' % tuple(
@@ -1028,8 +1045,9 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         if self.func is not None:
             return lambda x: self.func(x, *self.fit_coeffs)
         elif self.degree is not None:
-            return lambda x: sum([x ** (c) * self.fit_coeffs[abs(c - self.degree)]
-                                  for c in range(self.degree + 1).__reversed__()])
+            return lambda x: sum(
+                [x ** (c) * self.fit_coeffs[abs(c - self.degree)]
+                 for c in range(self.degree + 1).__reversed__()])
         else:
             raise AttributeError("Missing parameters to compute fit"
                                  " coefficients, add either 'degree' or 'fx'"
@@ -1064,28 +1082,34 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         if base is None:
             base = self
 
-        sigma_label: str = base.kwargs["sigma_label"] if "sigma_label" in\
-                                                         base.kwargs else\
-                                                        "%s sigma boundary" % base.sigma_uncertainty
-        sigma_colour: str = base.kwargs["sigma_colour"] if "sigma_colour" in\
-                                                         base.kwargs else "gray"
+        sigma_label: str = base.kwargs["sigma_label"] if "sigma_label" in \
+                                                         base.kwargs else \
+            "%s sigma boundary" % base.sigma_uncertainty
+        sigma_colour: str = base.kwargs["sigma_colour"] if "sigma_colour" in \
+                                                           base.kwargs else "gray"
 
         x_vals = np.linspace(min(self.x), max(self.x), self.n_points)
         if self.func is not None:
             # Plot the lower bound
             self.ax.plot(x_vals,
-                         y=base.func(x_vals, *base.fit_coeffs) - sum(base.fit_errors),
+                         y=base.func(x_vals, *base.fit_coeffs) - sum(
+                             base.fit_errors),
                          linestyle=linestyle,
                          c=sigma_colour, label=sigma_label)
             self.ax.plot(x_vals,
-                         base.func(x_vals, *base.fit_coeffs) + sum(base.fit_errors),
+                         base.func(x_vals, *base.fit_coeffs) + sum(
+                             base.fit_errors),
                          linestyle=linestyle,
                          c=sigma_colour)
         else:
-            lower_y = np.asarray(sum([x_vals ** (c) * base.fit_coeffs[abs(c - self.degree)]
-                           for c in range(self.degree + 1).__reversed__()])) - sum(base.fit_errors)
-            upper_y = np.asarray(sum([x_vals ** (c) * base.fit_coeffs[abs(c - self.degree)]
-                           for c in range(self.degree + 1).__reversed__()])) + sum(base.fit_errors)
+            lower_y = np.asarray(
+                sum([x_vals ** (c) * base.fit_coeffs[abs(c - self.degree)]
+                     for c in range(self.degree + 1).__reversed__()])) - sum(
+                base.fit_errors)
+            upper_y = np.asarray(
+                sum([x_vals ** (c) * base.fit_coeffs[abs(c - self.degree)]
+                     for c in range(self.degree + 1).__reversed__()])) + sum(
+                base.fit_errors)
 
             self.ax.plot(x_vals, lower_y, linestyle=linestyle,
                          c=sigma_colour, label=sigma_label)
@@ -1093,9 +1117,11 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
                          c=sigma_colour)
         return None
 
+
 class Histogram(Base):
 
-    def __innit__(self, x: Union[tuple, list, np.ndarray, str] = None, **kwargs):
+    def __innit__(self, x: Union[tuple, list, np.ndarray, str] = None,
+                  **kwargs):
         self.x = x
         bins = int(np.round(len(self.x) / np.sqrt(2)))
         if "binning" in kwargs:
@@ -1124,23 +1150,8 @@ class Histogram(Base):
 
 
 def format_figure(x_label: str, y_label: str, grid: bool = True, **kwargs):
-    """
-
-    :param x_label:
-    :param y_label:
-    :param grid:
-    Kwargs
-    :param legend_loc:
-
-    :param x_lim:
-    :param y_lim:
-
-    :param x_precision:
-    :param y_precision:
-
-    :return:
-    """
     return Default(**kwargs).single_form(x_label, y_label, grid, **kwargs)
+
 
 def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = ""):
     """
@@ -1183,9 +1194,11 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = ""):
                     colour = extra_plot.colour
 
                     if not colour:
-                        extra_plot.colour = colours[plots[ax][0].plots.index(extra_plot)]
+                        extra_plot.colour = colours[
+                            plots[ax][0].plots.index(extra_plot)]
 
-                    extra_plot.default_plot(ax=axes[ax], fig=fig, return_error=True,
+                    extra_plot.default_plot(ax=axes[ax], fig=fig,
+                                            return_error=True,
                                             fig_format=False)
                     extra_plot.colour = colour
 
@@ -1199,9 +1212,11 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = ""):
                     colour = extra_plot.colour
 
                     if not colour:
-                        extra_plot.colour = colours[plots[0][ax].plots.index(extra_plot)]
+                        extra_plot.colour = colours[
+                            plots[0][ax].plots.index(extra_plot)]
 
-                    extra_plot.default_plot(ax=axes[ax], fig=fig, return_error=True,
+                    extra_plot.default_plot(ax=axes[ax], fig=fig,
+                                            return_error=True,
                                             fig_format=False)
                     extra_plot.colour = colour
 
@@ -1217,7 +1232,8 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = ""):
                         colour = extra_plot.colour
 
                         if not colour:
-                            extra_plot.colour = colours[plots[row][ax].plots.index(extra_plot)]
+                            extra_plot.colour = colours[
+                                plots[row][ax].plots.index(extra_plot)]
 
                         extra_plot.default_plot(ax=axes[row][ax], fig=fig,
                                                 return_error=True,
@@ -1229,6 +1245,7 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = ""):
                                             return_error=True)
 
     plt.tight_layout()
+
     (lambda save_as:
      plt.show() if save_as == '' else plt.savefig(save_as,
                                                   bbox_inches='tight')
@@ -1250,15 +1267,16 @@ if __name__ == "__main__":
     x = np.linspace(-5, 5, points)
     noise = np.random.randint(-2, 2, points)
     plot = Default(x=x, y=np.array([i * -4.32 + 9.123 for i in x] + noise),
-          y_err=10, x_err=0.1, y_lim=[-50, 50], x_label="bruh x", y_label="bruh y", degree=2,
+                   y_err=10, x_err=0.1, y_lim=[-50, 50], x_label="bruh x",
+                   y_label="bruh y", degree=2,
                    connecting_line=True,
                    func_format="$y_{{result}} = \dfrac{{ {0} }}{{ {1} }}$")
-    
+
     add = Default(x=x, y=np.array([i * 4.4 + 0.12 for i in x] + noise),
-          y_err=10, x_err=0.1, line_mode=True, degree=2, add_mode=True)
+                  y_err=10, x_err=0.1, line_mode=True, degree=2, add_mode=True)
     # hist = Aplot([3, 2, 3, 1, 3, 4, 2, 4, 5, 6, 5], mode="hist", x_lim=[0, 7],
     #              x_label="X-as", grid=False)()
     plot += add
-    multi_plot([[plot, add], [add, plot]], fig_size=(16, 8))
-
+    # multi_plot([[plot, add], [add, plot]], fig_size=(16, 8))
+    plot()
     print("t: ", time.time() - t_start)

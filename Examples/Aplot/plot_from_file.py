@@ -1,8 +1,5 @@
 
-from Aplot import Default
-from Fileread import csvread
+from AdrianPack.Aplot import Default
 
-csvread()
-
-plot = Default(r"Data\TextData.txt")
+plot = Default(r"Data\TextData.txt", cols=[1, 4])
 plot()
