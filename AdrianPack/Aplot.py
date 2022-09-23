@@ -115,10 +115,13 @@ class Base:
                                                             "y_err"]
         test_inp(self.file_format, list, "File format")
 
+        # Initialise x and y as None
+        self.x, self.y = None, None
+
         if len(args) >= 2 and args[1] is not None:
             self.x = args[0]
             self.y = args[1]
-        elif len(args) == 1 or args[1] is None:
+        elif len(args) == 1:
             self.x = args[0]
             self.y = None
         elif "file" in kwargs:
@@ -171,6 +174,18 @@ class Base:
                 data_obj.output = "numpy"
                 self.array_parse(data_obj())
 
+        # Only y input should also be possible
+        if "y" in kwargs and self.y is None:
+            self.y = kwargs["y"]
+
+            if self.y.__class__.__name__ in ["list", "ndarray", "tuple"]:
+                self.y = np.asarray(self.y, dtype=np.float32)
+                # 1 Dimensional array
+                if self.y.ndim == 1:
+                    self.x = range(len(self.y))
+                else:
+                    raise Exception("Error") # TODO: Fix this error pls
+
         self.plots = []
         self.kwargs = kwargs
 
@@ -185,6 +200,9 @@ class Base:
 
     def __len__(self):
         return len(self.plots) + 1
+
+    def __repr__(self):
+        return "{0}, {1}".format(self.x, self.y)
 
     def array_parse(self, data):
         """
@@ -1148,6 +1166,47 @@ class Histogram(Base):
     def histogram(self):
         pass
 
+class LivePlot(Base):
+    def __init__(self, func: Callable = None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.func = self.update
+        if func is not None:
+            self.func = func
+
+    def __call__(self, *args, **kwargs):
+        self.run(*args, **kwargs)
+    
+    def __add__(self, other):
+        # Dont foget to add the added plot to plot list
+        # Save the animation as a plot? Like the end result and add a plot to this
+        # No possibility of adding extra liveplots, Liveplot + Liveplot should result in a standing plot
+        # Maybe inherit but save the result of this plot as an Aplot object? as in pass the final data through to Default
+        
+        pass
+
+    def append(self, x: Callable = None, y: Callable= None):
+        pass
+
+    def live_fit(self, target):
+        pass
+
+    def live_floating_point_average(self, target):
+        pass
+
+    def run(self,*args, **kwargs):
+        pass
+    
+    @staticmethod
+    def update(frame):
+        x_data.append(self.x())
+        y_data.append(self.y())
+        
+        figure.gca().relim()
+        figure.gca().autoscale_view()
+        return None
+
+    
+
 
 def format_figure(x_label: str, y_label: str, grid: bool = True, **kwargs):
     return Default(**kwargs).single_form(x_label, y_label, grid, **kwargs)
@@ -1259,24 +1318,13 @@ if __name__ == "__main__":
     t_start = time.time()
 
 
-    def f(x: float, a: float, b: float) -> float:
+    def f(x: float, a: float = 11, b: float = 9) -> float:
+        return a * x ** 2 + b * x
+    
+    def g(x: float, a: float = 10, b: float = 9) -> float:
         return a * x ** 2 + b * x
 
+    lp = LivePlot(f)
+    lp.append(y=g)
+    lp.run(endpoint=10)
 
-    points = 10
-    x = np.linspace(-5, 5, points)
-    noise = np.random.randint(-2, 2, points)
-    plot = Default(x=x, y=np.array([i * -4.32 + 9.123 for i in x] + noise),
-                   y_err=10, x_err=0.1, y_lim=[-50, 50], x_label="bruh x",
-                   y_label="bruh y", degree=2,
-                   connecting_line=True,
-                   func_format="$y_{{result}} = \dfrac{{ {0} }}{{ {1} }}$")
-
-    add = Default(x=x, y=np.array([i * 4.4 + 0.12 for i in x] + noise),
-                  y_err=10, x_err=0.1, line_mode=True, degree=2, add_mode=True)
-    # hist = Aplot([3, 2, 3, 1, 3, 4, 2, 4, 5, 6, 5], mode="hist", x_lim=[0, 7],
-    #              x_label="X-as", grid=False)()
-    plot += add
-    # multi_plot([[plot, add], [add, plot]], fig_size=(16, 8))
-    plot()
-    print("t: ", time.time() - t_start)
