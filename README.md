@@ -1,6 +1,8 @@
-# AdrianPack
+﻿# AdrianPack
 
 This is a small compilation of functions that have been made to make life easier. These functions can be applied in a variety of ways, mainly they are used to visualise data, parse data from files to python objects or simply manipulate data. The project is constantly updated and functions are continuously being added. 
+
+*Updated at v0.0.3.2.4
 
 # Contents
 1. [How to install?](#how-to-install)
@@ -46,6 +48,18 @@ This is a small compilation of functions that have been made to make life easier
     
     9.2 [fileread.py](#92-filereadpy)
 # How to install?
+Installing the package is done using the GitHub repository (PyPi coming soon...) 
+
+Using the CMD:
+To install the AdrianPack using the cmd simply type the following line in the console:
+```cmd
+python -m pip install git+https://github.com/AdrianvEik/AdrianPack#egg=AdrianPack
+```
+And to update an existing version to the latest release:
+```cmd
+python -m pip install --upgrade git+https://github.com/AdrianvEik/AdrianPack#egg=AdrianPack
+```
+
 
 # Dependecies
 * Numpy
@@ -74,7 +88,7 @@ Extra.py is a collection of functions that are used for a varied range of applic
 
 Most of the functions have test cases which are placed in Extra_test.py and for Compress_array in Helper_test.py
 
-ODE.py consists of three approximation methods for numerically calculating ODE's
+ODE.py consists of three approximation methods for numerically calculating ODEs
 * Euler approximation
 * Runga-Kutta 2nd order
 * Runga-Kutta 4th order
@@ -95,7 +109,7 @@ Plots can be added to each other to have multiple graphs in a single plot to do 
 
 ## 4.3 Methods
 
-### 4.3.1 Returnng fit parameters.
+### 4.3.1 Returning fit parameters.
 
 ### 4.3.2 Returning the fitted line as a function.
 
@@ -216,7 +230,7 @@ runga_kutta4_plot = Default(x=runga_kutta4_data[0], y=runga_kutta4_data[1],
                             x_label="Time t (s)", y_label="Velocity v ($\mathrm{ms^{-1}}$)",
                             data_label="4th order Runga-Kutta", save_as="air_res.png")
 ```
-Note the usage of latex code in the labels, the current version (0.0.2) only supports simple latex code and because of the current formatter inputs like "$e^{4 \cdot x + 3}$" are **not** allowed.
+Note the usage of latex code in the labels, the current version (0.0.2) only supports simple latex code and because of the current formatter inputs like "\$e^{4 \cdot x + 3}$" are **not** allowed.
 
 All other graphs will take the axis labels and limits of the base graph thus we do not need to redefine these. The code for Euler's approximation is then
 ```python
