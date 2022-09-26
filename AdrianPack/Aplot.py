@@ -4,10 +4,12 @@ import numpy.random
 import scipy.stats
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 
 from scipy.optimize import curve_fit
 from typing import Sized, Iterable, Union, Optional, Any, Type, Tuple, List, \
     Dict, Callable
+from inspect import signature
 
 try:
     from TN_code.plotten.TISTNplot import TNFormatter
@@ -46,7 +48,6 @@ class Base:
             Array with values that correspond to the output values f(x) or
              response values.
         """
-
         self.decimal_comma = True
         self.TNFormatter = TNFormatter
         if 'decimal_comma' in kwargs:
@@ -126,6 +127,8 @@ class Base:
             self.y = None
         elif "file" in kwargs:
             self.x = kwargs["file"]
+        elif "x" in kwargs:
+            self.x = kwargs["x"]
 
         if self.x.__class__.__name__ in ["ndarray", "list", "tuple"]:
             # either matrix or normal x and y
@@ -134,9 +137,10 @@ class Base:
                 self.y = np.asarray(self.y, dtype=np.float32)
             # 1 Dimensional array
             if self.x.ndim == 1:
-                if self.y is None:
-                    self.y = self.x
-                    self.x = range(len(self.x))
+                # if self.y is None:
+                #     self.y = self.x
+                #     self.x = range(len(self.x))
+                pass
 
             # Matrix
             else:
@@ -1167,14 +1171,36 @@ class Histogram(Base):
         pass
 
 class LivePlot(Base):
-    def __init__(self, func: Callable = None, *args, **kwargs):
+    """
+
+    Func > update function for Matplotlob.Animate, standard function by
+           static class method update
+    pass_x_to_y > Pass x input to y function, standard False
+    end_point > either a time in seconds or a function that will run parallel
+                (in thread) and when the function task is finished stops the plot.
+
+    """
+    def __init__(self, *args, func: Callable = None, pass_x_to_y: bool = False,
+                 end_point: Union[float, int, Callable] = 10, **kwargs):
         super().__init__(*args, **kwargs)
+
+        if self.x is not None and self.y is None:
+            self.y = self.x
+
         self.func = self.update
         if func is not None:
             self.func = func
 
+        self.x_data, self.y_data = [], []
+        print(self.x, self.y)
+        self.yargs = len(signature(self.y).parameters)
+
+        self.iteration = 0
+
     def __call__(self, *args, **kwargs):
         self.run(*args, **kwargs)
+        plot_obj = Default()
+        return plot_obj
     
     def __add__(self, other):
         # Dont foget to add the added plot to plot list
@@ -1193,16 +1219,43 @@ class LivePlot(Base):
     def live_floating_point_average(self, target):
         pass
 
-    def run(self,*args, **kwargs):
+    def run(self, *args, **kwargs):
+        """
+        Interval > interval for FuncAnimation
+
+        """
+        interval = 1
+        if "interval" in kwargs:
+            interval = kwargs["interval"]
+
+        self.line, = self.ax.plot([], [], lw=2)
+
+        animation = FuncAnimation(self.fig, self.update, interval=interval)
+
+        plt.show()
+
         pass
-    
-    @staticmethod
-    def update(frame):
-        x_data.append(self.x())
-        y_data.append(self.y())
+
+    def update(self, frame):
+        print(self.x)
+        if True:
+            self.x_data = self.x
+
+        if self.yargs > 0 and isinstance(self.x, (list, range, np.ndarray, tuple)):
+            self.y_data = self.y(self.x, frame)
+
+        self.line.set_data(self.x_data, self.y_data)
         
-        figure.gca().relim()
-        figure.gca().autoscale_view()
+        self.fig.gca().relim()
+        self.fig.gca().autoscale_view()
+
+        if isinstance(self.x, (list, range, np.ndarray, tuple)):
+            self.iteration = (self.iteration + 1) % len(self.x)
+            print((self.iteration + 1) % len(self.x) )
+        else:
+            self.iteration = 1 + frame
+
+        print(len(self.x))
         return None
 
     
@@ -1318,13 +1371,13 @@ if __name__ == "__main__":
     t_start = time.time()
 
 
-    def f(x: float, a: float = 11, b: float = 9) -> float:
-        return a * x ** 2 + b * x
+    def f(x: float, frame) -> float:
+        return 4 * x + 3 * np.sin(x + frame)
     
     def g(x: float, a: float = 10, b: float = 9) -> float:
         return a * x ** 2 + b * x
 
-    lp = LivePlot(f)
+    lp = LivePlot(x=np.linspace(0, 10, 50), y=f)
     lp.append(y=g)
-    lp.run(endpoint=10)
+    lp.run(endpoint=10, interval=80)
 
