@@ -1344,9 +1344,12 @@ class LivePlot(Base):
             #   Since the y function doesnt take a frame or an x append the values to lists.
 
             if ldict[i]["yargs"] == 0:
-                ldict[i]["xd"].append(ldict[i]["x"]()) if\
-                    isinstance(ldict[i]["x"], (list, range, np.ndarray, tuple))\
-                    else ldict[i]["xd"].append(frame)
+                if isinstance(ldict[i]["x"],(list, range, np.ndarray, tuple)):
+                    ldict[i]["xd"].append(ldict[i]["x"]) 
+                elif isinstance(ldict[i]["x"],function):
+                    ldict[i]["xd"].append(ldict[i]["x"]())
+                else:
+                    ldict[i]["xd"].append(frame)
                 ldict[i]["yd"].append(ldict[i]["y"]())
 
             # If the input takes one argument assume x
@@ -1355,7 +1358,7 @@ class LivePlot(Base):
             #   Append both values to list for export
 
             elif ldict[i]["yargs"] == 1:
-                    ldict[i]["xd"].append(ldict[i]["x"]()) if\
+                    ldict[i]["xd"].append(ldict[i]["x"]) if\
                         isinstance(ldict[i]["x"], (list, range, np.ndarray, tuple))\
                         else ldict[i]["xd"].append(frame)
                     ldict[i]["yd"].append(ldict[i]["y"](ldict[i]["xd"][-1]))
@@ -1396,8 +1399,9 @@ class LivePlot(Base):
             if not self.thread.is_alive():
                 plt.close() # Gives error, TODO: Fix this error
 
-        if time.time() > self.endpoint + self.tstart:
-            plt.close()  # Gives error, TODO: Fix this error
+        if self.endpoint.__class__.__name__ in ("int", "float"): 
+            if time.time() > self.endpoint + self.tstart:
+                plt.close()  # Gives error, TODO: Fix this error
 
         if self.x_lim or self.y_lim:
             if self.x_lim:
