@@ -1,4 +1,5 @@
 import types
+import time
 
 import numpy.random
 import scipy.stats
@@ -20,9 +21,9 @@ except ImportError:
         TNFormatter = False
 
 try:
-    from Helper import test_inp
+    from Helper import test_inp, compress_ind
 except ImportError:
-    from .Helper import test_inp
+    from .Helper import test_inp, compress_ind
 
 
 # TODO: plot straight from files
@@ -65,6 +66,7 @@ class Base:
 
         if not add_mode:
             plt.clf()
+            plt.close()
             self.fig, self.ax = plt.subplots()
 
         self.response_var = "y"
@@ -82,6 +84,7 @@ class Base:
             test_inp(kwargs["data_label"], str, "data label")
             self.label = kwargs["data_label"]
 
+        self.x_lim = False
         if "x_lim" in kwargs:
             self.x_lim = kwargs["x_lim"]
             test_inp(self.x_lim, (list, tuple, np.ndarray), "x lim")
@@ -96,6 +99,7 @@ class Base:
             test_inp(self.x_lim[0], (float, int), "xmin")
             test_inp(self.x_lim[1], (float, int), "xmax")
 
+        self.y_lim = False
         if "y_lim" in kwargs:
             self.y_lim = kwargs["y_lim"]
             test_inp(self.y_lim, (list, tuple, np.ndarray), "x lim")
@@ -1184,6 +1188,8 @@ class LivePlot(Base):
                  end_point: Union[float, int, Callable] = 10, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.args, self.kwargs = args, kwargs
+
         if self.x is not None and self.y is None:
             self.y = self.x
 
@@ -1191,33 +1197,89 @@ class LivePlot(Base):
         if func is not None:
             self.func = func
 
-        self.x_data, self.y_data = [], []
-        print(self.x, self.y)
-        self.yargs = len(signature(self.y).parameters)
+        linestyle = "-"
+        if "linestyle" in kwargs:
+            linestyle = kwargs["linestyle"]
 
-        self.iteration = 0
+        marker = "."
+        if "marker" in kwargs:
+            marker = kwargs["marker"]
+
+        x_data, y_data = [], []
+        yargs = len(signature(self.y).parameters)
+
+        self.line_dict = {0: {"x": self.x, "y": self.y,
+                              "xd": x_data, "yd": y_data,
+                              "iter": 0, "yargs": yargs,
+                              "plot": self.ax.plot([], [], linestyle=linestyle,
+                                           marker=marker, label=self.label),
+                              "plotargs": [self.args, self.kwargs]}}
+
+        self.fit_dict = {}
+        self.fpa_dict = {}
+
+        self.thread = None
+        self.endpoint = None
+
+        self.tstart = time.time()
 
     def __call__(self, *args, **kwargs):
-        self.run(*args, **kwargs)
-        plot_obj = Default()
-        return plot_obj
-    
-    def __add__(self, other):
-        # Dont foget to add the added plot to plot list
-        # Save the animation as a plot? Like the end result and add a plot to this
-        # No possibility of adding extra liveplots, Liveplot + Liveplot should result in a standing plot
-        # Maybe inherit but save the result of this plot as an Aplot object? as in pass the final data through to Default
-        
-        pass
+        return self.run(*args, **kwargs)
 
-    def append(self, x: Callable = None, y: Callable= None):
-        pass
+    def append(self, x: Callable = None, y: Callable= None, *args, **kwargs):
+        # Deadcode?
+        if x is not None and y is None:
+            y = x
+
+        linestyle = "-"
+        if "linestyle" in kwargs:
+            linestyle = kwargs["linestyle"]
+
+        marker = "."
+        if "marker" in kwargs:
+            marker = kwargs["marker"]
+
+        x_data, y_data = [], []
+        yargs = len(signature(y).parameters)
+
+        self.line_dict[len(self.line_dict.keys())] =\
+            {"x": x, "y": y,
+             "xd": x_data, "yd": y_data,
+             "iter": 0, "yargs": yargs,
+             "plot": self.ax.plot([], [], linestyle=linestyle,
+                                  marker=marker, label=self.label),
+             "plotargs": [args, kwargs]}
 
     def live_fit(self, target):
-        pass
+        self.fit_dict[target] = {
+            "plot": self.ax.plot([], [], linestyle=linestyle,
+                                 marker=marker, label="Floating point average",
+                                 c=self.line_dict[target]["plot"].color),
+            "x": [], "y": []}
 
-    def live_floating_point_average(self, target):
-        pass
+    def live_floating_point_average(self, target: int, sample_size: int):
+        """
+        Initialise a fpa for a target datastream
+
+        target > target data stream int of added data
+        sample_size > sample size in frames (or datapoints) for the fpa
+        """
+        self.fpa_dict[target] = {"plot": self.ax.plot([], [], linestyle="--",
+                                                      label="Floating point average",
+                                                      c=self.line_dict[target]["plot"][0].get_c()),
+                                 "sample_size": sample_size,
+                                 "xf": [], "yf": []}
+
+    def comp_live_floating_point_average(self, target):
+        xd, yd = self.line_dict[target]["xd"], self.line_dict[target]["yd"]
+
+        # print("True", y_data.__len__())
+        new_len = int(len(yd) / self.fpa_dict[target]["sample_size"])
+        # print(new_len)
+        y = compress_ind(np.asarray(yd), new_len)[0]
+        # print(compress_ind(np.arange(0, y_data.__len__()), new_len)[0].astype(int))
+        x = np.asarray(xd)[(compress_ind(np.arange(0, yd.__len__()), new_len)[0]).astype(int)]
+        return x, y
 
     def run(self, *args, **kwargs):
         """
@@ -1228,34 +1290,125 @@ class LivePlot(Base):
         if "interval" in kwargs:
             interval = kwargs["interval"]
 
-        self.line, = self.ax.plot([], [], lw=2)
+        if "endpoint" in kwargs:
+            self.endpoint = kwargs["endpoint"]
 
-        animation = FuncAnimation(self.fig, self.update, interval=interval)
+        if self.endpoint.__class__.__name__ == "function":
+            import threading
+
+            endarg = False
+            if "endarg" in kwargs:
+                endarg = kwargs["endarg"]
+
+            self.thread = threading.Thread(target=self.endpoint,
+                                           args=(endarg, ) if endarg else ())
+            self.thread.start()
+
+        self.single_form(*self.args, **self.kwargs)
+        plt.legend()
+
+        self.animation = FuncAnimation(self.fig, self.update, interval=interval)
 
         plt.show()
 
-        pass
+        if "x" in self.kwargs:
+            del self.kwargs["x"]
+
+        if "y" in self.kwargs:
+            del self.kwargs["y"]
+
+        bplot = Default(self.line_dict[0]["xd"], self.line_dict[0]["yd"], *self.args, **self.kwargs)
+        if len(self.line_dict.keys()) > 1:
+            for eplot in range(1, len(self.line_dict.keys())):
+                bplot += Default(self.line_dict[eplot]["xd"], self.line_dict[eplot]["yd"], add_mode=True,
+                                 *self.line_dict[eplot]["plotargs"][0], **self.line_dict[eplot]["plotargs"][1])
+
+        if len(self.fpa_dict.keys()) >= 1:
+            for eplot in list(self.fpa_dict.keys()):
+                bplot += Default(self.fpa_dict[eplot]["xf"], self.fpa_dict[eplot]["yf"], line_only=True,
+                                                      label="Floating point average", colour="gray"
+                                                      # c=self.line_dict[eplot]["plot"][0].get_c()
+                                 , add_mode=True)
+
+        return bplot
 
     def update(self, frame):
-        print(self.x)
-        if True:
-            self.x_data = self.x
+        # For all lines
+        for i in list(self.line_dict.keys()):
+            # Rename the dictionary
+            ldict = self.line_dict
 
-        if self.yargs > 0 and isinstance(self.x, (list, range, np.ndarray, tuple)):
-            self.y_data = self.y(self.x, frame)
+            # If the input function takes no arguments,
+            #   Check if the x entry is a list or a function in case of function
+            #   Call and ad the return value, in case of list append the frame nr
+            #   Since the y function doesnt take a frame or an x append the values to lists.
 
-        self.line.set_data(self.x_data, self.y_data)
-        
-        self.fig.gca().relim()
-        self.fig.gca().autoscale_view()
+            if ldict[i]["yargs"] == 0:
+                ldict[i]["xd"].append(ldict[i]["x"]()) if\
+                    isinstance(ldict[i]["x"], (list, range, np.ndarray, tuple))\
+                    else ldict[i]["xd"].append(frame)
+                ldict[i]["yd"].append(ldict[i]["y"]())
 
-        if isinstance(self.x, (list, range, np.ndarray, tuple)):
-            self.iteration = (self.iteration + 1) % len(self.x)
-            print((self.iteration + 1) % len(self.x) )
+            # If the input takes one argument assume x
+            #   Again check if x is a list to check for predetermined x values
+            #   from list or function.
+            #   Append both values to list for export
+
+            elif ldict[i]["yargs"] == 1:
+                    ldict[i]["xd"].append(ldict[i]["x"]()) if\
+                        isinstance(ldict[i]["x"], (list, range, np.ndarray, tuple))\
+                        else ldict[i]["xd"].append(frame)
+                    ldict[i]["yd"].append(ldict[i]["y"](ldict[i]["xd"][-1]))
+
+            # If the input takes two arguments assume x, frame
+            #   The animation will be a standing animation in the range of the x-list
+            #   will wrap around iteration == len(x) to zero, the full x-array is passed
+            #   to the y function, assume that x is an array and not a function.
+            #   TODO: Add function possibility to 2 arg y input
+
+            elif ldict[i]["yargs"] >= 2:
+                ldict[i]["xd"] = ldict[i]["x"]
+                ldict[i]["yd"] = ldict[i]["y"](ldict[i]["x"], frame)
+
+            # Set the line data and update the frame/iteration according to
+            # input values to assure no index error shows up.
+            ldict[i]["plot"][0].set_data(ldict[i]["xd"], ldict[i]["yd"])
+
+            if isinstance(ldict[i]["x"], (list, range, np.ndarray, tuple)):
+                ldict[i]["iter"] = (ldict[i]["x"] + 1) % len(ldict[i]["x"])
+                print((ldict[i]["x"] + 1) % len(ldict[i]["x"]))
+            else:
+                ldict[i]["x"] = 1 + frame
+
+        for i in list(self.fpa_dict.keys()):
+            if frame % self.fpa_dict[i]["sample_size"] == 0 and frame >= self.fpa_dict[i]["sample_size"]:
+                xf, yf = self.comp_live_floating_point_average(i)
+
+                self.fpa_dict[i]["xf"] = xf
+                self.fpa_dict[i]["yf"] = yf
+
+                self.fpa_dict[i]["plot"][0].set_data(xf, yf)
+
+
+        # Check if the thread is running, if not start a new one
+        # New threads cant be started thus the thread is "reset"
+        if self.thread is not None:
+            if not self.thread.is_alive():
+                plt.close() # Gives error, TODO: Fix this error
+
+        if time.time() > self.endpoint + self.tstart:
+            plt.close()  # Gives error, TODO: Fix this error
+
+        if self.x_lim or self.y_lim:
+            if self.x_lim:
+                self.ax.set_xlim(self.x_lim)
+            if self.y_lim:
+                self.ax.set_ylim(self.y_lim)
+
         else:
-            self.iteration = 1 + frame
+            self.fig.gca().relim()
+            self.fig.gca().autoscale_view()
 
-        print(len(self.x))
         return None
 
     
@@ -1296,6 +1449,7 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = ""):
     colours = ["C%s" % i for i in range(1, 10)]
 
     plt.clf()
+    plt.close()
 
     fig, axes = plt.subplots(rows, columns)
     # Column vector
@@ -1367,17 +1521,26 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = ""):
 
 if __name__ == "__main__":
     import time
+    import random
 
     t_start = time.time()
 
-
-    def f(x: float, frame) -> float:
-        return 4 * x + 3 * np.sin(x + frame)
+    noise = 0.5
+    def f(x) -> float:
+        return np.sin(1/16 * x) + noise * random.random() * (-1)**random.randint(0, 1)
     
-    def g(x: float, a: float = 10, b: float = 9) -> float:
-        return a * x ** 2 + b * x
+    def g(x: float) -> float:
+        return np.cos(1/16 * x) + noise * random.random() * (-1)**random.randint(0, 1)
 
-    lp = LivePlot(x=np.linspace(0, 10, 50), y=f)
-    lp.append(y=g)
-    lp.run(endpoint=10, interval=80)
+    def sleeptimer(t):
+        for i in range(t):
+            time.sleep(1)
+            print(i)
+        return None
+
+    lp = LivePlot(y=f, connecting_line=True, x_label="frame", y_label="Data")
+    lp.append(y=g, connecting_line=True)
+    lp.live_floating_point_average(1, 10)
+    plot = lp.run(endpoint=10, interval=50)
+    plot()
 
