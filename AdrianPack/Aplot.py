@@ -2,6 +2,7 @@ import types
 import time
 
 import numpy.random
+import scipy.stats
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
@@ -113,6 +114,31 @@ class Base:
             test_inp(self.y_lim[0], (float, int), "ymin")
             test_inp(self.y_lim[1], (float, int), "ymax")
 
+        self.colour = "C0"
+        if "colour" in kwargs:
+            test_inp(kwargs["colour"], str, "colour")
+            self.colour = kwargs["colour"]
+
+        self.marker = "o"
+        if "marker" in kwargs:
+            test_inp(kwargs["marker"], str, "marker")
+            self.marker = kwargs["marker"]
+
+        self.linestyle = "-"
+        if "linestyle" in kwargs:
+            test_inp(kwargs["linestyle"], str, "linestyle")
+            self.linestyle = kwargs["linestyle"]
+
+        self.capsize = "4"
+        if "capsize" in kwargs:
+            test_inp(kwargs["capsize"], (int, float, str), "capsize")
+            self.capsize = kwargs["capsize"]
+
+        self.linewidth = 1
+        if "linewidth" in kwargs:
+            test_inp(kwargs["linewidth"], (int, float, str), "linewidth")
+            self.linewidth = kwargs["linewidth"]
+
         # Read x and y values
         self.file_format = kwargs[
             "file_format"] if "file_format" in kwargs else ["x", "y", "x_err",
@@ -191,7 +217,7 @@ class Base:
                 if self.y.ndim == 1:
                     self.x = range(len(self.y))
                 else:
-                    raise Exception("Error")  # TODO: Fix this error pls
+                    raise Exception("Error") # TODO: Fix this error pls
 
         self.plots = []
         self.kwargs = kwargs
@@ -406,29 +432,31 @@ class Base:
 
         if other.scatter:
             if len(other.y_err) == 0 and len(other.x_err) == 0:
-                self.ax.scatter(other.x, other.y, label=other.label,
-                                color=color)
+                self.ax.plot(other.x, other.y,
+                        label=other.label, marker=other.marker, c=other.colour,
+                        linestyle=other.linestyle,
+                        ms=other.capsize,
+                        linewidth=other.linewidth
+                )
             elif len(other.y_err) == 0 or len(other.x_err) == 0:
                 if len(other.y_err) == 0:
                     self.ax.errorbar(other.x, other.y, xerr=other.x_err,
-                                     label=other.label, fmt=color + 'o',
-                                     linestyle='',
-                                     capsize=4)
+                                     label=other.label,
+                                     fmt=color + other.marker,
+                                     linestyle=other.linestyle,
+                                     capsize=other.capsize)
                 else:
                     self.ax.errorbar(other.x, other.y, yerr=other.y_err,
-                                     label=other.label, fmt=color + 'o',
-                                     linestyle='',
-                                     capsize=4)
+                                     label=other.label,
+                                     fmt=color + other.marker,
+                                     linestyle=other.linestyle,
+                                     capsize=other.capsize)
             else:
                 self.ax.errorbar(other.x, other.y, xerr=other.x_err,
                                  yerr=other.y_err,
-                                 label=other.label, fmt=color + 'o',
-                                 linestyle='',
-                                 capsize=4)
-
-        if other.connecting_line:
-            self.ax.plot(other.x, other.y, label=other.connecting_line_label,
-                         color=color)
+                                 label=other.label, fmt=color + other.marker,
+                                 linestyle=other.linestyle,
+                                 capsize=other.capsize)
 
         if other.sigma_uncertainty:
             self.sigma_uncertainty(base=other)
@@ -452,7 +480,8 @@ class Base:
 
         if other.func is not None:
             self.ax.plot(fit_x, other.func(fit_x, *other.fit_coeffs),
-                         linestyle="--", c=color,
+                         linestyle=other.fit_line_style,
+                         c=color if not other.fit_colour else other.fit_colour,
                          label=(
                              lambda _: other.func_format.format(
                                  *str_fit_coeffs)
@@ -464,7 +493,8 @@ class Base:
                                  abs(c - other.degree)]
                                   for c in
                                   range(other.degree + 1).__reversed__()]),
-                             linestyle="--", c=color,
+                             linestyle=other.fit_line_style,
+                             c=color if not other.fit_colour else other.fit_colour,
                              label=(other.func_format.format(*str_fit_coeffs)))
             else:
                 self.ax.plot(fit_x,
@@ -472,7 +502,8 @@ class Base:
                                  abs(c - other.degree)]
                                   for c in
                                   range(other.degree + 1).__reversed__()]),
-                             linestyle="--", c=color,
+                             linestyle=other.fit_line_style,
+                             c=color if not other.fit_colour else other.fit_colour,
                              label=(
                                      "Fit with function %s = " % other.response_var +
                                      other.degree_dict[other.degree].format(
@@ -704,31 +735,23 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
             self.func = kwargs["fx"]
             test_inp(self.func, types.FunctionType, "f(x)")
 
+        self.fit_coeffs = 0
+        self.fit_errors = 0
+
         self.fit()
 
-        if "colour" in self.kwargs:
-            test_inp(self.kwargs["colour"], str, "colour")
-            self.colour = self.kwargs["colour"]
-        else:
-            self.colour = False
+        self.fit_colour = False
+        if 'fit_colour' in kwargs:
+            test_inp(kwargs['fit_colour'], str, "fit_colour")
+            self.func_format = kwargs['fit_colour']
 
-        self.connecting_line = False
-        if 'connecting_line' in kwargs:
-            test_inp(kwargs["connecting_line"], bool, "connecting_line")
-            self.connecting_line = kwargs['connecting_line']
-
-        self.connecting_line_label = "Connection"
-        if 'connecting_line_label' in kwargs:
-            test_inp(kwargs["connecting_line_label"], str,
-                     "connecting_line_label")
-            self.connecting_line_label = kwargs['connecting_line_label']
+        self.fit_line_style = "--"
+        if 'fit_line_style' in kwargs:
+            test_inp(kwargs['fit_line_style'], str, "fit_line_style")
+            self.func_format = kwargs['fit_line_style']
 
         self.line_only = False
         self.scatter = True
-        if 'line_only' in kwargs:
-            test_inp(kwargs["line_only"], bool, "line_only")
-            self.connecting_line = kwargs['line_only']
-            self.scatter = not kwargs['line_only']
 
         self.func_format = ''
         if 'func_format' in kwargs:
@@ -886,43 +909,30 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
         if not fig:
             fig = self.fig
 
-        colour = self.colour
-        if not self.colour:
-            colour = "C0"
-
-        if "marker_fmt" in self.kwargs:
-            test_inp(self.kwargs["marker_fmt"], str, "marker format")
-            mark = self.kwargs["marker_fmt"]
-        else:
-            mark = "o"
-
         if self.scatter:
             if len(self.y_err) == 0 and len(self.x_err) == 0:
-                ax.scatter(self.x, self.y, label=self.label, color=colour)
+                ax.plot(self.x, self.y,
+                        label=self.label, marker=self.marker, c=self.colour,
+                        linestyle=self.linestyle,
+                        ms=self.capsize,
+                        linewidth=self.linewidth
+                )
             elif len(self.y_err) == 0 or len(self.x_err) == 0:
                 if len(self.y_err) == 0:
                     ax.errorbar(self.x, self.y, xerr=self.x_err,
-                                label=self.label, fmt=colour + mark,
-                                linestyle='',
-                                capsize=4)
+                                label=self.label, fmt=self.marker + self.colour,
+                                linestyle=self.linestyle,
+                                capsize=self.capsize)
                 else:
                     ax.errorbar(self.x, self.y, yerr=self.y_err,
-                                label=self.label, fmt=colour + mark,
-                                linestyle='',
-                                capsize=4)
+                                label=self.label, fmt=self.marker + self.colour,
+                                linestyle=self.linestyle,
+                                capsize=self.capsize)
             else:
                 ax.errorbar(self.x, self.y, xerr=self.x_err, yerr=self.y_err,
-                            label=self.label, fmt=colour + mark, linestyle='',
-                            capsize=4)
-
-        if self.connecting_line:
-            ax.plot(self.x, self.y, label=self.connecting_line_label,
-                    color=colour)
-
-        # FIT PLOTTING
-        # dead code?
-        if show_error:
-            print(self.fit_errors)
+                            label=self.label, fmt=self.marker + self.colour,
+                            linestyle=self.linestyle,
+                            capsize=self.capsize)
 
         fit_x = np.linspace(min(self.x), max(self.x), self.n_points)
 
@@ -944,7 +954,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
 
         if self.func is not None:
             ax.plot(fit_x, self.func(fit_x, *self.fit_coeffs),
-                    linestyle="--", c=colour,
+                    linestyle=self.fit_line_style, c=self.colour if not self.fit_colour else self.fit_colour,
                     label=(
                         lambda _: self.func_format.format(*str_fit_coeffs)
                         if self.func_format != "" else "Fit")(None))
@@ -955,7 +965,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
                             abs(c - self.degree)]
                              for c in
                              range(self.degree + 1).__reversed__()]),
-                        linestyle="--", c=colour,
+                        linestyle=self.fit_line_style, c=self.colour if not self.fit_colour else self.fit_colour,
                         label=(self.func_format.format(*str_fit_coeffs)))
             else:
                 ax.plot(fit_x,
@@ -963,7 +973,7 @@ class Default(Base):  # TODO: expand the docstring #TODO x and y in args.
                             abs(c - self.degree)]
                              for c in
                              range(self.degree + 1).__reversed__()]),
-                        linestyle="--", c=colour,
+                        linestyle=self.fit_line_style, c=self.colour if not self.fit_colour else self.fit_colour,
                         label=(
                                 "Fit with function %s = " % self.response_var +
                                 self.degree_dict[self.degree].format(
@@ -1173,7 +1183,6 @@ class Histogram(Base):
     def histogram(self):
         pass
 
-
 class LivePlot(Base):
     """
 
@@ -1184,7 +1193,6 @@ class LivePlot(Base):
                 (in thread) and when the function task is finished stops the plot.
 
     """
-
     def __init__(self, *args, func: Callable = None, pass_x_to_y: bool = False,
                  end_point: Union[float, int, Callable] = 10, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1198,23 +1206,15 @@ class LivePlot(Base):
         if func is not None:
             self.func = func
 
-        linestyle = "-"
-        if "linestyle" in kwargs:
-            linestyle = kwargs["linestyle"]
-
-        marker = "."
-        if "marker" in kwargs:
-            marker = kwargs["marker"]
-
         x_data, y_data = [], []
         yargs = len(signature(self.y).parameters)
 
         self.line_dict = {0: {"x": self.x, "y": self.y,
                               "xd": x_data, "yd": y_data,
                               "iter": 0, "yargs": yargs,
-                              "plot": self.ax.plot([], [], linestyle=linestyle,
-                                                   marker=marker,
-                                                   label=self.label),
+                              "plot": self.ax.plot([], [], linestyle=self.linestyle,
+                                           marker=self.marker, label=self.label,
+                                                   ms=self.capsize, linewidth=self.linewidth),
                               "plotargs": [self.args, self.kwargs]}}
 
         self.fit_dict = {}
@@ -1222,13 +1222,14 @@ class LivePlot(Base):
 
         self.thread = None
         self.endpoint = None
+        self.passframe = False
 
         self.tstart = time.time()
 
     def __call__(self, *args, **kwargs):
         return self.run(*args, **kwargs)
 
-    def append(self, x: Callable = None, y: Callable = None, *args, **kwargs):
+    def append(self, x: Callable = None, y: Callable= None, *args, **kwargs):
         # Deadcode?
         if x is not None and y is None:
             y = x
@@ -1244,7 +1245,7 @@ class LivePlot(Base):
         x_data, y_data = [], []
         yargs = len(signature(y).parameters)
 
-        self.line_dict[len(self.line_dict.keys())] = \
+        self.line_dict[len(self.line_dict.keys())] =\
             {"x": x, "y": y,
              "xd": x_data, "yd": y_data,
              "iter": 0, "yargs": yargs,
@@ -1252,10 +1253,10 @@ class LivePlot(Base):
                                   marker=marker, label=self.label),
              "plotargs": [args, kwargs]}
 
-    def live_fit(self, target):
+    def live_fit(self, target: int):
         self.fit_dict[target] = {
             "plot": self.ax.plot([], [], linestyle=linestyle,
-                                 marker=marker, label="Floating point average",
+                                 marker=marker, label="Fit",
                                  c=self.line_dict[target]["plot"].color),
             "x": [], "y": []}
 
@@ -1268,8 +1269,8 @@ class LivePlot(Base):
         """
         self.fpa_dict[target] = {"plot": self.ax.plot([], [], linestyle="--",
                                                       label="Floating point average",
-                                                      c=self.line_dict[target][
-                                                          "plot"][0].get_c()),
+                                                      c=self.line_dict[target]["plot"][0].get_c(),
+                                                      linewidth=1),
                                  "sample_size": sample_size,
                                  "xf": [], "yf": []}
 
@@ -1281,14 +1282,13 @@ class LivePlot(Base):
         # print(new_len)
         y = compress_ind(np.asarray(yd), new_len)[0]
         # print(compress_ind(np.arange(0, y_data.__len__()), new_len)[0].astype(int))
-        x = np.asarray(xd)[
-            (compress_ind(np.arange(0, yd.__len__()), new_len)[0]).astype(int)]
+        x = np.asarray(xd)[(compress_ind(np.arange(0, yd.__len__()), new_len)[0]).astype(int)]
         return x, y
 
     def run(self, *args, **kwargs):
         """
         Interval > interval for FuncAnimation
-
+        passframe > pass frame to x function if x is function
         """
         interval = 1
         if "interval" in kwargs:
@@ -1296,6 +1296,9 @@ class LivePlot(Base):
 
         if "endpoint" in kwargs:
             self.endpoint = kwargs["endpoint"]
+
+        if "passframe" in kwargs:
+            self.passframe = kwargs["endpoint"]
 
         if self.endpoint.__class__.__name__ == "function":
             import threading
@@ -1305,14 +1308,13 @@ class LivePlot(Base):
                 endarg = kwargs["endarg"]
 
             self.thread = threading.Thread(target=self.endpoint,
-                                           args=(endarg,) if endarg else ())
+                                           args=(endarg, ) if endarg else ())
             self.thread.start()
 
         self.single_form(*self.args, **self.kwargs)
         plt.legend()
 
-        self.animation = FuncAnimation(self.fig, self.update,
-                                       interval=interval)
+        self.animation = FuncAnimation(self.fig, self.update, interval=interval)
 
         plt.show()
 
@@ -1322,22 +1324,23 @@ class LivePlot(Base):
         if "y" in self.kwargs:
             del self.kwargs["y"]
 
-        bplot = Default(self.line_dict[0]["xd"], self.line_dict[0]["yd"],
-                        *self.args, **self.kwargs)
+        bplot = Default(self.line_dict[0]["xd"], self.line_dict[0]["yd"], *self.args, **self.kwargs)
         if len(self.line_dict.keys()) > 1:
             for eplot in range(1, len(self.line_dict.keys())):
-                bplot += Default(self.line_dict[eplot]["xd"],
-                                 self.line_dict[eplot]["yd"], add_mode=True,
-                                 *self.line_dict[eplot]["plotargs"][0],
-                                 **self.line_dict[eplot]["plotargs"][1])
+                bplot += Default(self.line_dict[eplot]["xd"], self.line_dict[eplot]["yd"], add_mode=True,
+                                 *self.line_dict[eplot]["plotargs"][0], **self.line_dict[eplot]["plotargs"][1])
 
+        # Change colour and linedwidth back to normal
+        # Colour : c=self.line_dict[eplot]["plot"][0].get_c(
+        # Linedwidth: None
         if len(self.fpa_dict.keys()) >= 1:
             for eplot in list(self.fpa_dict.keys()):
-                bplot += Default(self.fpa_dict[eplot]["xf"],
-                                 self.fpa_dict[eplot]["yf"], line_only=True,
-                                 label="Floating point average", colour="gray"
-                                 # c=self.line_dict[eplot]["plot"][0].get_c()
-                                 , add_mode=True)
+                bplot += Default(self.fpa_dict[eplot]["xf"], self.fpa_dict[eplot]["yf"], line_only=True,
+                                                      label="Floating point average",
+                                 colour="C1",
+                                 linestyle="--",
+                                 marker="",
+                                 add_mode=True, linewidth=7.0)
 
         return bplot
 
@@ -1353,12 +1356,16 @@ class LivePlot(Base):
             #   Since the y function doesnt take a frame or an x append the values to lists.
 
             if ldict[i]["yargs"] == 0:
-                if isinstance(ldict[i]["x"], (list, range, np.ndarray, tuple)):
-                    ldict[i]["xd"].append(ldict[i]["x"])
-                elif isinstance(ldict[i]["x"], function):
+                if isinstance(ldict[i]["x"],(list, range, np.ndarray, tuple)):
+                    ldict[i]["xd"].append(ldict[i]["x"]) 
+                elif isinstance(ldict[i]["x"], types.FunctionType):
+                    print(ldict[i]["x"]())
                     ldict[i]["xd"].append(ldict[i]["x"]())
                 else:
                     ldict[i]["xd"].append(frame)
+                print(isinstance(ldict[i]["x"], types.FunctionType))
+                print(ldict[i]["x"])
+                print(ldict[i]["xd"])
                 ldict[i]["yd"].append(ldict[i]["y"]())
 
             # If the input takes one argument assume x
@@ -1367,10 +1374,17 @@ class LivePlot(Base):
             #   Append both values to list for export
 
             elif ldict[i]["yargs"] == 1:
-                ldict[i]["xd"].append(ldict[i]["x"]) if \
-                    isinstance(ldict[i]["x"], (list, range, np.ndarray, tuple)) \
-                    else ldict[i]["xd"].append(frame)
-                ldict[i]["yd"].append(ldict[i]["y"](ldict[i]["xd"][-1]))
+                if isinstance(ldict[i]["x"], (list, range, np.ndarray, tuple)):
+                    ldict[i]["xd"].append(ldict[i]["x"])
+                elif isinstance(ldict[i]["x"], types.FunctionType):
+                    ldict[i]["xd"].append(ldict[i]["x"]())
+                else:
+                    ldict[i]["xd"].append(frame)
+
+                if self.passframe:
+                    ldict[i]["yd"].append(ldict[i]["y"](frame))
+                else:
+                    ldict[i]["yd"].append(ldict[i]["y"](ldict[i]["xd"][-1]))
 
             # If the input takes two arguments assume x, frame
             #   The animation will be a standing animation in the range of the x-list
@@ -1387,14 +1401,10 @@ class LivePlot(Base):
             ldict[i]["plot"][0].set_data(ldict[i]["xd"], ldict[i]["yd"])
 
             if isinstance(ldict[i]["x"], (list, range, np.ndarray, tuple)):
-                ldict[i]["iter"] = (ldict[i]["x"] + 1) % len(ldict[i]["x"])
-                print((ldict[i]["x"] + 1) % len(ldict[i]["x"]))
-            else:
-                ldict[i]["x"] = 1 + frame
+                ldict[i]["iter"] = (ldict[i]["iter"] + 1) % len(ldict[i]["iter"])
 
         for i in list(self.fpa_dict.keys()):
-            if frame % self.fpa_dict[i]["sample_size"] == 0 and frame >= \
-                    self.fpa_dict[i]["sample_size"]:
+            if frame % self.fpa_dict[i]["sample_size"] == 0 and frame >= self.fpa_dict[i]["sample_size"]:
                 xf, yf = self.comp_live_floating_point_average(i)
 
                 self.fpa_dict[i]["xf"] = xf
@@ -1402,13 +1412,14 @@ class LivePlot(Base):
 
                 self.fpa_dict[i]["plot"][0].set_data(xf, yf)
 
+
         # Check if the thread is running, if not start a new one
         # New threads cant be started thus the thread is "reset"
         if self.thread is not None:
             if not self.thread.is_alive():
-                plt.close()  # Gives error, TODO: Fix this error
+                plt.close() # Gives error, TODO: Fix this error
 
-        if self.endpoint.__class__.__name__ in ("int", "float"):
+        if self.endpoint.__class__.__name__ in ("int", "float"): 
             if time.time() > self.endpoint + self.tstart:
                 plt.close()  # Gives error, TODO: Fix this error
 
@@ -1423,6 +1434,8 @@ class LivePlot(Base):
             self.fig.gca().autoscale_view()
 
         return None
+
+    
 
 
 def format_figure(x_label: str, y_label: str, grid: bool = True, **kwargs):
@@ -1532,22 +1545,21 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = ""):
 
 if __name__ == "__main__":
     import time
+    from datetime import datetime
     import random
 
     t_start = time.time()
 
     noise = 0.5
-
-
     def f(x) -> float:
-        return np.sin(1 / 16 * x) + noise * random.random() * (
+        return 1/10 * x + 4 *np.sin(1 / 4 * x) + noise * random.random() * (
             -1) ** random.randint(0, 1)
 
-
+def dtm():
+    return time.time() - t_start
+    
     def g(x: float) -> float:
-        return np.cos(1 / 16 * x) + noise * random.random() * (
-            -1) ** random.randint(0, 1)
-
+        return np.cos(1/16 * x) + noise * random.random() * (-1)**random.randint(0, 1)
 
     def sleeptimer(t):
         for i in range(t):
@@ -1556,9 +1568,11 @@ if __name__ == "__main__":
         return None
 
 
-    lp = LivePlot(y=f, connecting_line=True, x_label="frame", y_label="Data")
-    lp.append(y=g, connecting_line=True)
-    lp.live_floating_point_average(1, 10)
-    plot = lp.run(endpoint=10, interval=50)
-    plot()
+    lp = LivePlot(x=dtm, y=f, x_label="time", y_label="Data",
+                  linestyle="", capsize=4, linewidth=2)
+    # lp.append(y=g, connecting_line=True)
+    lp.live_floating_point_average(0, 10)
+    plot = lp.run(interval=10, endpoint=20)
+    plot2 = Default(np.linspace(0, 200, 100), y=f(np.linspace(0, 200, 100)), add_mode=True)
+    multi_plot([plot, plot2])
 
