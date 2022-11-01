@@ -204,9 +204,9 @@ class Fileread:
                 start_row = 0
             if path.split('.')[1] in ('csv', 'txt'):
                 df = pd.read_csv(f, delimiter=self.delimiter,
-                                 skiprows=range(start_row))
+                                 skiprows=range(start_row), dtype=str)
             elif path.split('.')[1] == 'xlsx':
-                df = pd.read_excel(path, skiprows=range(start_row))
+                df = pd.read_excel(path, skiprows=range(start_row), dtype=str)
             else:
                 raise Exception('Expected .csv or .xlsx, got .' +
                                 path.split('.')[1])

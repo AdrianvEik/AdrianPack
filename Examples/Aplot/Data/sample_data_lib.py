@@ -120,6 +120,3 @@ LH_n4_TM = Fileread("SampleData/Para_4_Hz.csv", cols=[0, 1, 2, 3])()
 LH_n4_TM_r = LH_n4_TM["R"]
 LH_n4_TM_t = LH_n4_TM["T"]
 LH_n4_TM_rt = LH_n4_TM["RT"]
-
-
-
