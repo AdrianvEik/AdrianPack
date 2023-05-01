@@ -1,3 +1,4 @@
+import os
 
 import pandas as pd
 import numpy as np
@@ -81,10 +82,13 @@ class Fileread:
                           True)
             self.all = kwargs["include_all"]
 
-        if path.__class__.__name__ in 'list':
+        if self.path.__class__.__name__ in 'list' or os.path.isdir(self.path):
             # Test inputs (row currently only supports all file wide rows)
             # TODO: dict row support
             # TODO: multifile str support
+            if os.path.isdir(self.path):
+                self.path = [p for p in os.listdir(self.path) if p.endswith((".csv", ".txt", ".xlsx", ".dat"))]
+
             self.test_inp(cols, (dict, type(None)), "cols")
             self.test_inp(rows, (type(None), list, tuple, int), "row")
 

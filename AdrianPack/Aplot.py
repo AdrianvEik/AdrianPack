@@ -1255,8 +1255,8 @@ class LivePlot(Base):
 
     def live_fit(self, target: int):
         self.fit_dict[target] = {
-            "plot": self.ax.plot([], [], linestyle=linestyle,
-                                 marker=marker, label="Fit",
+            "plot": self.ax.plot([], [], linestyle=self.linestyle,
+                                 marker=self.marker, label="Fit",
                                  c=self.line_dict[target]["plot"].color),
             "x": [], "y": []}
 
