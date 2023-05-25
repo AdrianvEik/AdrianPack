@@ -92,17 +92,17 @@ class Fileread:
             self.test_inp(cols, (dict, type(None)), "cols")
             self.test_inp(rows, (type(None), list, tuple, int), "row")
 
-            try:
-                assert len(cols) == len(path)
-            except AssertionError:
-                if not self.all:
-                    raise IndexError("Length of 'path' should equal length of"
-                                     " 'cols' in multi file mode but equals: "
-                                     "{0} and {1}. If you meant to include all files"
-                                     "set include_all to True".format(len(path), len(cols)))
-                else:
-                    # TODO: include_all support
-                    pass
+            # try:
+            #     assert len(cols) == len(path)
+            # except AssertionError:
+            #     if not self.all:
+            #         raise IndexError("Length of 'path' should equal length of"
+            #                          " 'cols' in multi file mode but equals: "
+            #                          "{0} and {1}. If you meant to include all files"
+            #                          "set include_all to True".format(len(path), len(cols)))
+            #     else:
+            #         # TODO: include_all support
+            #         pass
 
             # init talley list
             df_list = []
@@ -110,7 +110,8 @@ class Fileread:
             heads = []
 
             # Read files
-            for file in path:
+            for file in self.path:
+                file = path + "/" + file
                 df, head_h = self.arr__init__(file, start_row, self.head)
                 df.columns = range(col_count[it], col_count[it] + len(df.columns))
                 col_count.append(len(df.columns) + col_count[-1])
@@ -119,10 +120,13 @@ class Fileread:
                 it += 1
             df = pd.DataFrame()
 
-            # Indexes of requested cols
-            self.cols = cols[0]
-            for i in range(1, len(cols)):
-                self.cols += (np.array(cols[i]) + col_count[i]).tolist()
+            # Indexes of requested cols, if cols is None, all cols are selected
+            if cols is not None:
+                self.cols = cols[0]
+                for i in range(1, len(cols)):
+                    self.cols += (np.array(cols[i]) + col_count[i]).tolist()
+            else:
+                self.cols = list(range(col_count[-1]))
 
             # Combine dataframes
             for dataframe in df_list:
