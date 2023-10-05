@@ -210,7 +210,7 @@ class Fileread:
                 self.test_inp(start_row, int, 'start row')
             else:
                 start_row = 0
-            if path.split('.')[1] in ('csv', 'txt'):
+            if path.split('.')[1] in ('csv', 'txt', 'dat'):
                 df = pd.read_csv(f, delimiter=self.delimiter,
                                  skiprows=range(start_row), dtype=str)
             elif path.split('.')[1] == 'xlsx':
