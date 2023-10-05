@@ -210,14 +210,15 @@ class Fileread:
                 self.test_inp(start_row, int, 'start row')
             else:
                 start_row = 0
-            if path.split('.')[1] in ('csv', 'txt', 'dat'):
+            split_path = path.split('.')[-1]
+            if split_path in ('csv', 'txt', 'dat'):
                 df = pd.read_csv(f, delimiter=self.delimiter,
                                  skiprows=range(start_row), dtype=str)
-            elif path.split('.')[1] == 'xlsx':
+            elif split_path == 'xlsx':
                 df = pd.read_excel(path, skiprows=range(start_row), dtype=str)
             else:
                 raise Exception('Expected .csv or .xlsx, got .' +
-                                path.split('.')[1])
+                                split_path)
 
             if head:
                 heads = list(df.columns)
