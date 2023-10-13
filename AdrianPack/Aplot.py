@@ -129,10 +129,11 @@ class Base:
             test_inp(kwargs["linestyle"], str, "linestyle")
             self.linestyle = kwargs["linestyle"]
 
-        self.capsize = "4"
+        self.capsize = 4
         if "capsize" in kwargs:
             test_inp(kwargs["capsize"], (int, float, str), "capsize")
             self.capsize = kwargs["capsize"]
+        self.capsize = int(self.capsize)
 
         self.linewidth = 1
         if "linewidth" in kwargs:
