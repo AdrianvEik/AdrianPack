@@ -1443,11 +1443,21 @@ def format_figure(x_label: str, y_label: str, grid: bool = True, **kwargs):
     return Default(**kwargs).single_form(x_label, y_label, grid, **kwargs)
 
 
-def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = ""):
+def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = "",
+               run_plot=True, plot_title=""):
     """
+    Combine multiple AdrianPack plots into one figure with a grid layout.
 
-    :param plots:
-    :return:
+    :param plots: List of plots to be plotted in a grid
+    :type plots: List[List[Default, Histogram]]
+    :param fig_size: Size of the figure when plotted
+    :type fig_size: Tuple
+    :param save_as: Name of the file to save the plot as
+    :type save_as: str
+    :param run_plot: Argument to run the plot after creation
+    :type run_plot: bool
+    :return: fig, axes
+    :rtype: Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]
     """
     test_inp(plots, list, "plot grid")
 
@@ -1535,13 +1545,18 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = ""):
                 plots[row][ax].default_plot(ax=axes[row][ax], fig=fig,
                                             return_error=True)
 
-    plt.tight_layout()
+    # Formatting title
+    if plot_title != "":
+        plt.title(plot_title)
 
-    (lambda save_as:
-     plt.show() if save_as == '' else plt.savefig(save_as,
-                                                  bbox_inches='tight')
-     )(save_as)
-    return None
+    plt.tight_layout()
+    if run_plot:
+        (lambda save_as:
+         plt.show() if save_as == '' else plt.savefig(save_as,
+                                                      bbox_inches='tight')
+         )(save_as)
+
+    return fig, axes
 
 
 if __name__ == "__main__":
