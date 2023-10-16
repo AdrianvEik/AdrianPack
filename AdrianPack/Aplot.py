@@ -1486,6 +1486,9 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = "",
     plt.clf()
     plt.close()
 
+    if plot_title != "":
+        plt.suptitle(plot_title)
+
     fig, axes = plt.subplots(rows, columns)
     # Column vector
     if columns == 1:
@@ -1545,11 +1548,12 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = "",
                 plots[row][ax].default_plot(ax=axes[row][ax], fig=fig,
                                             return_error=True)
 
-    # Formatting title
-    if plot_title != "":
-        plt.suptitle(plot_title)
-
     plt.tight_layout()
+
+    if plot_title != "":
+        # Adjust for title
+        fig.subplots_adjust(top=0.88)
+
     if run_plot:
         (lambda save_as:
          plt.show() if save_as == '' else plt.savefig(save_as,
