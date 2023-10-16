@@ -1486,10 +1486,11 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = "",
     plt.clf()
     plt.close()
 
-    if plot_title != "":
-        plt.suptitle(plot_title)
-
     fig, axes = plt.subplots(rows, columns)
+
+    if plot_title != "":
+        fig.suptitle(plot_title)
+
     # Column vector
     if columns == 1:
         for ax in range(len(axes)):
