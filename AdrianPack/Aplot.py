@@ -1547,7 +1547,7 @@ def multi_plot(plots: list, fig_size: tuple = (10, 6), save_as: str = "",
 
     # Formatting title
     if plot_title != "":
-        plt.title(plot_title)
+        plt.suptitle(plot_title)
 
     plt.tight_layout()
     if run_plot:
